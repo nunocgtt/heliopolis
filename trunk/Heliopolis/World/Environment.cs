@@ -342,7 +342,9 @@ namespace Heliopolis.World
                             if (firstTile.AreaID != secondTile.AreaID)
                             {
                                 // Merge requried
-                                theTile.AreaID = MergeTwoAreas(firstTile.AreaID, secondTile.AreaID);
+                                Area mergeOne = areaDictionary[firstTile.AreaID];
+                                Area mergeTwo = areaDictionary[secondTile.AreaID];
+                                theTile.AreaID = Area.MergeTwoAreas(mergeOne, mergeTwo);
                             }                                
                         }
                     }
@@ -363,70 +365,8 @@ namespace Heliopolis.World
             areaDictionary[theTile.AreaID].memberCount++;
         }
 
-        /// <summary>
-        /// Merge two areas together because they have joined.
-        /// </summary>
-        /// <param name="areaA">The first area ID.</param>
-        /// <param name="areaB">The second area ID.</param>
-        /// <returns>The ID that they were merged into.</returns>
-        public int MergeTwoAreas(int areaA, int areaB)
-        {
-            Area copyFrom;
-            Area copyTo;
-            if (areaDictionary[areaA].memberCount >= areaDictionary[areaB].memberCount)
-            {
-                copyFrom = areaDictionary[areaB];
-                copyTo = areaDictionary[areaA];
-            }
-            else
-            {
-                copyFrom = areaDictionary[areaA];
-                copyTo = areaDictionary[areaB];
-            }
-            foreach (EnvironmentTile memberTile in copyFrom.members)
-            {
-                memberTile.AreaID = copyTo.id;
-                copyTo.memberCount++;
-                copyTo.members.Add(memberTile);
-            }
-            copyFrom.memberCount = 0;
-            copyFrom.members.Clear();
-            return copyTo.id;
-        }
 
     }
 
-    /// <summary>
-    /// Contains information about an areas.
-    /// </summary>
-    /// <remarks>An Area is a collection of tiles that are all accessable from each other.
-    /// The idea behind managing these areas is so that actors can quickly check if they can
-    /// get to a tile or not by checking to see if they are in the same area.</remarks>
-    [Serializable]
-    public class Area
-    {
-        /// <summary>
-        /// The number of tiles in this area.
-        /// </summary>
-        public int memberCount;
-        /// <summary>
-        /// The unique ID of this area.
-        /// </summary>
-        public int id;
-        /// <summary>
-        /// All the tiles in this area.
-        /// </summary>
-        public List<EnvironmentTile> members;
-        /// <summary>
-        /// Initialises a new instance of the Area class.
-        /// </summary>
-        /// <param name="_nextGroupId">The ID of this area.</param>
-        public Area(int _nextGroupId)
-        {
-            id = _nextGroupId;
-            memberCount = 0;
-            members = new List<EnvironmentTile>();
-        }
-    }
 
 }

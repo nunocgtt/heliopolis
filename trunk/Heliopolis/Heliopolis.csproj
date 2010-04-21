@@ -114,6 +114,7 @@
     <Compile Include="World\ActorFactory.cs" />
     <Compile Include="World\ActorManager.cs" />
     <Compile Include="World\ActorState.cs" />
+    <Compile Include="World\Area.cs" />
     <Compile Include="World\Building.cs" />
     <Compile Include="World\BuildingFactory.cs" />
     <Compile Include="World\BuildingManager.cs" />
