@@ -74,7 +74,7 @@ namespace Heliopolis.World
         public static void SetToTemplate(string templateName, EnvironmentTile loadInto)
         {
             loadInto.Texture = tileTemplates[templateName].Texture;
-            loadInto.Resource = tileTemplates[templateName].Resource;
+            //loadInto.Resource = tileTemplates[templateName].Resource;
             loadInto.CanAccess = tileTemplates[templateName].CanAccess;
         }
 

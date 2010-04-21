@@ -43,6 +43,9 @@ namespace Heliopolis.World
         private string exhaustedTile;
         private bool canAccess;
         private List<EnvironmentTile> adjacentTiles;
+        private List<Item> itemsOnGround;
+
+
 
         /// <summary>
         /// The area ID of this tile.
@@ -78,7 +81,7 @@ namespace Heliopolis.World
         /// <summary>
         /// The tile to the left.
         /// </summary>
-        public EnvironmentTile LeftTile
+        public EnvironmentTile WestTile
         {
             get { return adjacentTiles[(int)Direction.West]; }
             set { adjacentTiles[(int)Direction.West] = value; }
@@ -86,7 +89,7 @@ namespace Heliopolis.World
         /// <summary>
         /// The tile to the right.
         /// </summary>
-        public EnvironmentTile RightTile
+        public EnvironmentTile EastTile
         {
             get { return adjacentTiles[(int)Direction.East]; }
             set { adjacentTiles[(int)Direction.East] = value; }
@@ -94,7 +97,7 @@ namespace Heliopolis.World
         /// <summary>
         /// The tile above.
         /// </summary>
-        public EnvironmentTile TopTile
+        public EnvironmentTile NorthTile
         {
             get { return adjacentTiles[(int)Direction.North]; }
             set { adjacentTiles[(int)Direction.North] = value; }
@@ -102,11 +105,12 @@ namespace Heliopolis.World
         /// <summary>
         /// The tile below.
         /// </summary>
-        public EnvironmentTile BottomTile
+        public EnvironmentTile SouthTile
         {
             get { return adjacentTiles[(int)Direction.South]; }
             set { adjacentTiles[(int)Direction.South] = value; }
         }
+
         /// <summary>
         /// The texture of this tile.
         /// </summary>
@@ -115,14 +119,7 @@ namespace Heliopolis.World
             get { return texture; }
             set { texture = value; }
         }
-        /// <summary>
-        /// Any resources on this tile that can be harvested.
-        /// </summary>
-        public string Resource
-        {
-            get { return resource; }
-            set { resource = value; }
-        }
+
         /// <summary>
         /// If this tile can be access by actors.
         /// </summary>
@@ -140,14 +137,7 @@ namespace Heliopolis.World
                     canAccess = value;
             }
         }
-        /// <summary>
-        /// The amount of resources left.
-        /// </summary>
-        public float ResourceLeft
-        {
-            get { return resourceLeft; }
-            set { resourceLeft = value; }
-        }
+
         /// <summary>
         /// The game world position of this tile.
         /// </summary>
@@ -155,22 +145,6 @@ namespace Heliopolis.World
         {
             get { return position; }
             set { position = value; }
-        }
-        /// <summary>
-        /// If the resources run out, what tile this one will become.
-        /// </summary>
-        public string ExhaustedTile
-        {
-            get { return exhaustedTile; }
-            set { exhaustedTile = value; }
-        }
-
-        /// <summary>
-        /// Returns if this tile should get rendered.
-        /// </summary>
-        public bool ShouldBeRendered
-        {
-            get { return true; }
         }
 
         /// <summary>

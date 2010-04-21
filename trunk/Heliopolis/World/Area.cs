@@ -37,7 +37,6 @@ namespace Heliopolis.World
             members = new List<EnvironmentTile>();
         }
 
-
         /// <summary>
         /// Merge two areas together because they have joined.
         /// </summary>

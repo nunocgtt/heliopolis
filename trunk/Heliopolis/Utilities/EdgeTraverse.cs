@@ -187,7 +187,7 @@ namespace Heliopolis.Utilities
                 Point pointB = tileChange.Position;
                 offsetPoint(ref pointA, topLeftOffset);
                 offsetPoint(ref pointB, topRightOffset);
-                CreateEdge(pointA, pointB, tileChange, tileChange.TopTile, swapDirections);
+                CreateEdge(pointA, pointB, tileChange, tileChange.NorthTile, swapDirections);
             }
             else if (botherRemoving)
             {
@@ -202,7 +202,7 @@ namespace Heliopolis.Utilities
                 Point pointB = tileChange.Position;
                 offsetPoint(ref pointA, bottomLeftOffset);
                 offsetPoint(ref pointB, topLeftOffset);
-                CreateEdge(pointA, pointB, tileChange, tileChange.LeftTile, swapDirections);
+                CreateEdge(pointA, pointB, tileChange, tileChange.WestTile, swapDirections);
             }
             else if (botherRemoving)
             {
@@ -218,7 +218,7 @@ namespace Heliopolis.Utilities
                 Point pointB = tileChange.Position;
                 offsetPoint(ref pointA, topRightOffset);
                 offsetPoint(ref pointB, bottomRightOffset);
-                CreateEdge(pointA, pointB, tileChange, tileChange.RightTile, swapDirections);
+                CreateEdge(pointA, pointB, tileChange, tileChange.EastTile, swapDirections);
             }
             else if (botherRemoving)
             {
@@ -232,7 +232,7 @@ namespace Heliopolis.Utilities
                 Point pointB = tileChange.Position;
                 offsetPoint(ref pointA, bottomRightOffset);
                 offsetPoint(ref pointB, bottomLeftOffset);
-                CreateEdge(pointA, pointB, tileChange, tileChange.BottomTile, swapDirections);
+                CreateEdge(pointA, pointB, tileChange, tileChange.SouthTile, swapDirections);
             }
             else if (botherRemoving)
             {
@@ -252,7 +252,7 @@ namespace Heliopolis.Utilities
                 Point pointB = tileChange.Position;
                 offsetPoint(ref pointA, topLeftOffset);
                 offsetPoint(ref pointB, topRightOffset);
-                CreateEdge(pointA, pointB, tileChange, tileChange.TopTile, swapDirections);
+                CreateEdge(pointA, pointB, tileChange, tileChange.NorthTile, swapDirections);
             }
             else
             {
@@ -266,7 +266,7 @@ namespace Heliopolis.Utilities
                 Point pointB = tileChange.Position;
                 offsetPoint(ref pointA, bottomLeftOffset);
                 offsetPoint(ref pointB, topLeftOffset);
-                CreateEdge(pointA, pointB, tileChange, tileChange.LeftTile, swapDirections);
+                CreateEdge(pointA, pointB, tileChange, tileChange.WestTile, swapDirections);
             }
             else
             {
@@ -280,7 +280,7 @@ namespace Heliopolis.Utilities
                 Point pointB = tileChange.Position;
                 offsetPoint(ref pointA, topRightOffset);
                 offsetPoint(ref pointB, bottomRightOffset);
-                CreateEdge(pointA, pointB, tileChange, tileChange.RightTile, swapDirections);
+                CreateEdge(pointA, pointB, tileChange, tileChange.EastTile, swapDirections);
             }
             else
             {
@@ -294,7 +294,7 @@ namespace Heliopolis.Utilities
                 Point pointB = tileChange.Position;
                 offsetPoint(ref pointA, bottomRightOffset);
                 offsetPoint(ref pointB, bottomLeftOffset);
-                CreateEdge(pointA, pointB, tileChange, tileChange.BottomTile, swapDirections);
+                CreateEdge(pointA, pointB, tileChange, tileChange.SouthTile, swapDirections);
             }
             else
             {

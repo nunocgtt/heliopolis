@@ -22,7 +22,7 @@ namespace Heliopolis.Utilities
         /// <param name="point">The point to access from.</param>
         /// <param name="parentPoint">The point that this point has already been access from. If there is no parent, pass in null.</param>
         /// <returns>A list of Node</returns>
-        List<Node<T>> GetSuccessors(T point, T parentPoint);
+        List<Node<T>> GetSuccessorsWithDir(T point, T parentPoint);
         /// <summary>
         /// Returns a list of nodes accessable from a paricular point. Use in fill algorithms.
         /// </summary>

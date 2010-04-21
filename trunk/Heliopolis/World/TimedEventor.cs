@@ -20,7 +20,6 @@ namespace Heliopolis.World
         /// <param name="absoluteMilliseconds">The absolute game time in milliseconds</param>
         public delegate void ProcessTick(TimeSpan absoluteMilliseconds);
 
-
         /// <summary>
         /// The time between the last action time, and the next one.
         /// </summary>
@@ -42,7 +41,10 @@ namespace Heliopolis.World
             : base(_owner)
         {
             nextAbsoluteActionTime = TimeSpan.FromMilliseconds(0);
+            this.Disabled = false;
         }
+
+        public bool Disabled { get; set; }
 
         /// <summary>
         /// Set up the next action time by incrementing it by the provided amount.

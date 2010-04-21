@@ -287,7 +287,7 @@ namespace Heliopolis.Utilities
             traceManager.WriteLine("ProcessNextSearchStep", "path");
             T parentPoint = nextNode.Parent.Position;
             T pos = nextNode.Position;
-            List<Node<T>> successors = searchGrid.GetSuccessors(pos, parentPoint);
+            List<Node<T>> successors = searchGrid.GetSuccessorsWithDir(pos, parentPoint);
             traceManager.WriteLine("Successors of " + nextNode.ToString(), "path");
             traceManager.DisplayContentsOfNodeList(successors, "path");
             Node<T> openNode = null;

@@ -67,16 +67,16 @@ namespace Heliopolis.World
             switch (jobType)
             {
                 case "mining":
-                    EnvironmentalJobParameters environmentalJobParameters = (EnvironmentalJobParameters)JobParameters;
-                    environmentalJobParameters.TargetTile.ResourceLeft -= 1;
-                    owner.ItemManager.SpawnItem(environmentalJobParameters.TargetTile.Resource, environmentalJobParameters.JobActor.Position);
-                    // we need to create some resource where the actor is
-                    isFinished = false;
-                    if (environmentalJobParameters.TargetTile.ResourceLeft == 0)
-                    {
-                        EnvironmentTileFactory.SetToTemplate(environmentalJobParameters.TargetTile.ExhaustedTile, environmentalJobParameters.TargetTile);
-                        isFinished = true;
-                    }
+                    //EnvironmentalJobParameters environmentalJobParameters = (EnvironmentalJobParameters)JobParameters;
+                    //environmentalJobParameters.TargetTile.ResourceLeft -= 1;
+                    //owner.ItemManager.SpawnItem(environmentalJobParameters.TargetTile.Resource, environmentalJobParameters.JobActor.Position);
+                    //// we need to create some resource where the actor is
+                    //isFinished = false;
+                    //if (environmentalJobParameters.TargetTile.ResourceLeft == 0)
+                    //{ 
+                    //    EnvironmentTileFactory.SetToTemplate(environmentalJobParameters.TargetTile.ExhaustedTile, environmentalJobParameters.TargetTile);
+                    //    isFinished = true;
+                    //}
                     break;
                 case "pickupitem":
                     MoveItemJobParameters moveItemJobParameters = (MoveItemJobParameters) jobParameters;

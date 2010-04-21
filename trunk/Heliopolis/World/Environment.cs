@@ -92,7 +92,7 @@ namespace Heliopolis.World
             return gameWorld[point.X, point.Y].GetAccessPoints();
         }
 
-        public List<Node<Point>> GetSuccessors(Point point, Point parentPoint)
+        public List<Node<Point>> GetSuccessorsWithDir(Point point, Point parentPoint)
         {
             bool hasParent = (parentPoint == null);
             List<Node<Point>> returnList = new List<Node<Point>>();
@@ -100,38 +100,36 @@ namespace Heliopolis.World
             EnvironmentTile currentTile = gameWorld[point.X, point.Y];
             EnvironmentTile parentTile = hasParent ? gameWorld[parentPoint.X, parentPoint.Y] : null;
 
-            if (currentTile.LeftTile != null)
+            if (currentTile.WestTile != null)
             {
-                if (currentTile.LeftTile.CanAccess)
+                if (currentTile.WestTile.CanAccess)
                 {
                     //Note: Those directions are where the node is coming *FROM*
-                    Node<Point> NewNode = new Node<Point>(currentTile.LeftTile.Position, Direction.East);
+                    Node<Point> NewNode = new Node<Point>(currentTile.WestTile.Position, Direction.East);
                     returnList.Add(NewNode);
                 }
             }
-            if (currentTile.RightTile != null)
+            if (currentTile.EastTile != null)
             {
-                if (currentTile.RightTile.CanAccess)
+                if (currentTile.EastTile.CanAccess)
                 {
-                    Node<Point> NewNode = new Node<Point>(currentTile.RightTile.Position, Direction.West);
+                    Node<Point> NewNode = new Node<Point>(currentTile.EastTile.Position, Direction.West);
                     returnList.Add(NewNode);
                 }
             }
-            if
-                (currentTile.TopTile != null)
+            if (currentTile.NorthTile != null)
             {
-                if (currentTile.TopTile.CanAccess)
+                if (currentTile.NorthTile.CanAccess)
                 {
-                    Node<Point> NewNode = new Node<Point>(currentTile.TopTile.Position, Direction.South);
+                    Node<Point> NewNode = new Node<Point>(currentTile.NorthTile.Position, Direction.South);
                     returnList.Add(NewNode);
                 }
             }
-
-            if (currentTile.BottomTile != null)
+            if (currentTile.SouthTile != null)
             {
-                if (currentTile.BottomTile.CanAccess)
+                if (currentTile.SouthTile.CanAccess)
                 {
-                    Node<Point> NewNode = new Node<Point>(currentTile.BottomTile.Position, Direction.North);
+                    Node<Point> NewNode = new Node<Point>(currentTile.SouthTile.Position, Direction.North);
                     returnList.Add(NewNode);
                 }
             }
@@ -147,7 +145,6 @@ namespace Heliopolis.World
                     }
                 }
             }
-
             return returnList;
         }
 
@@ -191,13 +188,13 @@ namespace Heliopolis.World
                 for (int j = 0; j < worldSize.Y; j++)
                 {
                     if (i != 0)
-                        gameWorld[i, j].LeftTile = gameWorld[i - 1, j];
+                        gameWorld[i, j].WestTile = gameWorld[i - 1, j];
                     if (i != worldSize.X - 1)
-                        gameWorld[i, j].RightTile = gameWorld[i + 1, j];
+                        gameWorld[i, j].EastTile = gameWorld[i + 1, j];
                     if (j != 0)
-                        gameWorld[i, j].TopTile = gameWorld[i, j - 1];
+                        gameWorld[i, j].NorthTile = gameWorld[i, j - 1];
                     if (j != worldSize.Y - 1)
-                        gameWorld[i, j].BottomTile = gameWorld[i, j + 1];
+                        gameWorld[i, j].SouthTile = gameWorld[i, j + 1];
                 }
             }
         }
