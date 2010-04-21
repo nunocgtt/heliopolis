@@ -21,13 +21,12 @@ namespace Heliopolis.World
         private Point worldSize = new Point(135, 135);
         private Point sectionSize = new Point(5,5);
         private Environment environment;
-        private TimeSpan totalGameTime;
         private ActorManager actorManager;
         private DesignationManager designationManager;
         private ItemManager itemManager;
         private BuildingManager buildingManager;
         private SpatialTreeIndex spatialTreeIndex;
-        private bool paused = true;
+        public TimedEventManager TimedEventManager { get; set; }
 
         static GameWorld()
         {
@@ -87,15 +86,6 @@ namespace Heliopolis.World
         }
 
         /// <summary>
-        /// Set to true to pause the game ticks.
-        /// </summary>
-        public bool Paused
-        {
-            get { return paused; }
-            set { paused = value; }
-        }
-
-        /// <summary>
         /// Manages all the items in the game.
         /// </summary>
         public ItemManager ItemManager
@@ -136,7 +126,7 @@ namespace Heliopolis.World
             actorManager = new ActorManager(this);
             environment = new Environment(worldSize, this);
             spatialTreeIndex = new SpatialTreeIndex(this.SectionSize, this.WorldSize, new int[] { 3, 3, 3, 3 });
-            totalGameTime = TimeSpan.FromMilliseconds(0);
+            this.TimedEventManager = new TimedEventManager(this);
             LoadGameDescription();
         }
 
@@ -179,55 +169,7 @@ namespace Heliopolis.World
         /// <param name="timeSpan">The time since the last tick.</param>
         public void Tick(TimeSpan timeSpan)
         {
-            if (paused)
-                return;
-            // Loop through all the actors and make them move
-            totalGameTime = totalGameTime.Add(timeSpan);
-
-            if (actorManager.ActorsByTime.Count > 0)
-            {
-                /* We want to process all the actors whos next absolute action time
-                   is less than the current game time tick
-                   NOTE: actors need to be processed in order of their action time
-                   and in some cases an actor could be processed more than once if the game tick
-                   is large enough. */
-
-                // need the first value of the array
-                //Actor first = firstActor();
-                //bool keepLooping = true;
-                List<TimeSpan> keysToReAdd = new List<TimeSpan>();
-
-                // TODO: Refactor the timing logic into a TimedEventorManager class
-                keysToReAdd.Clear();
-                foreach (KeyValuePair<TimeSpan, Actor> kvp in actorManager.ActorsByTime)
-                {
-                    if (kvp.Key.CompareTo(totalGameTime) > 0)
-                    {
-
-                    }
-                    else
-                    {
-                        kvp.Value.Tick(totalGameTime);
-                        Actor reAddMe = kvp.Value;
-                        keysToReAdd.Add(kvp.Key);
-                    }
-                }
-
-                foreach (TimeSpan d in keysToReAdd)
-                {
-                    Actor reAddMe = actorManager.ActorsByTime[d];
-                    actorManager.ActorsByTime.Remove(d);
-                    // need to be careful about adding the same key
-                    while (actorManager.ActorsByTime.ContainsKey(reAddMe.NextAbsoluteActionTime))
-                    {
-                        reAddMe.IncrementActionTime(TimeSpan.FromMilliseconds(1));
-                    }
-                    actorManager.ActorsByTime.Add(reAddMe.NextAbsoluteActionTime, reAddMe);
-                    break;
-                }
-                // get first and reloop... maybe later. this will work fine as long as the actors
-                // next move isnt inside this timeframe again
-            }
+            TimedEventManager.Tick(timeSpan);
         }
     }
 }

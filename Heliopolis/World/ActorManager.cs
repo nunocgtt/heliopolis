@@ -12,7 +12,7 @@ namespace Heliopolis.World
     [Serializable]
     public class ActorManager : GameWorldObject
     {
-        private SortedDictionary<TimeSpan, Actor> actorsByTime = new SortedDictionary<TimeSpan, Actor>();
+        public List<Actor> LiveActors = new List<Actor>();
 
         /// <summary>
         /// Initialises a new instance of the ActorManager class.
@@ -21,32 +21,6 @@ namespace Heliopolis.World
         public ActorManager(GameWorld _owner)
             : base(_owner)
         {
-
-        }
-
-        /// <summary>
-        /// Public access to the internal actors by time. This will get moved out to a TimedEventor manager.
-        /// </summary>
-        public SortedDictionary<TimeSpan, Actor> ActorsByTime
-        {
-            get { return actorsByTime; }
-            set { actorsByTime = value; }
-        }
-
-        /// <summary>
-        /// Returns the first actor in the list that is sorted by next action time.
-        /// </summary>
-        /// <returns></returns>
-        public Actor FirstActor()
-        {
-            Actor firstActor = null;
-            SortedDictionary<TimeSpan, Actor>.ValueCollection valueCol = actorsByTime.Values;
-            foreach (Actor a in valueCol)
-            {
-                firstActor = a;
-                break;
-            }
-            return firstActor;
         }
 
         /// <summary>
@@ -58,8 +32,8 @@ namespace Heliopolis.World
         {
             Actor toAdd = ActorFactory.GetNewActor(ActorType, position);
             owner.SpatialTreeIndex.AddToSection(position, toAdd, SpatialObjectType.Actor, "");
-            actorsByTime.Add(TimeSpan.FromMilliseconds(1), toAdd);
+            owner.TimedEventManager.StartTimedAtCurrentTime(toAdd);
+            LiveActors.Add(toAdd);
         }
-
     }
 }

@@ -16,13 +16,17 @@ namespace Heliopolis.World
         /// </summary>
         OnGround,
         /// <summary>
-        /// The item is being carried.
+        /// The item is being carried by an actor.
         /// </summary>
         BeingCarried,
         /// <summary>
         /// The item is in a building.
         /// </summary>
-        InStorage
+        InStorage,
+        /// <summary>
+        /// The item in an actor's storage/backpack.
+        /// </summary>
+        InBackpack
     }
 
     /// <summary>
@@ -80,9 +84,15 @@ namespace Heliopolis.World
         {
             get { return itemState; }
             set {
-                if (value == ItemStates.BeingCarried && itemState == ItemStates.OnGround)
+                // Item is being picked up
+                if ((value == ItemStates.BeingCarried || value == ItemStates.InBackpack) && (itemState == ItemStates.OnGround || itemState == ItemStates.InStorage))
                 {
                     owner.SpatialTreeIndex.RemoveFromSection(this.position, this, SpatialObjectType.Item, itemType);
+                }
+                // Item is being put down
+                if ((value == ItemStates.OnGround || value == ItemStates.InStorage) && (itemState == ItemStates.BeingCarried || itemState == ItemStates.InBackpack))
+                {
+                    owner.SpatialTreeIndex.AddToSection(this.position, this, SpatialObjectType.Item, itemType);
                 }
                 itemState = value; 
             }
@@ -111,14 +121,6 @@ namespace Heliopolis.World
         public string ItemType
         {
             get { return itemType; }
-        }
-
-        /// <summary>
-        /// Returns if this item should be rendered.
-        /// </summary>
-        public bool ShouldBeRendered
-        {
-            get { return (itemState == ItemStates.OnGround); }
         }
 
         /// <summary>
