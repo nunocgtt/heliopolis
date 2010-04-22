@@ -15,7 +15,7 @@ namespace Heliopolis.World
         public bool Paused { get; set; }
         public TimeSpan CurrentProcessingTimeSpan { get; set; }
 
-               /// <summary>
+        /// <summary>
         /// Initialises a new instance of the ActorManager class.
         /// </summary>
         /// <param name="_owner">The owning game world.</param>
@@ -35,8 +35,9 @@ namespace Heliopolis.World
         {
             if (Paused)
                 return;
-            // Loop through all the actors and make them move
-            totalGameTime = totalGameTime.Add(timeSpan);
+
+            // Implement scaling here
+            totalGameTime = TimeSpan.FromTicks(totalGameTime.Add(timeSpan).Ticks * Scale);
 
             if (eventorsByTime.Count > 0)
             {
@@ -48,12 +49,7 @@ namespace Heliopolis.World
                 {
                     CurrentProcessingTimeSpan = kvp.Key;
                     kvp.Value.Tick(totalGameTime);
-                    if (kvp.Value.Disabled)
-                    {
-                        // This timed eventor has disabled itself
-                        StopTimedEventor(kvp.Value);
-                    }
-                    else
+                    if (!kvp.Value.Disabled)
                     {
                         eventorsByTime.Remove(kvp.Key);
                         // need to be careful about adding the same key so vary by 100 nanoseconds
@@ -64,7 +60,10 @@ namespace Heliopolis.World
                         eventorsByTime.Add(kvp.Value.NextAbsoluteActionTime, kvp.Value);
                         listOfActiveEventors[kvp.Value] = kvp.Value.NextAbsoluteActionTime;
                     }
-                    kvp = eventorsByTime.First();
+                    if (eventorsByTime.Count > 0)
+                        kvp = eventorsByTime.First();
+                    else
+                        break;
                 }
             }
         }
