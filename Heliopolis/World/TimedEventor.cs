@@ -41,10 +41,31 @@ namespace Heliopolis.World
             : base(_owner)
         {
             nextAbsoluteActionTime = TimeSpan.FromMilliseconds(0);
-            this.Disabled = false;
         }
 
-        public bool Disabled { get; set; }
+        private bool disabled = false;
+
+        public bool Disabled 
+        {
+            get
+            {
+                return disabled;
+            }
+            set
+            {
+                // If we are enabling this timed eventor, we need to re-add it into the manager
+                if (disabled && !value)
+                {
+                    owner.TimedEventManager.StartTimedAtCurrentTime(this);
+                }
+                // if we are disabling, remove from the event management
+                else if (!disabled && value)
+                {
+                    owner.TimedEventManager.StopTimedEventor(this);
+                }
+                disabled = value;
+            }
+        }
 
         /// <summary>
         /// Set up the next action time by incrementing it by the provided amount.
