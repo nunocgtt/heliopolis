@@ -113,7 +113,11 @@
     <Compile Include="World\Actor.cs" />
     <Compile Include="World\ActorFactory.cs" />
     <Compile Include="World\ActorManager.cs" />
-    <Compile Include="World\ActorState.cs" />
+    <Compile Include="World\Job\BuildingJobParameters.cs" />
+    <Compile Include="World\Job\EnvironmentalJobParameters.cs" />
+    <Compile Include="World\Job\JobFactory.cs" />
+    <Compile Include="World\Job\MoveItemJobParameters.cs" />
+    <Compile Include="World\State\ActorState.cs" />
     <Compile Include="World\Area.cs" />
     <Compile Include="World\Building.cs" />
     <Compile Include="World\BuildingFactory.cs" />
@@ -132,8 +136,12 @@
     <Compile Include="World\ItemFactory.cs" />
     <Compile Include="World\ItemManager.cs" />
     <Compile Include="World\InteractableObject.cs" />
-    <Compile Include="World\Job.cs" />
-    <Compile Include="World\JobParameters.cs" />
+    <Compile Include="World\Job\Job.cs" />
+    <Compile Include="World\Job\JobParameters.cs" />
+    <Compile Include="World\State\ActorStateIdle.cs" />
+    <Compile Include="World\State\ActorStateMove.cs" />
+    <Compile Include="World\State\ActorStatePerformJob.cs" />
+    <Compile Include="World\State\ActorStateSatisfyDesignation.cs" />
     <Compile Include="World\TimedEventManager.cs" />
     <Compile Include="World\TimedEventor.cs" />
     <Compile Include="World\Utilities.cs" />

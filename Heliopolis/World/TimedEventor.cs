@@ -11,14 +11,14 @@ namespace Heliopolis.World
     /// on a time basis. The main game loop controls the timing, and will tell TimedEventors
     /// to perform their actions when necessary.</remarks>
     [Serializable]
-    public class TimedEventor : GameWorldObject
+    public abstract class TimedEventor : GameWorldObject
     {
         /// <summary>
         /// This delegate is required to be pointing to the action that is to be
         /// performed next.
         /// </summary>
         /// <param name="absoluteMilliseconds">The absolute game time in milliseconds</param>
-        public delegate void ProcessTick(TimeSpan absoluteMilliseconds);
+        public abstract void ExecuteTick(TimeSpan absoluteMilliseconds);
 
         /// <summary>
         /// The time between the last action time, and the next one.
@@ -28,10 +28,6 @@ namespace Heliopolis.World
         /// The absolute game time for the next action.
         /// </summary>
         protected TimeSpan nextAbsoluteActionTime;
-        /// <summary>
-        /// The actual action to be performed.
-        /// </summary>
-        protected ProcessTick processTick;
 
         /// <summary>
         /// Initialises a new instance of the TimedEventor class.
@@ -105,7 +101,7 @@ namespace Heliopolis.World
         {
             if (absoluteMilliseconds > nextAbsoluteActionTime)
             {
-                processTick(absoluteMilliseconds);
+                ExecuteTick(absoluteMilliseconds);
             }
         }
     }

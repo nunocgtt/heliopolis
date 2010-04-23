@@ -4,6 +4,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using System.Xml;
 using Heliopolis.Utilities;
+using Heliopolis.World.State;
 
 namespace Heliopolis.World
 {
@@ -69,14 +70,6 @@ namespace Heliopolis.World
             jobsAble = _jobsAble;
             actorType = _actorType;
             position = new Point(-1, -1);
-        }
-
-        /// <summary>
-        /// Hook up the internal TimedEventor.processTick to this actors TickActor method.
-        /// </summary>
-        public void SetUpTick()
-        {
-            processTick = TickActor;
         }
 
         /// <summary>
@@ -309,7 +302,7 @@ namespace Heliopolis.World
         /// Process this actors move.
         /// </summary>
         /// <param name="absoluteMilliseconds">The absolute game time.</param>
-        public void TickActor(TimeSpan absoluteMilliseconds)
+        public override void ExecuteTick(TimeSpan absoluteMilliseconds)
         {
             state.Tick();
             if (state.StateFinished)
