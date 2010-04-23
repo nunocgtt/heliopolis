@@ -8,7 +8,7 @@ namespace Heliopolis.Utilities
 {
    public  class PathFinderPoint : PathFinder<Point>
     {
-       public override float GoalDistanceEstimate(object position, object goalPosition)
+       public override float GoalDistanceEstimate(Point position, Point goalPosition)
        {
            Point pos = (Point)position;
            Point goal = (Point)goalPosition;

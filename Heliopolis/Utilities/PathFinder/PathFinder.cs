@@ -29,7 +29,7 @@ namespace Heliopolis.Utilities
     /// <summary>
     /// Class used to solve a path finding problem using the A* algorithm.
     /// </summary>
-    public class PathFinder<T>
+    public abstract class PathFinder<T>
     {
         private Point max;
         private ISearchAble<T> searchGrid;
@@ -343,9 +343,6 @@ namespace Heliopolis.Utilities
             closedList.Add(nextNode.Position,nextNode);
         }
 
-        public virtual float GoalDistanceEstimate(object position, object goal)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract float GoalDistanceEstimate(T position, T goal);
     }
 }
