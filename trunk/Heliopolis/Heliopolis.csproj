@@ -108,6 +108,7 @@
     <Compile Include="Utilities\Serialization.cs" />
     <Compile Include="Utilities\SpatialTreeIndex\ISpatialIndexMember.cs" />
     <Compile Include="Utilities\SpatialTreeIndex\SpatialTreeIndex.cs" />
+    <Compile Include="Utilities\SpatialTreeIndex\SpatialTreeNode.cs" />
     <Compile Include="Utilities\StateRecorder.cs" />
     <Compile Include="Utilities\TraceManager.cs" />
     <Compile Include="World\Actor.cs" />

@@ -53,9 +53,9 @@ namespace Heliopolis.World
         /// <param name="jobType">The job to perform.</param>
         public void AddSimpleDesignation(EnvironmentTile targetTile, string jobType)
         {
-            EnvironmentalJobParameters jobParameters = new EnvironmentalJobParameters(targetTile);
-            Designation newDesignation = new Designation(owner, jobParameters, DesignationTypes.Simple);
-            AddDesignation(jobType, newDesignation);
+            //EnvironmentalJobParameters jobParameters = new EnvironmentalJobParameters(targetTile);
+            //Designation newDesignation = new Designation(owner, jobParameters, DesignationTypes.Simple);
+            //AddDesignation(jobType, newDesignation);
         }
 
         /// <summary>
@@ -86,27 +86,27 @@ namespace Heliopolis.World
         /// <returns>Returns true if the designation was created.</returns>
         public bool AddConstructionDesignation(Point targetPos, string buildingToConstruct)
         {
-            if (!checkConstructionAble(targetPos, buildingToConstruct))
-            {
-                return false;
-            }
-            Building constructMe = owner.BuildingManager.StartBuildingConstruction(buildingToConstruct, targetPos);
-            BuildingJobParameters buildingJobParameters = new BuildingJobParameters(constructMe);
-            Designation newDesignation = new Designation(owner, buildingJobParameters, DesignationTypes.Construction);
+            //if (!checkConstructionAble(targetPos, buildingToConstruct))
+            //{
+            //    return false;
+            //}
+            //Building constructMe = owner.BuildingManager.StartBuildingConstruction(buildingToConstruct, targetPos);
+            //BuildingJobParameters buildingJobParameters = new BuildingJobParameters(constructMe);
+            //Designation newDesignation = new Designation(owner, buildingJobParameters, DesignationTypes.Construction);
 
-            int j = 0;
-            foreach (string item in BuildingFactory.BuildingTemplates[buildingToConstruct].RequiredMaterials)
-            {
-                for (int i = 0; i < BuildingFactory.BuildingTemplates[buildingToConstruct].RequiredMaterialAmount[j]; i++)
-                {
-                    MoveItemJobParameters moveItemJobParameters = new MoveItemJobParameters(item, constructMe);
-                    Designation pickupItemDesignation = new Designation(owner, moveItemJobParameters, DesignationTypes.TransportItem);
-                    newDesignation.AddPrerequisite(pickupItemDesignation);
-                    AddDesignation("moveitem", pickupItemDesignation);
-                }
-                j++;
-            }
-            AddDesignation("construction", newDesignation);
+            //int j = 0;
+            //foreach (string item in BuildingFactory.BuildingTemplates[buildingToConstruct].RequiredMaterials)
+            //{
+            //    for (int i = 0; i < BuildingFactory.BuildingTemplates[buildingToConstruct].RequiredMaterialAmount[j]; i++)
+            //    {
+            //        MoveItemJobParameters moveItemJobParameters = new MoveItemJobParameters(item, constructMe);
+            //        Designation pickupItemDesignation = new Designation(owner, moveItemJobParameters, DesignationTypes.TransportItem);
+            //        newDesignation.AddPrerequisite(pickupItemDesignation);
+            //        AddDesignation("moveitem", pickupItemDesignation);
+            //    }
+            //    j++;
+            //}
+            //AddDesignation("construction", newDesignation);
             return true;
         }
 
@@ -135,30 +135,30 @@ namespace Heliopolis.World
         public Designation CheckAvailableDesignation(int searcherAreaId, string jobType, Point searcherPosition)
         {
             Designation returnMe = null;
-            List<Designation> cleanUp = new List<Designation>();
-            if (designations.ContainsKey(jobType))
-            {
-                if (designations[jobType].Count == 0)
-                {
-                    return null;
-                }
-                foreach (Designation d in designations[jobType])
-                {
-                    if (d.IsComplete)
-                    {
-                        cleanUp.Add(d);
-                    }
-                    else if (d.CanBeTaken(searcherAreaId, searcherPosition))
-                    {
-                        returnMe = d;
-                        break;
-                    }
-                }
-            }
-            foreach (Designation d in cleanUp)
-            {
-                designations[jobType].Remove(d);
-            }
+            //List<Designation> cleanUp = new List<Designation>();
+            //if (designations.ContainsKey(jobType))
+            //{
+            //    if (designations[jobType].Count == 0)
+            //    {
+            //        return null;
+            //    }
+            //    foreach (Designation d in designations[jobType])
+            //    {
+            //        if (d.IsComplete)
+            //        {
+            //            cleanUp.Add(d);
+            //        }
+            //        else if (d.CanBeTaken(searcherAreaId, searcherPosition))
+            //        {
+            //            returnMe = d;
+            //            break;
+            //        }
+            //    }
+            //}
+            //foreach (Designation d in cleanUp)
+            //{
+            //    designations[jobType].Remove(d);
+            //}
             return returnMe;
         }
     }
