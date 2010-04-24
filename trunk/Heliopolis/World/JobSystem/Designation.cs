@@ -31,16 +31,49 @@ namespace Heliopolis.World
     /// then are able to take up designations and complete them at their leasure.
     /// Designations can have prerequisites. These need to be completed before it can be picked up.</remarks>
     [Serializable]
-    public class Designation : GameWorldObject
+    public class Designation : GameWorldObject, IRequiresAccess
     {
-        protected JobParameters jobParameters;
         protected DesignationTypes designationType;
-        protected bool physicallyAccessible;
         protected string jobType;
-        protected List<Designation> prerequisites = null;
+        protected List<Designation> prerequisites = new List<Designation>();
         protected bool isTaken;
         protected bool isComplete;
-        protected Designation postRequisite;
+
+        private List<EnvironmentTile> accessPoints = new List<EnvironmentTile>();
+
+        public List<EnvironmentTile>  AccessPoints 
+        {
+            get
+            {
+                return accessPoints;
+            }
+            set
+            {
+                if (accessPoints.Count > 0)
+                {
+                    foreach (EnvironmentTile tile in accessPoints)
+                    {
+                        tile.RequiringAccess.Remove(this);
+                    }
+                }
+                accessPoints = value;
+                foreach (EnvironmentTile tile in accessPoints)
+                {
+                    if (tile.CanAccess)
+                        tile.RequiringAccess.Add(this);
+                }
+            }
+        }
+
+        public Designation PostRequisite { get; set; }
+
+        public bool CanAccess
+        {
+            get
+            {
+                return accessPoints.Count > 0;
+            }
+        }
 
         /// <summary>
         /// If this designation has already been taken by an actor.
@@ -76,35 +109,16 @@ namespace Heliopolis.World
         }
 
         /// <summary>
-        /// Any relevant job parameters that pertain to this designation.
-        /// </summary>
-        public JobParameters JobParameters
-        {
-            get { return jobParameters; }
-        }
-
-        /// <summary>
-        /// If this designation is a prerequisite, this is a designation that owns it.
-        /// </summary>
-        public Designation PostRequisite
-        {
-            get { return postRequisite; }
-            set { postRequisite = value; }
-        }
-
-        /// <summary>
         /// Initialises a new instance of the Designation class.
         /// </summary>
         /// <param name="_owner">The owning game world.</param>
         /// <param name="_jobParameters">Any relevant job parameters for this designation.</param>
         /// <param name="_designationType">The type of designation.</param>
-        public Designation(GameWorld _owner, JobParameters _jobParameters, DesignationTypes _designationType) : base(_owner)
+        public Designation(GameWorld _owner, DesignationTypes _designationType) : base(_owner)
         {
-            physicallyAccessible = false;
             isTaken = false;
             isComplete = false;
             owner = _owner;
-            jobParameters = _jobParameters;
             designationType = _designationType;
         }
 
@@ -114,15 +128,7 @@ namespace Heliopolis.World
         /// <param name="myActor">The Actor to be assigned the designation.</param>
         public void AssignDesignation(Actor myActor)
         {
-            jobParameters.JobActor = myActor;
             isTaken = true;
-            if (jobParameters is MoveItemJobParameters)
-            {
-                MoveItemJobParameters moveItemJobParameters = (MoveItemJobParameters) jobParameters;
-                moveItemJobParameters.TargetItem =
-                    owner.ItemManager.GetClosestItem(moveItemJobParameters.JobActor.AreaID, moveItemJobParameters.TargetItemType, myActor.Position);
-                moveItemJobParameters.TargetItem.IsReserved = true;
-            }
         }
 
         /// <summary>
@@ -131,8 +137,6 @@ namespace Heliopolis.World
         public void UnassignDesignation()
         {
             isTaken = false;
-            //designationJob = null;
-            throw new Exception("Not implemented yet");
         }
         
         /// <summary>
@@ -142,28 +146,12 @@ namespace Heliopolis.World
         /// </summary>
         /// <param name="searcherAreaId">The ID of the searcher.</param>
         /// <returns>Returns true is the designation can be taken.</returns>
-        public bool CanBeTaken(int searcherAreaId, Point searcherPosition)
+        public bool HasPrerequisites
         {
-            if (prerequisites != null)
-                if (prerequisites.Count > 0)
-                    return false;
-            if (!isTaken)
+            get
             {
-                if (jobParameters.RequiresPositionalAccess())
-                {
-                    if (accessableFromAreaID(searcherAreaId))
-                        return true;                
-                }
-                else 
-                {
-                    if (jobParameters is MoveItemJobParameters)
-                    {
-                        MoveItemJobParameters moveItemJobParameters = (MoveItemJobParameters)jobParameters;
-                        return (owner.ItemManager.ValidItemExists(searcherAreaId, moveItemJobParameters.TargetItemType));
-                    }
-                }
+                return prerequisites.Count > 0;
             }
-            return false;
         }
 
         /// <summary>
@@ -172,10 +160,6 @@ namespace Heliopolis.World
         /// <param name="preReq">The Designation that is a prerequisite.</param>
         public void AddPrerequisite(Designation preReq)
         {
-            if (prerequisites == null)
-            {
-                prerequisites = new List<Designation>();
-            }
             prerequisites.Add(preReq);
             preReq.PostRequisite = this;
         }
@@ -186,63 +170,10 @@ namespace Heliopolis.World
         /// <param name="preReq">The prerequisite Designation to remove.</param>
         public void RemovePrerequisite(Designation preReq)
         {
-            if (prerequisites != null)
+            prerequisites.Remove(preReq);
+            if (prerequisites.Count > 0)
             {
-                prerequisites.Remove(preReq);
-            }
-        }
-
-        /// <summary>
-        /// Checks to see if this designation can be accessed from a specific area.
-        /// </summary>
-        /// <param name="areaID">The area ID of the searching object.</param>
-        /// <returns>Returns true if the searcher has access.</returns>
-        private bool accessableFromAreaID(int areaID)
-        {
-            EnvironmentTile targetTile = owner.Environment[jobParameters.GetJobAcccessPosition(areaID).PointToMoveTo];
-            if (targetTile.CanAccess)
-            {
-                return (targetTile.AreaID == areaID);
-            }
-            else
-            {
-                List<EnvironmentTile> adjacent = targetTile.AdjacentTiles;
-                foreach (EnvironmentTile tile in adjacent)
-                {
-                    if (tile != null)
-                        if (tile.AreaID == areaID)
-                            return true;
-                }
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Returns pathing information to access this designation from a particular area ID.
-        /// </summary>
-        /// <param name="areaID">The area ID of the searcher.</param>
-        /// <returns>A MovementDestination object containing relevant pathing destination information.</returns>
-        public MovementDestination<Point> GetAccessablePointsByAreaID(int areaID)
-        {
-            EnvironmentTile targetTile = owner.Environment[jobParameters.GetJobAcccessPosition(areaID).PointToMoveTo];
-            if (targetTile.CanAccess)
-            {
-                if (targetTile.AreaID == areaID)
-                    return new MovementDestination<Point>(targetTile.Position);
-                else
-                    return new MovementDestination<Point>();
-            }
-            else
-            {
-                List<Point> returnme = new List<Point>();
-                List<EnvironmentTile> adjacent = targetTile.AdjacentTiles;
-                foreach (EnvironmentTile tile in adjacent)
-                {
-                    if (tile != null)
-                        if (tile.AreaID == areaID)
-                            returnme.Add(tile.Position);
-                }
-                return new MovementDestination<Point>(targetTile.Position, returnme);
+                // TODO: Enable this designation now
             }
         }
 
@@ -252,10 +183,21 @@ namespace Heliopolis.World
         public void CompleteDesignation()
         {
             isComplete = true;
-            if (postRequisite != null)
-                postRequisite.RemovePrerequisite(this);
+            if (PostRequisite != null)
+                PostRequisite.RemovePrerequisite(this);
         }
 
+        #region IRequiresAccess Members
+
+        public void AccessChanged(bool canAccess, Point position)
+        {
+            if (canAccess)
+                accessPoints.Add(owner.Environment[position]);
+            else
+                accessPoints.Remove(owner.Environment[position]);
+        }
+
+        #endregion
     }
 
     //public class HarvestDesignation : Designation

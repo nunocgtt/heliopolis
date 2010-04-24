@@ -113,6 +113,7 @@
     <Compile Include="World\Actor.cs" />
     <Compile Include="World\ActorFactory.cs" />
     <Compile Include="World\ActorManager.cs" />
+    <Compile Include="World\Environment\IRequiresAccess.cs" />
     <Compile Include="World\JobSystem\BuildingJobParameters.cs" />
     <Compile Include="World\JobSystem\EnvironmentalJobParameters.cs" />
     <Compile Include="World\JobSystem\JobFactory.cs" />
@@ -125,9 +126,9 @@
     <Compile Include="World\BuildingTile.cs" />
     <Compile Include="World\JobSystem\Designation.cs" />
     <Compile Include="World\JobSystem\DesignationManager.cs" />
-    <Compile Include="World\Environment.cs" />
-    <Compile Include="World\EnvironmentTile.cs" />
-    <Compile Include="World\EnvironmentTileFactory.cs" />
+    <Compile Include="World\Environment\Environment.cs" />
+    <Compile Include="World\Environment\EnvironmentTile.cs" />
+    <Compile Include="World\Environment\EnvironmentTileFactory.cs" />
     <Compile Include="World\Exceptions.cs" />
     <Compile Include="World\GameWorldObject.cs" />
     <Compile Include="World\Global.cs" />

@@ -31,13 +31,13 @@ namespace Heliopolis.World.State
         {
             foreach (string s in myActor.JobsAble)
             {
-                Designation someDesignation = owner.DesignationManager.CheckAvailableDesignation(myActor.AreaID, s, myActor.Position);
-                if (someDesignation != null)
-                {
-                    someDesignation.AssignDesignation(myActor);
-                    myActor.State = new ActorStateSatisfyDesignation(myActor, someDesignation, owner);
-                    break;
-                }
+                //Designation someDesignation = owner.DesignationManager.CheckAvailableDesignation(myActor.AreaID, s, myActor.Position);
+                //if (someDesignation != null)
+                //{
+                //    someDesignation.AssignDesignation(myActor);
+                //    myActor.State = new ActorStateSatisfyDesignation(myActor, someDesignation, owner);
+                //    break;
+                //}
             }
             base.Tick();
         }
