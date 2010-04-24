@@ -28,41 +28,41 @@ namespace Heliopolis.World.State
             myDesignation = _myDesignation;
             checkFinishedState = checkDesignationDone;
             subStates = new LinkedList<ActorState>();
-            switch (myDesignation.DesignationType)
-            {
-                case DesignationTypes.Simple:
-                    // TODO: Move the location chosing logic out of this class into the designation class
-                    EnvironmentalJobParameters environmentalJobParameters = (EnvironmentalJobParameters)myDesignation.JobParameters;
-                    MovementDestination<Point> movementDestination = _myDesignation.GetAccessablePointsByAreaID(myActor.AreaID);
-                    AddSubState(new ActorStateMove(myActor, movementDestination, owner));
-                    AddSubState(new ActorStatePerformJob(myActor, JobFactory.GetNewJob("mining", environmentalJobParameters), owner));
-                    break;
-                case DesignationTypes.Construction:
-                    BuildingJobParameters buildingJobParameters = (BuildingJobParameters)myDesignation.JobParameters;
-                    AddSubState(new ActorStateMove(myActor, buildingJobParameters.GetJobAcccessPosition(myActor.AreaID), owner));
-                    AddSubState(new ActorStatePerformJob(myActor, JobFactory.GetNewJob("construction", buildingJobParameters), owner));
-                    break;
-                case DesignationTypes.TransportItem:
-                    MoveItemJobParameters moveItemJobParameters = (MoveItemJobParameters)myDesignation.JobParameters;
-                    // move to item, pick up item, move to target, put down item
-                    AddSubState(new ActorStateMove(myActor, moveItemJobParameters.TargetItem.Position, owner));
-                    AddSubState(new ActorStatePerformJob(myActor, JobFactory.GetNewJob("pickupitem", moveItemJobParameters), owner));
-                    if (moveItemJobParameters.TargetHolder is ICanAccess)
-                    {
-                        ICanAccess canAccess = (ICanAccess)moveItemJobParameters.TargetHolder;
-                        AddSubState(new ActorStateMove(myActor, canAccess.GetAccessablePointsByAreaID(myActor.AreaID, AccessReason.PlaceItem), owner));
-                    }
-                    else
-                    //throw new Exception(
-                    //    "Can not move an object to an object that does not implement the ICanAccess interface");
-                    {
-                        AddSubState(new ActorStateMove(myActor, moveItemJobParameters.TargetHolder.Position, owner));
-                    }
-                    AddSubState(new ActorStatePerformJob(myActor, JobFactory.GetNewJob("placeitem", moveItemJobParameters), owner));
-                    break;
-                default:
-                    break;
-            }
+            //switch (myDesignation.DesignationType)
+            //{
+            //    case DesignationTypes.Simple:
+            //        // TODO: Move the location chosing logic out of this class into the designation class
+            //        EnvironmentalJobParameters environmentalJobParameters = (EnvironmentalJobParameters)myDesignation.JobParameters;
+            //        MovementDestination<Point> movementDestination = _myDesignation.GetAccessablePointsByAreaID(myActor.AreaID);
+            //        AddSubState(new ActorStateMove(myActor, movementDestination, owner));
+            //        AddSubState(new ActorStatePerformJob(myActor, JobFactory.GetNewJob("mining", environmentalJobParameters), owner));
+            //        break;
+            //    case DesignationTypes.Construction:
+            //        BuildingJobParameters buildingJobParameters = (BuildingJobParameters)myDesignation.JobParameters;
+            //        AddSubState(new ActorStateMove(myActor, buildingJobParameters.GetJobAcccessPosition(myActor.AreaID), owner));
+            //        AddSubState(new ActorStatePerformJob(myActor, JobFactory.GetNewJob("construction", buildingJobParameters), owner));
+            //        break;
+            //    case DesignationTypes.TransportItem:
+            //        MoveItemJobParameters moveItemJobParameters = (MoveItemJobParameters)myDesignation.JobParameters;
+            //        // move to item, pick up item, move to target, put down item
+            //        AddSubState(new ActorStateMove(myActor, moveItemJobParameters.TargetItem.Position, owner));
+            //        AddSubState(new ActorStatePerformJob(myActor, JobFactory.GetNewJob("pickupitem", moveItemJobParameters), owner));
+            //        if (moveItemJobParameters.TargetHolder is ICanAccess)
+            //        {
+            //            ICanAccess canAccess = (ICanAccess)moveItemJobParameters.TargetHolder;
+            //            AddSubState(new ActorStateMove(myActor, canAccess.GetAccessablePointsByAreaID(myActor.AreaID, AccessReason.PlaceItem), owner));
+            //        }
+            //        else
+            //        //throw new Exception(
+            //        //    "Can not move an object to an object that does not implement the ICanAccess interface");
+            //        {
+            //            AddSubState(new ActorStateMove(myActor, moveItemJobParameters.TargetHolder.Position, owner));
+            //        }
+            //        AddSubState(new ActorStatePerformJob(myActor, JobFactory.GetNewJob("placeitem", moveItemJobParameters), owner));
+            //        break;
+            //    default:
+            //        break;
+            //}
         }
 
         private bool checkDesignationDone()

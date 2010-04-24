@@ -13,6 +13,7 @@ namespace Heliopolis.World
     public class DesignationManager : GameWorldObject
     {
         private Dictionary<string, List<Designation>> designations;
+        private Dictionary<string, List<Designation>> designationsPendingPrereqs;
 
         /// <summary>
         /// Initialises a new instance of the DesignationManager class.
@@ -22,6 +23,7 @@ namespace Heliopolis.World
             : base(_owner)
         {
             designations = new Dictionary<string, List<Designation>>();
+            designationsPendingPrereqs = new Dictionary<string, List<Designation>>();
         }
 
         // Move these elsewhere, maybe into static designation methods
