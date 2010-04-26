@@ -26,7 +26,6 @@ namespace Heliopolis.World.State
         {
             actionType = "movement";
             movementDestination = new MovementDestination<Point>(_pointToMoveTo);
-            checkFinishedState = checkMoveDone;
         }
 
         /// <summary>
@@ -39,7 +38,6 @@ namespace Heliopolis.World.State
             : base(_myActor, _owner)
         {
             actionType = "movement";
-            checkFinishedState = checkMoveDone;
             movementDestination = _movementDestination;
         }
 
@@ -61,7 +59,7 @@ namespace Heliopolis.World.State
             base.Tick();
         }
 
-        private bool checkMoveDone()
+        protected override bool checkFinishedState()
         {
             return (myActor.Directions.Count == 0);
         }

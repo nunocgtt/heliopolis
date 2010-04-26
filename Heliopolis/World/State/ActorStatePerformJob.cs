@@ -24,7 +24,6 @@ namespace Heliopolis.World.State
         {
             actionType = _myJob.JobType;
             myJob = _myJob;
-            checkFinishedState = checkJobDone;
         }
 
         /// <summary>
@@ -36,7 +35,7 @@ namespace Heliopolis.World.State
             base.Tick();
         }
 
-        private bool checkJobDone()
+        protected override bool checkFinishedState()
         {
             return (myJob.IsFinished);
         }

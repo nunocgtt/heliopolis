@@ -28,8 +28,8 @@ namespace Heliopolis.World
                 XmlNode actionTime = node.SelectSingleNode("ActionTime");
                 XmlNode producesItem = node.SelectSingleNode("ProducesItem");
                 XmlNode targetTileResource = node.SelectSingleNode("TargetTileResource");
-                Job addJob = new Job(owner, node.Attributes["name"].Value);
-                AddTemplate(node.Attributes["name"].Value, addJob);
+                //Job addJob = new Job(owner, node.Attributes["name"].Value);
+                //AddTemplate(node.Attributes["name"].Value, addJob);
             }
         }
 
@@ -39,12 +39,12 @@ namespace Heliopolis.World
         /// <param name="templateName">The template to copy from.</param>
         /// <param name="_jobParameters">Any relevant parameters for this job.</param>
         /// <returns>A Job.</returns>
-        public static Job GetNewJob(string templateName, JobParameters _jobParameters)
-        {
-            Job returnMe = (Job)jobTemplates[templateName].Clone();
-            returnMe.JobParameters = _jobParameters;
-            return returnMe;
-        }
+        //public static Job GetNewJob(string templateName, JobParameters _jobParameters)
+        //{
+        //    Job returnMe = (Job)jobTemplates[templateName].Clone();
+        //    returnMe.JobParameters = _jobParameters;
+        //    return returnMe;
+        //}
 
         private static void AddTemplate(string name, Job addJob)
         {
