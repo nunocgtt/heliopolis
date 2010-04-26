@@ -262,20 +262,20 @@ namespace Heliopolis.World
         /// </summary>
         /// <param name="itemHolder">The ICanHoldItem to give the object to.</param>
         /// <param name="itemType">The item to give.</param>
-        public void PlaceItem(ICanHoldItem itemHolder, string itemType)
+        public void PlaceItem(ICanHoldItem itemHolder, Item item)
         {
             if (buildingState == BuildingStates.Ready)
             {
                 foreach (BuildingTileContains container in itemsHeld.Values)
                 {
-                    if (container.HasItem(itemType))
-                    {
-                        Item item = container.RemoveItem();
-                        container.itemType = item.ItemType;
-                        container.amount--;
-                        item.Holder = itemHolder;
-                        item.ItemState = ItemStates.BeingCarried;
-                    }
+                    //if (container.HasItem(itemType))
+                    //{
+                    //    Item item = container.RemoveItem();
+                    //    container.itemType = item.ItemType;
+                    //    container.amount--;
+                    //    item.Holder = itemHolder;
+                    //    item.ItemState = ItemStates.BeingCarried;
+                    //}
                 }
             }
         }
@@ -283,7 +283,7 @@ namespace Heliopolis.World
         /// <summary>
         /// Put an item on the ground.
         /// </summary>
-        public void PlaceItemOnGround()
+        public void PlaceItemOnGround(Item itemToDrop)
         {
             throw new Exception("A building can not place an item on the ground.");
         }

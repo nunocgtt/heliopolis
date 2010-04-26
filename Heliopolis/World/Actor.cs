@@ -195,7 +195,7 @@ namespace Heliopolis.World
         /// </summary>
         /// <param name="itemHolder">The ICanHoldItem to give the item to.</param>
         /// <param name="itemType">The type of item to place.</param>
-        public void PlaceItem(ICanHoldItem itemHolder, string itemType)
+        public void PlaceItem(ICanHoldItem itemHolder, Item item)
         {
             throw new NotImplementedException();
         }
@@ -203,11 +203,11 @@ namespace Heliopolis.World
         /// <summary>
         /// Put an item on the ground at this actors current position.
         /// </summary>
-        public void PlaceItemOnGround()
+        public void PlaceItemOnGround(Item item)
         {
-            Item itemToPlace = inventory[0];
-            itemToPlace.ItemState = ItemStates.OnGround;
-            itemToPlace.Position = this.position;
+            item.ItemState = ItemStates.OnGround;
+            item.Position = this.position;
+            inventory.Remove(item);
         }
 
         /// <summary>
