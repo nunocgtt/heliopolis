@@ -239,7 +239,7 @@ namespace Heliopolis.World
                 }
                 else if (newPosition.MovementDestinationType == MovementDestinationType.MultiPoint)
                 {
-                    newrequest = new PathfindRequest<Point>(position, newPosition.PointToMoveTo, this, newPosition.PointsAcceptable);
+                    newrequest = new PathfindRequest<Point>(position, this, newPosition.PointsAcceptable);
                 }
                 else
                     throw new Exception("Can not move to an unaccessable position.");

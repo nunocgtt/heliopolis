@@ -13,7 +13,7 @@ namespace Heliopolis.Utilities
         public T start;
         public T end;
         public object owner;
-
+        public bool SinglePointSolution { get; set; }
         public List<T> possibleSolutions = null;
 
         public PathfindRequest(T _start, T _end, object _owner)
@@ -21,14 +21,15 @@ namespace Heliopolis.Utilities
             start = _start;
             end = _end;
             owner = _owner;
+            SinglePointSolution = true;
         }
 
-        public PathfindRequest(T _start, T _end, object _owner, List<T> _possibleSolutions)
+        public PathfindRequest(T _start, object _owner, List<T> _possibleSolutions)
         {
             start = _start;
-            end = _end;
             owner = _owner;
             possibleSolutions = _possibleSolutions;
+            SinglePointSolution = false;
         }
 
         public override string ToString()
