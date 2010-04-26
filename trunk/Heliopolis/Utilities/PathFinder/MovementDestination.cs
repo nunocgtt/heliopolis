@@ -20,9 +20,8 @@ namespace Heliopolis.Utilities
         private List<T> pointsAcceptable = null;
         private MovementDestinationType movementDestinationType;
 
-        public MovementDestination(T _pointToMoveTo, List<T> _pointsAcceptable)
+        public MovementDestination(List<T> _pointsAcceptable)
         {
-            PointToMoveTo = _pointToMoveTo;
             PointsAcceptable = _pointsAcceptable;
             movementDestinationType = MovementDestinationType.MultiPoint;
         }

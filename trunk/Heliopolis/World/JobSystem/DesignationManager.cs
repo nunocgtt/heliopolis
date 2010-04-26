@@ -13,7 +13,7 @@ namespace Heliopolis.World
     public class DesignationManager : GameWorldObject
     {
         private Dictionary<string, List<Designation>> designations;
-        private Dictionary<string, List<Designation>> designationsPendingPrereqs;
+        private Dictionary<string, List<Designation>> designationsPending;
 
         /// <summary>
         /// Initialises a new instance of the DesignationManager class.
@@ -23,7 +23,56 @@ namespace Heliopolis.World
             : base(_owner)
         {
             designations = new Dictionary<string, List<Designation>>();
-            designationsPendingPrereqs = new Dictionary<string, List<Designation>>();
+            designationsPending = new Dictionary<string, List<Designation>>();
+        }
+
+        private void addKey(string newKey)
+        {
+            if (!designations.ContainsKey(newKey))
+            {
+                designations.Add(newKey, new List<Designation>());
+            }
+            if (!designationsPending.ContainsKey(newKey))
+            {
+                designationsPending.Add(newKey, new List<Designation>());
+            }
+        }
+
+        /// <summary>
+        /// Add a new designation.
+        /// </summary>
+        /// <param name="jobType">The type of the job.</param>
+        /// <param name="newDesignation">The designation to add.</param>
+        public void AddDesignation(Designation newDesignation)
+        {
+            addKey(newDesignation.JobType);
+            // The designation will add itself into the correct dictionary when created
+        }
+
+        // These three methods are used by the designations to update their availability status
+
+        public void MakeDesignationAvailable(Designation availableDesignation)
+        {
+            if (designationsPending[availableDesignation.JobType].Contains(availableDesignation))
+                designationsPending[availableDesignation.JobType].Remove(availableDesignation);
+            if (!designations[availableDesignation.JobType].Contains(availableDesignation))
+                designations[availableDesignation.JobType].Add(availableDesignation);
+        }
+
+        public void MakeDesignationUnavailable(Designation unavailableDesignation)
+        {
+            if (!designationsPending[unavailableDesignation.JobType].Contains(unavailableDesignation))
+                designationsPending[unavailableDesignation.JobType].Add(unavailableDesignation);
+            if (designations[unavailableDesignation.JobType].Contains(unavailableDesignation))
+                designations[unavailableDesignation.JobType].Remove(unavailableDesignation);
+        }
+
+        public void DesignationCompleted(Designation completedDesignation)
+        {
+            if (designations[completedDesignation.JobType].Contains(completedDesignation))
+                designations[completedDesignation.JobType].Remove(completedDesignation);
+            if (designationsPending[completedDesignation.JobType].Contains(completedDesignation))
+                designationsPending[completedDesignation.JobType].Remove(completedDesignation);
         }
 
         // Move these elsewhere, maybe into static designation methods
@@ -110,20 +159,6 @@ namespace Heliopolis.World
             return true;
         }
 
-        /// <summary>
-        /// Add a new designation.
-        /// </summary>
-        /// <param name="jobType">The type of the job.</param>
-        /// <param name="newDesignation">The designation to add.</param>
-        public void AddDesignation(string jobType, Designation newDesignation)
-        {
-            if (!designations.ContainsKey(jobType))
-            {
-                designations.Add(jobType, new List<Designation>());
-            }
-            List<Designation> addInto = designations[jobType];
-            addInto.Add(newDesignation);
-        }
 
         /// <summary>
         /// Check for any available designations, that exist in a particular area.
@@ -132,34 +167,18 @@ namespace Heliopolis.World
         /// <param name="jobType">The job type required.</param>
         /// <param name="searcherPosition">The position of the searcher.</param>
         /// <returns>Returns null if one doesnt exist, otherwise returns a Designation to perform.</returns>
-        public Designation CheckAvailableDesignation(int searcherAreaId, string jobType, Point searcherPosition)
+        public bool CheckAvailableDesignation(int searcherAreaId, string jobType, Point searcherPosition, out Designation designationToTake)
         {
-            Designation returnMe = null;
-            //List<Designation> cleanUp = new List<Designation>();
-            //if (designations.ContainsKey(jobType))
-            //{
-            //    if (designations[jobType].Count == 0)
-            //    {
-            //        return null;
-            //    }
-            //    foreach (Designation d in designations[jobType])
-            //    {
-            //        if (d.IsComplete)
-            //        {
-            //            cleanUp.Add(d);
-            //        }
-            //        else if (d.CanBeTaken(searcherAreaId, searcherPosition))
-            //        {
-            //            returnMe = d;
-            //            break;
-            //        }
-            //    }
-            //}
-            //foreach (Designation d in cleanUp)
-            //{
-            //    designations[jobType].Remove(d);
-            //}
-            return returnMe;
+            foreach (Designation d in designations[jobType])
+            {
+                if (d.CanBeTakenFromArea(searcherAreaId))
+                {
+                    designationToTake = d;
+                    return true;
+                }
+            }
+            designationToTake = null;
+            return false;
         }
     }
 }

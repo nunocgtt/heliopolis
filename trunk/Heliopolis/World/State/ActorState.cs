@@ -47,11 +47,6 @@ namespace Heliopolis.World.State
     public abstract class ActorState : GameWorldObject
     {
         /// <summary>
-        /// Delegate type for checking if a state is finished.
-        /// </summary>
-        /// <returns></returns>
-        protected delegate bool CheckFinishedState();
-        /// <summary>
         /// Delegate type for a method to run across substates
         /// </summary>
         protected delegate void RunOnSubStates();
@@ -70,7 +65,7 @@ namespace Heliopolis.World.State
         /// <summary>
         /// A method to be set up by inheriting states to check if the state has finished.
         /// </summary>
-        protected CheckFinishedState checkFinishedState;
+        protected abstract bool checkFinishedState();
 
         private bool firstSubstateEntered = false;
         private bool stateFinished;
@@ -182,12 +177,9 @@ namespace Heliopolis.World.State
 
         private void checkStateDone()
         {
-            if (checkFinishedState != null)
+            if (checkFinishedState())
             {
-                if (checkFinishedState())
-                {
-                    stateFinished = true;
-                }
+                stateFinished = true;
             }
         }
     }

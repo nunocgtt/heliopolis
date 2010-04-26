@@ -20,8 +20,6 @@ namespace Heliopolis.World.State
             : base(_myActor, _owner)
         {
             actionType = "idle";
-            // Idle state is never finished. Instead it will move the actor into a valid state
-            checkFinishedState = null;
         }
 
         /// <summary>
@@ -31,15 +29,22 @@ namespace Heliopolis.World.State
         {
             foreach (string s in myActor.JobsAble)
             {
-                //Designation someDesignation = owner.DesignationManager.CheckAvailableDesignation(myActor.AreaID, s, myActor.Position);
-                //if (someDesignation != null)
-                //{
-                //    someDesignation.AssignDesignation(myActor);
-                //    myActor.State = new ActorStateSatisfyDesignation(myActor, someDesignation, owner);
-                //    break;
-                //}
+                Designation someDesignation;
+                
+                if (owner.DesignationManager.CheckAvailableDesignation(myActor.AreaID, s, myActor.Position, out someDesignation))
+                {
+                    someDesignation.AssignDesignation(myActor);
+                    myActor.State = new ActorStateSatisfyDesignation(myActor, someDesignation, owner);
+                    break;
+                }
             }
             base.Tick();
+        }
+
+        // Idle will create new states to replace itself, so it will never "finish".
+        protected override bool checkFinishedState()
+        {
+            return false;
         }
     }
 }

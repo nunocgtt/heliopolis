@@ -115,10 +115,8 @@
     <Compile Include="World\ActorFactory.cs" />
     <Compile Include="World\ActorManager.cs" />
     <Compile Include="World\Environment\IRequiresAccess.cs" />
-    <Compile Include="World\JobSystem\BuildingJobParameters.cs" />
     <Compile Include="World\JobSystem\EnvironmentalJobParameters.cs" />
     <Compile Include="World\JobSystem\JobFactory.cs" />
-    <Compile Include="World\JobSystem\MoveItemJobParameters.cs" />
     <Compile Include="World\State\ActorState.cs" />
     <Compile Include="World\Area.cs" />
     <Compile Include="World\Building.cs" />
@@ -139,7 +137,6 @@
     <Compile Include="World\ItemManager.cs" />
     <Compile Include="World\InteractableObject.cs" />
     <Compile Include="World\JobSystem\Job.cs" />
-    <Compile Include="World\JobSystem\JobParameters.cs" />
     <Compile Include="World\State\ActorStateIdle.cs" />
     <Compile Include="World\State\ActorStateMove.cs" />
     <Compile Include="World\State\ActorStatePerformJob.cs" />

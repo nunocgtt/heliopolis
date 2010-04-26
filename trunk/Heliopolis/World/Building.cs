@@ -350,12 +350,12 @@ namespace Heliopolis.World
             // TODO: Change the position to the middle of the building if its bigger than 2x2
             if (accessReason == AccessReason.Construction)
             {
-                return new MovementDestination<Point>(position, ConstructionPoints(areaID));
+                return new MovementDestination<Point>(ConstructionPoints(areaID));
             }
             else if (accessReason == AccessReason.PlaceItem)
             {
                 if (buildingState == BuildingStates.UnderConstruction)
-                    return new MovementDestination<Point>(position, ConstructionPoints(areaID));
+                    return new MovementDestination<Point>(ConstructionPoints(areaID));
             }
             return null;
         }
