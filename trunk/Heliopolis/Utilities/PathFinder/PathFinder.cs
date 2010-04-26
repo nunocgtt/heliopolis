@@ -43,6 +43,7 @@ namespace Heliopolis.Utilities
         private Dictionary<T, Node<T>> closedList;
         private LinkedList<Direction> finalDirections;
         private List<T> possibleSolutions;
+        private bool singlePointSolution;
         private TraceManager<T> traceManager = new TraceManager<T>();
 
         public PathFinder()
@@ -95,7 +96,11 @@ namespace Heliopolis.Utilities
             if (finalDirections.Count > 0)
                 finalDirections = new LinkedList<Direction>();
             startNode = new Node<T>(request.start);
-            goalNode = new Node<T>(request.end);
+            singlePointSolution = request.SinglePointSolution;
+            if (singlePointSolution)
+                goalNode = new Node<T>(request.end);
+            else
+                goalNode = new Node<T>(request.possibleSolutions[0]);
             startNode.H = GoalDistanceEstimate(request.start, request.end);
             startNode.F = startNode.H + startNode.G;
             // Add the start node into the open list to begin the search
@@ -131,7 +136,7 @@ namespace Heliopolis.Utilities
                 {
                     hitSolution = true;
                 }
-                else if (possibleSolutions != null)
+                else if (!singlePointSolution)
                 {
                     foreach (T p in possibleSolutions)
                     {
