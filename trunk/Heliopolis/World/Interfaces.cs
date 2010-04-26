@@ -41,11 +41,11 @@ namespace Heliopolis.World
         /// </summary>
         /// <param name="itemHolder">The ICanHoldItem to give the item to.</param>
         /// <param name="itemType">The type of item to give.</param>
-        void PlaceItem(ICanHoldItem itemHolder, string itemType);
+        void PlaceItem(ICanHoldItem itemHolder, Item itemToPlace);
         /// <summary>
         /// Put an item on the ground.
         /// </summary>
-        void PlaceItemOnGround();
+        void PlaceItemOnGround(Item itemToDrop);
         /// <summary>
         /// All ICanHoldItem members must also have a position.
         /// </summary>

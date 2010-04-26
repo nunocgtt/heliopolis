@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
 using System.Xml;
+using Heliopolis.World.State;
 
 namespace Heliopolis.World
 {
@@ -13,7 +14,7 @@ namespace Heliopolis.World
     /// JobParameter, which contains the various relevant information that the actor needs to actually
     /// get to and perform the job.</remarks>
     [Serializable]
-    public abstract class Job : GameWorldObject, System.ICloneable
+    public abstract class Job : ActorState
     {
         private string jobType;
         private bool isFinished;
@@ -43,17 +44,14 @@ namespace Heliopolis.World
         /// </summary>
         /// <param name="_owner">The owning game world.</param>
         /// <param name="_jobtype">The type of this job.</param>
-        public Job(GameWorld _owner, string _jobtype, Designation owningDesignation) : base(_owner)
+        public Job(GameWorld _owner, Actor _actor, string _jobtype, Designation owningDesignation)
+            : base(_actor,_owner)
         {
             jobType = _jobtype;
             isFinished = false;
             OwningDesignation = owningDesignation;
         }
 
-        /// <summary>
-        /// Peforms the job.
-        /// </summary>
-        public abstract void Tick();
         //{
         //    isFinished = true;
         //    switch (jobType)
@@ -69,14 +67,6 @@ namespace Heliopolis.World
         //                EnvironmentTileFactory.SetToTemplate(environmentalJobParameters.TargetTile.ExhaustedTile, environmentalJobParameters.TargetTile);
         //                isFinished = true;
         //            }
-        //            break;
-        //        case "pickupitem":
-        //            MoveItemJobParameters moveItemJobParameters = (MoveItemJobParameters) jobParameters;
-        //            moveItemJobParameters.JobActor.PickupItem(moveItemJobParameters.TargetItem);
-        //            break;
-        //        case "placeitem":
-        //            MoveItemJobParameters moveItemJobParametersPlaceItem = (MoveItemJobParameters) jobParameters;
-        //            moveItemJobParametersPlaceItem.JobActor.PlaceItem(moveItemJobParametersPlaceItem.TargetHolder);
         //            break;
         //        case "construction":
         //            BuildingJobParameters buildingJobParameters = (BuildingJobParameters)jobParameters;
@@ -97,8 +87,8 @@ namespace Heliopolis.World
 
     public class HarvestJob : Job
     {
-        public HarvestJob(GameWorld _owner, string _jobType, HarvestDesignation parentDesignation)
-            : base(_owner, _jobType, parentDesignation)
+        public HarvestJob(GameWorld _owner, Actor _actor, string _jobType, HarvestDesignation parentDesignation)
+            : base(_owner, _actor, _jobType, parentDesignation)
         {
 
         }
@@ -107,6 +97,56 @@ namespace Heliopolis.World
         {
             throw new NotImplementedException();
         }
+
+        protected override bool checkFinishedState()
+        {
+            return this.IsFinished;
+        }
     }
 
+    public class PickupItemJob : Job
+    {
+        public ICanHoldItem PickerUpper { get; set; }
+        public Item TargetItem { get; set; }
+
+        public PickupItemJob(GameWorld _owner, Actor _actor, string _jobType, Designation parentDesignation, ICanHoldItem pickUpper, Item targetItem)
+            : base(_owner, _actor, _jobType, parentDesignation)
+        {
+            PickerUpper = pickUpper;
+        }
+
+        public override void Tick()
+        {
+            PickerUpper.PickupItem(TargetItem);
+        }
+
+        protected override bool checkFinishedState()
+        {
+            return this.IsFinished;
+        }
+    }
+
+    public class PlaceItem : Job
+    {
+        public ICanHoldItem ActorPlacingItem { get; set; }
+        public ICanHoldItem PutItemPlace { get; set; }
+        public Item TargetItem { get; set; }
+
+        public PlaceItem(GameWorld _owner, Actor _actor, string _jobType, Designation parentDesignation, ICanHoldItem putItemPlace, Item targetItem)
+            : base(_owner, _actor, _jobType, parentDesignation)
+        {
+            PutItemPlace = putItemPlace;
+            ActorPlacingItem = _actor;
+        }
+
+        public override void Tick()
+        {
+            ActorPlacingItem.PlaceItem(PutItemPlace, TargetItem);
+        }
+
+        protected override bool checkFinishedState()
+        {
+            return this.IsFinished;
+        }
+    }
 }

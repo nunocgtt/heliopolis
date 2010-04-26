@@ -136,10 +136,10 @@
     <Compile Include="World\ItemFactory.cs" />
     <Compile Include="World\ItemManager.cs" />
     <Compile Include="World\InteractableObject.cs" />
-    <Compile Include="World\JobSystem\Job.cs" />
+    <Compile Include="World\State\ActorStateStashItem.cs" />
+    <Compile Include="World\State\Job.cs" />
     <Compile Include="World\State\ActorStateIdle.cs" />
     <Compile Include="World\State\ActorStateMove.cs" />
-    <Compile Include="World\State\ActorStatePerformJob.cs" />
     <Compile Include="World\State\ActorStateSatisfyDesignation.cs" />
     <Compile Include="World\TimedEventManager.cs" />
     <Compile Include="World\TimedEventor.cs" />

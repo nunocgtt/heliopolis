@@ -150,7 +150,7 @@ namespace Heliopolis.World
             ItemFactory.LoadTemplatesFromXml(xmlDoc, this);
             EnvironmentTileFactory.LoadTemplatesFromXml(xmlDoc, this);
             ActorFactory.LoadTemplatesFromXml(xmlDoc, this);
-            JobFactory.LoadTemplatesFromXml(xmlDoc, this);
+            //JobFactory.LoadTemplatesFromXml(xmlDoc, this);
             BuildingFactory.LoadTemplatesFromXml(xmlDoc, this);
         }
 

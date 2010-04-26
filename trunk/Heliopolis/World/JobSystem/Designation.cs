@@ -217,7 +217,9 @@ namespace Heliopolis.World
         public abstract List<ActorState> GetStateStepsToPerform();
     }
 
-
+    /// <summary>
+    /// Designation to harvest a resource node. TODO: Ensure this can be repeated by re-creating it after it's done.
+    /// </summary>
     public class HarvestDesignation : Designation
     {
         public HarvestDesignation(GameWorld _owner, EnvironmentTile targetTile, string jobtype)
@@ -235,12 +237,84 @@ namespace Heliopolis.World
             List<ActorState> subStates = new List<ActorState>();
             MovementDestination<Point> movementDestination = this.GetAccessablePointsByAreaID(TakenBy.AreaID);
             subStates.Add(new ActorStateMove(TakenBy, movementDestination, owner));
+            subStates.Add(new HarvestJob(owner, TakenBy, JobType, this));
+            return subStates;
+        }
+    }
+
+    /// <summary>
+    /// For when an item is dropped on the ground, it will eventually need to be put somewhere nicer.
+    /// </summary>
+    public class StashItemFromGroundDesignation : Designation
+    {
+        public Item ItemToStash { get; set; }
+
+        public StashItemFromGroundDesignation(GameWorld _owner, Item itemToStash, string jobtype)
+            : base(_owner)
+        {
+            this.ItemToStash = itemToStash;
+            this.JobType = "MoveItem";
+            this.AccessPoints = new List<EnvironmentTile>() { owner.Environment[ItemToStash.Position] };
+        }
+
+        public override List<ActorState> GetStateStepsToPerform()
+        {
+            List<ActorState> subStates = new List<ActorState>();
+            subStates.Add(new ActorStateMove(TakenBy, ItemToStash.Position, owner));
+            // pick up item
+            // find a stash to take it to
+            // move to that stash
+            return subStates;
+        }
+    }
+
+    public class CollectItemDesignation : Designation
+    {
+        public Item ItemToStash { get; set; }
+
+        public CollectItemDesignation(GameWorld _owner, string itemType)
+            : base(_owner)
+        {
+            this.JobType = "MoveItem";
+            // TODO: Find an item first!!!
+            //this.AccessPoints = new List<EnvironmentTile>() { owner.Environment[ItemToStash.Position] };
+        }
+
+        public override List<ActorState> GetStateStepsToPerform()
+        {
+            List<ActorState> subStates = new List<ActorState>();
+            subStates.Add(new ActorStateMove(TakenBy, ItemToStash.Position, owner));
 
             return subStates;
         }
     }
 
-    
+    /// <summary>
+    /// For when construction requires items, this will collect the items for it.
+    /// </summary>
+    public class CollectItemForConstrutionDesignation : Designation
+    {
+        public Item ItemToStash { get; set; }
+
+        public CollectItemForConstrutionDesignation(GameWorld _owner, string itemType, Building targetBuilding)
+            : base(_owner)
+        {
+            this.JobType = "MoveItem";
+            // TODO: Find an item first!!!
+            //this.AccessPoints = new List<EnvironmentTile>() { owner.Environment[ItemToStash.Position] };
+        }
+
+        public override List<ActorState> GetStateStepsToPerform()
+        {
+            List<ActorState> subStates = new List<ActorState>();
+            subStates.Add(new ActorStateMove(TakenBy, ItemToStash.Position, owner));
+            // Pick up item
+            // take item to buiding
+            // place item in building
+            return subStates;
+        }
+    }
+
     //public class BuildingCostructionDesignation : Designation
     //{
     //    public BuildingCostructionDesignation(GameWorld _owner, string _jobType, JobParameters _jobParameters, DesignationTypes _designationType,
@@ -267,15 +341,6 @@ namespace Heliopolis.World
 
 
 
-    //switch (myDesignation.DesignationType)
-    //{
-    //    case DesignationTypes.Simple:
-    //        // TODO: Move the location chosing logic out of this class into the designation class
-    //        EnvironmentalJobParameters environmentalJobParameters = (EnvironmentalJobParameters)myDesignation.JobParameters;
-    //        MovementDestination<Point> movementDestination = _myDesignation.GetAccessablePointsByAreaID(myActor.AreaID);
-    //        AddSubState(new ActorStateMove(myActor, movementDestination, owner));
-    //        AddSubState(new ActorStatePerformJob(myActor, JobFactory.GetNewJob("mining", environmentalJobParameters), owner));
-    //        break;
     //    case DesignationTypes.Construction:
     //        BuildingJobParameters buildingJobParameters = (BuildingJobParameters)myDesignation.JobParameters;
     //        AddSubState(new ActorStateMove(myActor, buildingJobParameters.GetJobAcccessPosition(myActor.AreaID), owner));
