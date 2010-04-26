@@ -34,7 +34,10 @@ namespace Heliopolis.Utilities
 
         public override string ToString()
         {
-            return " { Start - " + start.ToString() + " End - " + end.ToString() + " Owner - " + owner.ToString();
+            if (SinglePointSolution)
+                return " { Start - " + start.ToString() + " End - " + end.ToString() + " Owner - " + owner.ToString();
+            else
+                return " { Start - " + start.ToString() + " MultiPoint End - Owner - " + owner.ToString();
         }
     }
 }
