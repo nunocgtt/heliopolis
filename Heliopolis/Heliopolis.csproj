@@ -115,7 +115,6 @@
     <Compile Include="World\ActorFactory.cs" />
     <Compile Include="World\ActorManager.cs" />
     <Compile Include="World\Environment\IRequiresAccess.cs" />
-    <Compile Include="World\JobSystem\EnvironmentalJobParameters.cs" />
     <Compile Include="World\JobSystem\JobFactory.cs" />
     <Compile Include="World\State\ActorState.cs" />
     <Compile Include="World\Area.cs" />
