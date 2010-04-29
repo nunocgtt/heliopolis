@@ -49,7 +49,7 @@ namespace Heliopolis.World
                 {
                     CurrentProcessingTimeSpan = kvp.Key;
                     kvp.Value.Tick(totalGameTime);
-                    if (!kvp.Value.Disabled)
+                    if (!kvp.Value.TimedEventDisabled)
                     {
                         eventorsByTime.Remove(kvp.Key);
                         // need to be careful about adding the same key so vary by 100 nanoseconds
@@ -76,7 +76,6 @@ namespace Heliopolis.World
             }
             listOfActiveEventors.Add(timedEventor, firstActionTime);
             eventorsByTime.Add(firstActionTime, timedEventor);
-            timedEventor.Disabled = false;
         }
 
         public void StartTimedAtCurrentTime(TimedEventor timedEventor)
@@ -89,7 +88,6 @@ namespace Heliopolis.World
             TimeSpan timeToRemove = listOfActiveEventors[timedEventor];
             listOfActiveEventors.Remove(timedEventor);
             eventorsByTime.Remove(timeToRemove);
-            timedEventor.Disabled = true;
         }
     }
 }

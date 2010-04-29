@@ -137,12 +137,9 @@ namespace Heliopolis.World
         {
             environment.InitialiseEnvironment();
             XmlDocument doc = new XmlDocument();
-            Stream s = this.GetType().Assembly.GetManifestResourceStream("ShadesGame.Gamedata.world.xml");
-            using (s)
-            {
-                doc.Load(s);
-                LoadFactoriesFromFile(doc);
-            }
+            string fileLoc = Path.GetDirectoryName(this.GetType().Assembly.Location) + "\\WorldDef\\Gamedata.xml";
+            doc.Load(fileLoc);
+            LoadFactoriesFromFile(doc);
         }
 
         private void LoadFactoriesFromFile(XmlDocument xmlDoc)
@@ -150,7 +147,6 @@ namespace Heliopolis.World
             ItemFactory.LoadTemplatesFromXml(xmlDoc, this);
             EnvironmentTileFactory.LoadTemplatesFromXml(xmlDoc, this);
             ActorFactory.LoadTemplatesFromXml(xmlDoc, this);
-            //JobFactory.LoadTemplatesFromXml(xmlDoc, this);
             BuildingFactory.LoadTemplatesFromXml(xmlDoc, this);
         }
 
@@ -160,7 +156,7 @@ namespace Heliopolis.World
         public void LoadTestWorld()
         {
             environment.LoadTestEnvironment();
-            actorManager.SpawnActor("skeleton", new Point(0, 1));
+            actorManager.SpawnActor("dood", new Point(0, 0));
         }
 
         /// <summary>

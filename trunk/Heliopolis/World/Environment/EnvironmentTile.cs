@@ -3,32 +3,10 @@ using Microsoft.Xna.Framework;
 using System.Xml;
 using System;
 using Heliopolis.Utilities;
+using Heliopolis.Engine;
 
 namespace Heliopolis.World
 {
-    ///// <summary>
-    ///// Vector for the various directions one can move in the game world.
-    ///// </summary>
-    //public enum tileDirection
-    //{
-    //    /// <summary>
-    //    /// Left.
-    //    /// </summary>
-    //    Left,
-    //    /// <summary>
-    //    /// Right.
-    //    /// </summary>
-    //    Right,
-    //    /// <summary>
-    //    /// Up.
-    //    /// </summary>
-    //    Top,
-    //    /// <summary>
-    //    /// Down.
-    //    /// </summary>
-    //    Bottom
-    //}
-
     /// <summary>
     /// Represents a single tile in the game environment.
     /// </summary>
@@ -38,9 +16,6 @@ namespace Heliopolis.World
         private int areaID;
         private string texture;
         private Point position;
-        private string resource;
-        private float resourceLeft;
-        private string exhaustedTile;
         private bool canAccess;
         private List<EnvironmentTile> adjacentTiles;
         private List<Item> itemsOnGround = new List<Item>();
@@ -53,6 +28,8 @@ namespace Heliopolis.World
                 return requiringAccess;
             }
         }
+
+        public List<Actor> ActorsOnTile;
 
         /// <summary>
         /// The area ID of this tile.
@@ -156,6 +133,8 @@ namespace Heliopolis.World
             set { position = value; }
         }
 
+        public InteractableObject InteractableObject { get; set; }
+
         /// <summary>
         /// Initialises a new instance of the EnvironmentTile class.
         /// </summary>
@@ -165,12 +144,9 @@ namespace Heliopolis.World
         /// <param name="_exhaustedTile">Resources exhausted tile.</param>
         /// <param name="_canAccess">If actors can access this tile.</param>
         /// <param name="_owner">The game world owner.</param>
-        public EnvironmentTile(string _texture, string _resource, float _resourceLeft, string _exhaustedTile, bool _canAccess, GameWorld _owner) : base(_owner)
+        public EnvironmentTile(string _texture, bool _canAccess, GameWorld _owner) : base(_owner)
         {
             texture = _texture;
-            resource = _resource;
-            resourceLeft = _resourceLeft;
-            exhaustedTile = _exhaustedTile;
             canAccess = _canAccess;
             areaID = 0;
         }
@@ -204,5 +180,4 @@ namespace Heliopolis.World
             return MemberwiseClone();
         }
     }
-
 }

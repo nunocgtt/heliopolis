@@ -36,7 +36,6 @@ namespace Heliopolis
         private SpriteBatch spriteBatch;
 
         private IsometricEngine isometricEngine = new IsometricEngine();
-        private WorldEnviroment world = new WorldEnviroment(new Point(60, 60));
 
         private InterfaceModel interfaceModel;
         private InterfaceController interfaceController;
@@ -63,10 +62,11 @@ namespace Heliopolis
         protected override void Initialize()
         {
             base.Initialize();
-            isometricEngine.Initialize(world);
+            isometricEngine.Initialize(GameWorld.Instance.Environment);
             isometricEngine.AddTileProvider(interfaceView);
-            isometricEngine.AddTileProvider(world);
+            isometricEngine.AddTileProvider(GameWorld.Instance.Environment);
             this.IsMouseVisible = true;
+            GameWorld.Instance.LoadTestWorld();
         }
 
         /// <summary>

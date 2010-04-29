@@ -8,6 +8,6 @@ namespace Heliopolis.Engine
 {
     public interface IWorld
     {
-        Point WorldSize { get; set; }
+        Point WorldSize { get; }
     }
 }
