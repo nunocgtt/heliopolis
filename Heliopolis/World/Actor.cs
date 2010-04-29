@@ -70,6 +70,7 @@ namespace Heliopolis.World
             jobsAble = _jobsAble;
             actorType = _actorType;
             position = new Point(-1, -1);
+            this.TimedEventDisabled = true;
         }
 
         /// <summary>
@@ -136,7 +137,6 @@ namespace Heliopolis.World
             get { return hitpoints; }
             set 
             {
-                StateRecorder.Instance.AddStateChange(this.Id, "Hitpoints", typeof(int), hitpoints, value, this.nextAbsoluteActionTime);
                 hitpoints = value; 
             }
         }
@@ -160,11 +160,6 @@ namespace Heliopolis.World
             {
                 changePosition(value);
             }
-        }
-
-        public bool ShouldBeRendered
-        {
-            get { return true; }
         }
 
         /// <summary>
@@ -197,7 +192,8 @@ namespace Heliopolis.World
         /// <param name="itemType">The type of item to place.</param>
         public void PlaceItem(ICanHoldItem itemHolder, Item item)
         {
-            throw new NotImplementedException();
+            itemHolder.PickupItem(item);
+            inventory.Remove(item);
         }
 
         /// <summary>
@@ -208,17 +204,6 @@ namespace Heliopolis.World
             item.ItemState = ItemStates.OnGround;
             item.Position = this.position;
             inventory.Remove(item);
-        }
-
-        /// <summary>
-        /// Place a particular item from this actors inventory into another ICanHoldItem.
-        /// </summary>
-        /// <param name="itemHolder">The ICanHoldItem to give the item to.</param>
-        public void PlaceItem(ICanHoldItem itemHolder)
-        {
-            Item itemToPlace = inventory[0];
-            itemHolder.PickupItem(itemToPlace);
-            inventory.Remove(itemToPlace);
         }
 
         #endregion
@@ -264,9 +249,11 @@ namespace Heliopolis.World
         /// <param name="newPosition">The new position to move to.</param>
         private void changePosition(Point newPosition)
         {
+            if (this.Position != new Point(-1,-1))
+                owner.Environment[this.Position].ActorsOnTile.Remove(this);
             owner.SpatialTreeIndex.CheckChangeSection(position, newPosition, this, SpatialObjectType.Actor,"");
-            StateRecorder.Instance.AddStateChange(this.Id, "Position", typeof(Point), position, newPosition, this.nextAbsoluteActionTime);
             position = newPosition;
+            owner.Environment[this.Position].ActorsOnTile.Add(this);
         }
 
         /// <summary>
@@ -311,6 +298,11 @@ namespace Heliopolis.World
             }
             // Want to set up the next tick
             SetUpNextTick(actionTimes[state.ActionType]);
+        }
+
+        public void Start()
+        {
+            this.TimedEventDisabled = false;
         }
 
         /// <summary>

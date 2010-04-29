@@ -26,16 +26,10 @@ namespace Heliopolis.World
             foreach (XmlNode node in tileNodes)
             {
                 XmlNode texture = node.SelectSingleNode("Texture");
-                XmlNode resource = node.SelectSingleNode("Resource");
-                XmlNode amount = node.SelectSingleNode("Amount");
-                XmlNode exhausted = node.SelectSingleNode("ExhaustedTile");
                 XmlNode canAcess = node.SelectSingleNode("CanAccess");
                 // Note some of these nodes are optional
                 EnvironmentTile addTile = new EnvironmentTile(
                     texture.InnerText,
-                    (resource == null) ? "" : resource.InnerText,
-                    (amount == null) ? 0 : int.Parse(amount.InnerText),
-                    (exhausted == null) ? "" : exhausted.InnerText,
                     (canAcess != null),
                     owner);
                 AddTemplate(node.Attributes["name"].Value, addTile);
@@ -63,6 +57,7 @@ namespace Heliopolis.World
             {
                 returnMe.AdjacentTiles.Add(null);
             }
+            returnMe.ActorsOnTile = new List<Actor>();
             return returnMe;
         }
 
@@ -74,7 +69,6 @@ namespace Heliopolis.World
         public static void SetToTemplate(string templateName, EnvironmentTile loadInto)
         {
             loadInto.Texture = tileTemplates[templateName].Texture;
-            //loadInto.Resource = tileTemplates[templateName].Resource;
             loadInto.CanAccess = tileTemplates[templateName].CanAccess;
         }
 

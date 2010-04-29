@@ -32,7 +32,6 @@ namespace Heliopolis.World
         {
             Actor toAdd = ActorFactory.GetNewActor(ActorType, position);
             owner.SpatialTreeIndex.AddToSection(position, toAdd, SpatialObjectType.Actor, "");
-            owner.TimedEventManager.StartTimedAtCurrentTime(toAdd);
             LiveActors.Add(toAdd);
         }
     }

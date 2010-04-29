@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Heliopolis.Utilities;
+using Heliopolis.Engine;
 
 namespace Heliopolis.World
 {
@@ -14,7 +15,7 @@ namespace Heliopolis.World
     /// environment has to be searched and interrogated using efficient algorithms.
     /// The PathFinder class will use the Environment to perform its search.</remarks>
     [Serializable]
-    public class Environment : GameWorldObject, ISearchAble<Point>
+    public class Environment : GameWorldObject, ISearchAble<Point>, IIsometricTileProvider, IWorld
     {
         // keeping the pathing array different because eventually
         // i want to multithread the pathing routine and this will require locking/unlocking
@@ -204,10 +205,11 @@ namespace Heliopolis.World
         /// </summary>
         /// <param name="type">The tile to create.</param>
         /// <param name="position">The position of the tile.</param>
-        private void spawnTile(string type, Point position)
+        private EnvironmentTile spawnTile(string type, Point position)
         {
             gameWorld[position.X, position.Y] = EnvironmentTileFactory.GetNewTile(type, position);
             owner.SpatialTreeIndex.AddToSection(position, gameWorld[position.X, position.Y], SpatialObjectType.EnvironmentTile, "");
+            return gameWorld[position.X, position.Y];
         }
 
         /// <summary>
@@ -222,13 +224,18 @@ namespace Heliopolis.World
                 for (int j = 0; j < worldSize.Y; j++)
                 {
                     int tileToUse = someNumber.Next(0, 6);
-                    if (tileToUse > 3)
+                    if (tileToUse >= 5)
+                    {
+                        EnvironmentTile tileAdded = spawnTile("grass", new Point(i, j));
+                        tileAdded.InteractableObject = new HarvestableInteractableObject(owner,tileAdded, "tree1", 30, "wood", "Woodchopping");
+                    }
+                    else if (tileToUse >= 1)
                     {
                         spawnTile("grass", new Point(i, j));
                     }
                     else
                     {
-                        spawnTile("stone", new Point(i, j));
+                        spawnTile("rock", new Point(i, j));
                     }
                 }
             }
@@ -362,7 +369,36 @@ namespace Heliopolis.World
             areaDictionary[theTile.AreaID].memberCount++;
         }
 
+        #region IIsometricTileProvider Members
 
+        public List<string> GetTexturesToDraw(Point position)
+        {
+            List<string> textures = new List<string>();
+            textures.Add(this[position].Texture);
+            if (this[position].InteractableObject != null)
+            {
+                textures.Add(this[position].InteractableObject.Texture);
+            }
+            foreach (Actor drawActor in this[position].ActorsOnTile)
+            {
+                textures.Add(drawActor.Texture);
+            }
+            return textures;
+        }
+
+        #endregion
+
+        #region IWorld Members
+
+        Point IWorld.WorldSize
+        {
+            get
+            {
+                return worldSize;
+            }
+        }
+
+        #endregion
     }
 
 

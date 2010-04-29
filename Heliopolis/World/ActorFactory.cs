@@ -69,6 +69,7 @@ namespace Heliopolis.World
             returnMe.ActionTimes.Add("pickupitem", TimeSpan.FromMilliseconds(100));
             returnMe.ActionTimes.Add("placeitem", TimeSpan.FromMilliseconds(100));
             returnMe.ActionTimes.Add("construction", TimeSpan.FromMilliseconds(100));
+            returnMe.Start();
             return returnMe;
         }
 

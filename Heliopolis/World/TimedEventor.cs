@@ -39,9 +39,9 @@ namespace Heliopolis.World
             nextAbsoluteActionTime = TimeSpan.FromMilliseconds(0);
         }
 
-        private bool disabled = false;
+        private bool disabled = true;
 
-        public bool Disabled 
+        public bool TimedEventDisabled
         {
             get
             {
@@ -62,6 +62,7 @@ namespace Heliopolis.World
                 disabled = value;
             }
         }
+
 
         /// <summary>
         /// Set up the next action time by incrementing it by the provided amount.
