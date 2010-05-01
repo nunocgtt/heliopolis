@@ -17,16 +17,16 @@ namespace Heliopolis.World
     [Serializable]
     public abstract class Job : ActorState
     {
-        private string jobType;
-        private bool isFinished;
+        private string _jobType;
+        private bool _isFinished;
 
         /// <summary>
         /// If the current job is finished.
         /// </summary>
         public bool IsFinished
         {
-            get { return isFinished; }
-            set { isFinished = value; }
+            get { return _isFinished; }
+            set { _isFinished = value; }
         }
 
         /// <summary>
@@ -34,8 +34,8 @@ namespace Heliopolis.World
         /// </summary>
         public string JobType
         {
-            get { return jobType; }
-            set { jobType = value; }
+            get { return _jobType; }
+            set { _jobType = value; }
         }
 
         public Designation OwningDesignation { get; set; }
@@ -43,13 +43,15 @@ namespace Heliopolis.World
         /// <summary>
         /// Initialises a new instance of the Job class.
         /// </summary>
-        /// <param name="_owner">The owning game world.</param>
-        /// <param name="_jobtype">The type of this job.</param>
-        public Job(GameWorld _owner, Actor _actor, string _jobtype, Designation owningDesignation)
-            : base(_actor,_owner)
+        /// <param name="owner">The owning game world.</param>
+        /// <param name="actor"></param>
+        /// <param name="jobtype">The type of this job.</param>
+        /// <param name="owningDesignation"></param>
+        public Job(GameWorld owner, Actor actor, string jobtype, Designation owningDesignation)
+            : base(actor,owner)
         {
-            jobType = _jobtype;
-            isFinished = false;
+            _jobType = jobtype;
+            _isFinished = false;
             OwningDesignation = owningDesignation;
         }
 
@@ -88,8 +90,8 @@ namespace Heliopolis.World
 
     public class HarvestJob : Job
     {
-        public HarvestJob(GameWorld _owner, Actor _actor, string _jobType, HarvestDesignation parentDesignation)
-            : base(_owner, _actor, _jobType, parentDesignation)
+        public HarvestJob(GameWorld owner, Actor actor, string jobType, HarvestDesignation parentDesignation)
+            : base(owner, actor, jobType, parentDesignation)
         {
 
         }
@@ -110,8 +112,8 @@ namespace Heliopolis.World
         public ICanHoldItem PickerUpper { get; set; }
         public Item TargetItem { get; set; }
 
-        public PickupItemJob(GameWorld _owner, Actor _actor, string _jobType, Designation parentDesignation, ICanHoldItem pickUpper, Item targetItem)
-            : base(_owner, _actor, _jobType, parentDesignation)
+        public PickupItemJob(GameWorld owner, Actor actor, string jobType, Designation parentDesignation, ICanHoldItem pickUpper, Item targetItem)
+            : base(owner, actor, jobType, parentDesignation)
         {
             PickerUpper = pickUpper;
         }

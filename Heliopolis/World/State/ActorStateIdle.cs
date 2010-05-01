@@ -15,12 +15,12 @@ namespace Heliopolis.World.State
         /// <summary>
         /// Initialises a new instance of the ActorStateIdle class.
         /// </summary>
-        /// <param name="_myActor">The actor who this state belongs to.</param>
-        /// <param name="_owner">The owning game world.</param>
-        public ActorStateIdle(Actor _myActor, GameWorld _owner)
-            : base(_myActor, _owner)
+        /// <param name="myActor">The actor who this state belongs to.</param>
+        /// <param name="owner">The owning game world.</param>
+        public ActorStateIdle(Actor myActor, GameWorld owner)
+            : base(myActor, owner)
         {
-            actionType = "idle";
+            ActionType = "idle";
         }
 
         /// <summary>

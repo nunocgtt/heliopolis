@@ -13,32 +13,32 @@ namespace Heliopolis.World.State
     [Serializable]
     public class ActorStateMove : ActorState
     {
-        private MovementDestination<Point> movementDestination;
+        private readonly MovementDestination<Point> _movementDestination;
 
         /// <summary>
         /// Initialises a new instance of the ActorStateMove class, with a destination point.
         /// </summary>
-        /// <param name="_myActor">The actor who this state belongs to.</param>
-        /// <param name="_pointToMoveTo">The final position to move to.</param>
-        /// <param name="_owner">The owning game world.</param>
-        public ActorStateMove(Actor _myActor, Point _pointToMoveTo, GameWorld _owner)
-            : base(_myActor, _owner)
+        /// <param name="myActor">The actor who this state belongs to.</param>
+        /// <param name="pointToMoveTo">The final position to move to.</param>
+        /// <param name="owner">The owning game world.</param>
+        public ActorStateMove(Actor myActor, Point pointToMoveTo, GameWorld owner)
+            : base(myActor, owner)
         {
-            actionType = "movement";
-            movementDestination = new MovementDestination<Point>(_pointToMoveTo);
+            ActionType = "movement";
+            _movementDestination = new MovementDestination<Point>(pointToMoveTo);
         }
 
         /// <summary>
         /// Initialises a new instance of the ActorStateMove class, with a MovementDestination destination.
         /// </summary>
-        /// <param name="_myActor">The actor who this state belongs to.</param>
-        /// <param name="_movementDestination">A MovementDestination instance containing destination information.</param>
-        /// <param name="_owner">The owning game world.</param>
-        public ActorStateMove(Actor _myActor, MovementDestination<Point> _movementDestination, GameWorld _owner)
-            : base(_myActor, _owner)
+        /// <param name="myActor">The actor who this state belongs to.</param>
+        /// <param name="movementDestination">A MovementDestination instance containing destination information.</param>
+        /// <param name="owner">The owning game world.</param>
+        public ActorStateMove(Actor myActor, MovementDestination<Point> movementDestination, GameWorld owner)
+            : base(myActor, owner)
         {
-            actionType = "movement";
-            movementDestination = _movementDestination;
+            ActionType = "movement";
+            this._movementDestination = movementDestination;
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Heliopolis.World.State
         /// </summary>
         public override void OnEnter()
         {
-            MyActor.DestinationPosition = movementDestination;
+            MyActor.DestinationPosition = _movementDestination;
             base.OnEnter();
         }
 
