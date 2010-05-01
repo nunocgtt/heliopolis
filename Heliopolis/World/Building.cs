@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
+using Heliopolis.World.Environment;
 using Microsoft.Xna.Framework;
 using Heliopolis.Utilities;
 
@@ -155,8 +156,8 @@ namespace Heliopolis.World
             itemsHeld = new Dictionary<Point, BuildingTileContains>();
             foreach (BuildingTile tile in buildingTiles)
             {
-                if (tile.itemSpace != 0)
-                    itemsHeld.Add(tile.position, new BuildingTileContains(tile.itemSpace));
+                if (tile.ItemSpace != 0)
+                    itemsHeld.Add(tile.Position, new BuildingTileContains(tile.ItemSpace));
             }
             return returnMe;
         }
@@ -171,7 +172,7 @@ namespace Heliopolis.World
             buildingState = BuildingStates.UnderConstruction;
             foreach (BuildingTile buildingTile in buildingTiles)
             {
-                EnvironmentTile targetTile = owner.Environment[position.X + buildingTile.position.X, position.Y + buildingTile.position.Y];
+                EnvironmentTile targetTile = Owner.Environment[position.X + buildingTile.Position.X, position.Y + buildingTile.Position.Y];
                 targetTile.CanAccess = false;
             }
         }
@@ -184,8 +185,8 @@ namespace Heliopolis.World
             buildingState = BuildingStates.Ready;
             foreach (BuildingTile buildingTile in buildingTiles)
             {
-                EnvironmentTile targetTile = owner.Environment[position.X + buildingTile.position.X, position.Y + buildingTile.position.Y];
-                targetTile.CanAccess = buildingTile.canAccess;
+                EnvironmentTile targetTile = Owner.Environment[position.X + buildingTile.Position.X, position.Y + buildingTile.Position.Y];
+                targetTile.CanAccess = buildingTile.CanAccess;
             }
         }
 
@@ -302,22 +303,22 @@ namespace Heliopolis.World
             {
                 Point yPosAbove = new Point(position.X + i,position.Y - 1);
                 if (yPosAbove.Y >= 0)
-                    if (owner.Environment[yPosAbove].CanAccess && owner.Environment[yPosAbove].AreaID == areaID)
+                    if (Owner.Environment[yPosAbove].CanAccess && Owner.Environment[yPosAbove].AreaID == areaID)
                         returnMe.Add(yPosAbove);
                 Point yPosBelow = new Point(position.X + i, position.Y + size.Y);
-                if (yPosBelow.Y <= owner.Environment.WorldSize.Y)
-                    if (owner.Environment[yPosBelow].CanAccess && owner.Environment[yPosBelow].AreaID == areaID)
+                if (yPosBelow.Y <= Owner.Environment.WorldSize.Y)
+                    if (Owner.Environment[yPosBelow].CanAccess && Owner.Environment[yPosBelow].AreaID == areaID)
                         returnMe.Add(yPosBelow);
             }
             for (int i = 0; i < size.Y; i++)
             {
                 Point xPosLeft = new Point(position.X - 1, position.Y + i);
                 if (xPosLeft.X >= 0)
-                    if (owner.Environment[xPosLeft].CanAccess && owner.Environment[xPosLeft].AreaID == areaID)
+                    if (Owner.Environment[xPosLeft].CanAccess && Owner.Environment[xPosLeft].AreaID == areaID)
                         returnMe.Add(xPosLeft);
                 Point xPosRight = new Point(position.X + size.X-1, position.Y + i);
-                if (xPosRight.X <= owner.Environment.WorldSize.X)
-                    if (owner.Environment[xPosRight].CanAccess && owner.Environment[xPosRight].AreaID == areaID)
+                if (xPosRight.X <= Owner.Environment.WorldSize.X)
+                    if (Owner.Environment[xPosRight].CanAccess && Owner.Environment[xPosRight].AreaID == areaID)
                         returnMe.Add(xPosRight);
             }
             return returnMe;

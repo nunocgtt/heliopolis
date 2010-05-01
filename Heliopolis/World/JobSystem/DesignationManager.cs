@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
+using Heliopolis.World.Environment;
 using Microsoft.Xna.Framework;
 
-namespace Heliopolis.World
+namespace Heliopolis.World.JobSystem
 {
 
     /// <summary>
@@ -12,40 +12,39 @@ namespace Heliopolis.World
     [Serializable]
     public class DesignationManager : GameWorldObject
     {
-        private Dictionary<string, List<Designation>> designations;
-        private Dictionary<string, List<Designation>> designationsPending;
+        private readonly Dictionary<string, List<Designation>> _designations;
+        private readonly Dictionary<string, List<Designation>> _designationsPending;
 
         /// <summary>
         /// Initialises a new instance of the DesignationManager class.
         /// </summary>
-        /// <param name="_owner">The owning game world.</param>
-        public DesignationManager(GameWorld _owner)
-            : base(_owner)
+        /// <param name="owner">The owning game world.</param>
+        public DesignationManager(GameWorld owner)
+            : base(owner)
         {
-            designations = new Dictionary<string, List<Designation>>();
-            designationsPending = new Dictionary<string, List<Designation>>();
+            _designations = new Dictionary<string, List<Designation>>();
+            _designationsPending = new Dictionary<string, List<Designation>>();
         }
 
-        private void addKey(string newKey)
+        private void AddKey(string newKey)
         {
-            if (!designations.ContainsKey(newKey))
+            if (!_designations.ContainsKey(newKey))
             {
-                designations.Add(newKey, new List<Designation>());
+                _designations.Add(newKey, new List<Designation>());
             }
-            if (!designationsPending.ContainsKey(newKey))
+            if (!_designationsPending.ContainsKey(newKey))
             {
-                designationsPending.Add(newKey, new List<Designation>());
+                _designationsPending.Add(newKey, new List<Designation>());
             }
         }
 
         /// <summary>
         /// Add a new designation.
         /// </summary>
-        /// <param name="jobType">The type of the job.</param>
         /// <param name="newDesignation">The designation to add.</param>
         public void AddDesignation(Designation newDesignation)
         {
-            addKey(newDesignation.JobType);
+            AddKey(newDesignation.JobType);
             // The designation will add itself into the correct dictionary when created
         }
 
@@ -53,26 +52,26 @@ namespace Heliopolis.World
 
         public void MakeDesignationAvailable(Designation availableDesignation)
         {
-            if (designationsPending[availableDesignation.JobType].Contains(availableDesignation))
-                designationsPending[availableDesignation.JobType].Remove(availableDesignation);
-            if (!designations[availableDesignation.JobType].Contains(availableDesignation))
-                designations[availableDesignation.JobType].Add(availableDesignation);
+            if (_designationsPending[availableDesignation.JobType].Contains(availableDesignation))
+                _designationsPending[availableDesignation.JobType].Remove(availableDesignation);
+            if (!_designations[availableDesignation.JobType].Contains(availableDesignation))
+                _designations[availableDesignation.JobType].Add(availableDesignation);
         }
 
         public void MakeDesignationUnavailable(Designation unavailableDesignation)
         {
-            if (!designationsPending[unavailableDesignation.JobType].Contains(unavailableDesignation))
-                designationsPending[unavailableDesignation.JobType].Add(unavailableDesignation);
-            if (designations[unavailableDesignation.JobType].Contains(unavailableDesignation))
-                designations[unavailableDesignation.JobType].Remove(unavailableDesignation);
+            if (!_designationsPending[unavailableDesignation.JobType].Contains(unavailableDesignation))
+                _designationsPending[unavailableDesignation.JobType].Add(unavailableDesignation);
+            if (_designations[unavailableDesignation.JobType].Contains(unavailableDesignation))
+                _designations[unavailableDesignation.JobType].Remove(unavailableDesignation);
         }
 
         public void DesignationCompleted(Designation completedDesignation)
         {
-            if (designations[completedDesignation.JobType].Contains(completedDesignation))
-                designations[completedDesignation.JobType].Remove(completedDesignation);
-            if (designationsPending[completedDesignation.JobType].Contains(completedDesignation))
-                designationsPending[completedDesignation.JobType].Remove(completedDesignation);
+            if (_designations[completedDesignation.JobType].Contains(completedDesignation))
+                _designations[completedDesignation.JobType].Remove(completedDesignation);
+            if (_designationsPending[completedDesignation.JobType].Contains(completedDesignation))
+                _designationsPending[completedDesignation.JobType].Remove(completedDesignation);
         }
 
         // Move these elsewhere, maybe into static designation methods
@@ -84,14 +83,14 @@ namespace Heliopolis.World
         /// <returns>Returns true if the designation was created.</returns>
         public bool AddMiningDesignation(Point targetPos, string jobType)
         {
-            EnvironmentTile targetTile = owner.Environment[targetPos];
-            if (!targetTile.CanAccess)
+            EnvironmentTile targetTile = Owner.Environment[targetPos];
+            if (targetTile.CanAccess)
+                return false;
+            else
             {
                 AddSimpleDesignation(targetTile, jobType);
                 return true;
             }
-            else
-                return false;
         }
 
         // Move these elsewhere, maybe into static designation methods
@@ -113,14 +112,14 @@ namespace Heliopolis.World
         /// <param name="targetPos">Where to construct the building.</param>
         /// <param name="buildingToConstruct">The building to construct.</param>
         /// <returns>Returns true if the building can be constructed.</returns>
-        public bool checkConstructionAble(Point targetPos, string buildingToConstruct)
+        public bool CheckConstructionAble(Point targetPos, string buildingToConstruct)
         {
             Building toBeConstructed = BuildingFactory.BuildingTemplates[buildingToConstruct];
             for (int i = 0; i < toBeConstructed.Size.X; i++)
             {
                 for (int j = 0; j < toBeConstructed.Size.Y; j++)
                 {
-                    if (!owner.Environment[targetPos.X + i, targetPos.Y + j].CanAccess)
+                    if (!Owner.Environment[targetPos.X + i, targetPos.Y + j].CanAccess)
                         return false;
                 }
             }
@@ -169,7 +168,7 @@ namespace Heliopolis.World
         /// <returns>Returns null if one doesnt exist, otherwise returns a Designation to perform.</returns>
         public bool CheckAvailableDesignation(int searcherAreaId, string jobType, Point searcherPosition, out Designation designationToTake)
         {
-            foreach (Designation d in designations[jobType])
+            foreach (Designation d in _designations[jobType])
             {
                 if (d.CanBeTakenFromArea(searcherAreaId))
                 {

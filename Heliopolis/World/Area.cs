@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Heliopolis.World.Environment;
 
 namespace Heliopolis.World
 {
@@ -17,24 +18,24 @@ namespace Heliopolis.World
         /// <summary>
         /// The number of tiles in this area.
         /// </summary>
-        public int memberCount;
+        public int MemberCount;
         /// <summary>
         /// The unique ID of this area.
         /// </summary>
-        public int id;
+        public int Id;
         /// <summary>
         /// All the tiles in this area.
         /// </summary>
-        public List<EnvironmentTile> members;
+        public List<EnvironmentTile> Members;
         /// <summary>
         /// Initialises a new instance of the Area class.
         /// </summary>
-        /// <param name="_nextGroupId">The ID of this area.</param>
-        public Area(int _nextGroupId)
+        /// <param name="nextGroupId">The ID of this area.</param>
+        public Area(int nextGroupId)
         {
-            id = _nextGroupId;
-            memberCount = 0;
-            members = new List<EnvironmentTile>();
+            Id = nextGroupId;
+            MemberCount = 0;
+            Members = new List<EnvironmentTile>();
         }
 
         /// <summary>
@@ -47,7 +48,7 @@ namespace Heliopolis.World
         {
             Area copyFrom;
             Area copyTo;
-            if (areaA.memberCount >= areaB.memberCount)
+            if (areaA.MemberCount >= areaB.MemberCount)
             {
                 copyFrom = areaB;
                 copyTo = areaA;
@@ -57,15 +58,15 @@ namespace Heliopolis.World
                 copyFrom = areaA;
                 copyTo = areaB;
             }
-            foreach (EnvironmentTile memberTile in copyFrom.members)
+            foreach (EnvironmentTile memberTile in copyFrom.Members)
             {
-                memberTile.AreaID = copyTo.id;
-                copyTo.memberCount++;
-                copyTo.members.Add(memberTile);
+                memberTile.AreaID = copyTo.Id;
+                copyTo.MemberCount++;
+                copyTo.Members.Add(memberTile);
             }
-            copyFrom.memberCount = 0;
-            copyFrom.members.Clear();
-            return copyTo.id;
+            copyFrom.MemberCount = 0;
+            copyFrom.Members.Clear();
+            return copyTo.Id;
         }
     }
 }

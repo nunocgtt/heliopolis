@@ -11,19 +11,16 @@ namespace Heliopolis.World
     /// Provides access to all in game items, and manages creation of items.
     /// </summary>
     [Serializable]
-    public class ItemManager
+    public class ItemManager : GameWorldObject
     {
-        private Dictionary<Point, List<Item>> items = new Dictionary<Point, List<Item>>();
-
-        private GameWorld owner;
+        private Dictionary<Point, List<Item>> _items = new Dictionary<Point, List<Item>>();
 
         /// <summary>
         /// Initialises a new instance of the ItemManager class.
         /// </summary>
-        /// <param name="_owner">The owning game world.</param>
-        public ItemManager(GameWorld _owner)
+        /// <param name="owner">The owning game world.</param>
+        public ItemManager(GameWorld owner) : base(owner)
         {
-            owner = _owner;
         }
 
         /// <summary>
@@ -34,32 +31,32 @@ namespace Heliopolis.World
         public void SpawnItem(string itemType, Point position)
         {
             Item toAdd = ItemFactory.GetNewItem(itemType, position);
-            owner.SpatialTreeIndex.AddToSection(position, toAdd, SpatialObjectType.Item, itemType);
+            Owner.SpatialTreeIndex.AddToSection(position, toAdd, SpatialObjectType.Item, itemType);
         }
 
         /// <summary>
         /// Find an item in an area.
         /// </summary>
-        /// <param name="searcherAreaID">The area ID of the searcher.</param>
+        /// <param name="searcherAreaId">The area ID of the searcher.</param>
         /// <param name="itemType">The type of item required.</param>
         /// <param name="searcherPosition">The position of the searcher.</param>
         /// <returns>Returns an item if one exists, otherwise returns null.</returns>
-        public Item GetClosestItem(int searcherAreaID, string itemType, Point searcherPosition)
+        public Item GetClosestItem(int searcherAreaId, string itemType, Point searcherPosition)
         {
             //TODO: Incorporate the searcher Area ID
-            return (Item)owner.SpatialTreeIndex.FindClosestObject(searcherPosition, itemType);
+            return (Item)Owner.SpatialTreeIndex.FindClosestObject(searcherPosition, itemType);
         }
 
         /// <summary>
         /// Checks to see if a particular item exists in the game world.
         /// </summary>
-        /// <param name="searcherAreaID">The area ID of the searcher.</param>
+        /// <param name="searcherAreaId">The area ID of the searcher.</param>
         /// <param name="itemType">The type of item to search for.</param>
         /// <returns>Returns true if at least one item exists.</returns>
-        public bool ValidItemExists(int searcherAreaID, string itemType)
+        public bool ValidItemExists(int searcherAreaId, string itemType)
         {
-            if (this.owner.SpatialTreeIndex.TopNode.ResourceCount.ContainsKey(itemType))
-                if (this.owner.SpatialTreeIndex.TopNode.ResourceCount[itemType] > 0)
+            if (this.Owner.SpatialTreeIndex.TopNode.ResourceCount.ContainsKey(itemType))
+                if (this.Owner.SpatialTreeIndex.TopNode.ResourceCount[itemType] > 0)
                     return true;
             return false;
         }

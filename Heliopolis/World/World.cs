@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Heliopolis.World.Environment;
+using Heliopolis.World.JobSystem;
 using Microsoft.Xna.Framework;
 using System.Xml;
 using System.IO;
@@ -17,20 +19,20 @@ namespace Heliopolis.World
     [Serializable]
     public class GameWorld
     {
-        private static GameWorld instance;
-        private Point worldSize = new Point(135, 135);
-        private Point sectionSize = new Point(5,5);
-        private Environment environment;
-        private ActorManager actorManager;
-        private DesignationManager designationManager;
-        private ItemManager itemManager;
-        private BuildingManager buildingManager;
-        private SpatialTreeIndex spatialTreeIndex;
+        private static GameWorld _instance;
+        private Point _worldSize = new Point(135, 135);
+        private Point _sectionSize = new Point(5,5);
+        private readonly Environment.Environment _environment;
+        private readonly ActorManager _actorManager;
+        private readonly DesignationManager _designationManager;
+        private readonly ItemManager _itemManager;
+        private readonly BuildingManager _buildingManager;
+        private readonly SpatialTreeIndex _spatialTreeIndex;
         public TimedEventManager TimedEventManager { get; set; }
 
         static GameWorld()
         {
-            instance = new GameWorld();
+            _instance = new GameWorld();
         }
 
         /// <summary>
@@ -38,7 +40,7 @@ namespace Heliopolis.World
         /// </summary>
         public static GameWorld Instance
         {
-            get { return instance; }
+            get { return _instance; }
         }
 
         /// <summary>
@@ -47,7 +49,7 @@ namespace Heliopolis.World
         /// <param name="worldToLoad">The new game world to load.</param>
         public static void LoadNewGameWorld(GameWorld worldToLoad)
         {
-            instance = worldToLoad;
+            _instance = worldToLoad;
             worldToLoad.LoadGameDescription();
             worldToLoad.Environment.InitialiseHelperClasses();
         }
@@ -57,7 +59,7 @@ namespace Heliopolis.World
         /// </summary>
         public SpatialTreeIndex SpatialTreeIndex
         {
-            get { return spatialTreeIndex; }
+            get { return _spatialTreeIndex; }
         }
 
         /// <summary>
@@ -65,7 +67,7 @@ namespace Heliopolis.World
         /// </summary>
         public DesignationManager DesignationManager
         {
-            get { return designationManager; }
+            get { return _designationManager; }
         }
 
         /// <summary>
@@ -73,16 +75,16 @@ namespace Heliopolis.World
         /// </summary>
         public Point WorldSize
         {
-            get { return worldSize; }
-            set { worldSize = value; }
+            get { return _worldSize; }
+            set { _worldSize = value; }
         }
 
         /// <summary>
         /// The environment.
         /// </summary>
-        public Environment Environment
+        public Environment.Environment Environment
         {
-            get { return environment; }
+            get { return _environment; }
         }
 
         /// <summary>
@@ -90,7 +92,7 @@ namespace Heliopolis.World
         /// </summary>
         public ItemManager ItemManager
         {
-            get { return itemManager; }
+            get { return _itemManager; }
         }
 
         /// <summary>
@@ -98,7 +100,7 @@ namespace Heliopolis.World
         /// </summary>
         public BuildingManager BuildingManager
         {
-            get { return buildingManager; }
+            get { return _buildingManager; }
         }
 
         /// <summary>
@@ -106,8 +108,8 @@ namespace Heliopolis.World
         /// </summary>
         public Point SectionSize
         {
-            get { return sectionSize; }
-            set { sectionSize = value; }
+            get { return _sectionSize; }
+            set { _sectionSize = value; }
         }
 
         /// <summary>
@@ -115,17 +117,17 @@ namespace Heliopolis.World
         /// </summary>
         public ActorManager ActorManager
         {
-            get { return actorManager; }
+            get { return _actorManager; }
         }
 
         private GameWorld()
         {
-            designationManager = new DesignationManager(this);
-            buildingManager = new BuildingManager(this);
-            itemManager = new ItemManager(this);
-            actorManager = new ActorManager(this);
-            environment = new Environment(worldSize, this);
-            spatialTreeIndex = new SpatialTreeIndex(this.SectionSize, this.WorldSize, new int[] { 3, 3, 3, 3 });
+            _designationManager = new DesignationManager(this);
+            _buildingManager = new BuildingManager(this);
+            _itemManager = new ItemManager(this);
+            _actorManager = new ActorManager(this);
+            _environment = new Environment.Environment(_worldSize, this);
+            _spatialTreeIndex = new SpatialTreeIndex(this.SectionSize, this.WorldSize, new int[] { 3, 3, 3, 3 });
             this.TimedEventManager = new TimedEventManager(this);
             LoadGameDescription();
         }
@@ -135,7 +137,7 @@ namespace Heliopolis.World
         /// </summary>
         public void LoadGameDescription()
         {
-            environment.InitialiseEnvironment();
+            _environment.InitialiseEnvironment();
             XmlDocument doc = new XmlDocument();
             string fileLoc = Path.GetDirectoryName(this.GetType().Assembly.Location) + "\\WorldDef\\Gamedata.xml";
             doc.Load(fileLoc);
@@ -155,8 +157,8 @@ namespace Heliopolis.World
         /// </summary>
         public void LoadTestWorld()
         {
-            environment.LoadTestEnvironment();
-            actorManager.SpawnActor("dood", new Point(0, 0));
+            _environment.LoadTestEnvironment();
+            _actorManager.SpawnActor("dood", new Point(0, 0));
         }
 
         /// <summary>

@@ -23,43 +23,43 @@ namespace Heliopolis.World
         /// <summary>
         /// The time between the last action time, and the next one.
         /// </summary>
-        protected TimeSpan nextActionTime;
+        protected TimeSpan NextActionTime;
         /// <summary>
         /// The absolute game time for the next action.
         /// </summary>
-        protected TimeSpan nextAbsoluteActionTime;
+        private TimeSpan _nextAbsoluteActionTime;
 
         /// <summary>
         /// Initialises a new instance of the TimedEventor class.
         /// </summary>
-        /// <param name="_owner">The owning GameWorld.</param>
-        public TimedEventor(GameWorld _owner)
-            : base(_owner)
+        /// <param name="owner">The owning GameWorld.</param>
+        protected TimedEventor(GameWorld owner)
+            : base(owner)
         {
-            nextAbsoluteActionTime = TimeSpan.FromMilliseconds(0);
+            _nextAbsoluteActionTime = TimeSpan.FromMilliseconds(0);
         }
 
-        private bool disabled = true;
+        private bool _disabled = true;
 
         public bool TimedEventDisabled
         {
             get
             {
-                return disabled;
+                return _disabled;
             }
             set
             {
                 // If we are enabling this timed eventor, we need to re-add it into the manager
-                if (disabled && !value)
+                if (_disabled && !value)
                 {
-                    owner.TimedEventManager.StartTimedAtCurrentTime(this);
+                    Owner.TimedEventManager.StartTimedAtCurrentTime(this);
                 }
                 // if we are disabling, remove from the event management
-                else if (!disabled && value)
+                else if (!_disabled && value)
                 {
-                    owner.TimedEventManager.StopTimedEventor(this);
+                    Owner.TimedEventManager.StopTimedEventor(this);
                 }
-                disabled = value;
+                _disabled = value;
             }
         }
 
@@ -71,8 +71,8 @@ namespace Heliopolis.World
         /// <param name="amount">The amount of time till the next action, relative to the action just processed.</param>
         public void IncrementActionTime(TimeSpan amount)
         {
-            nextActionTime = nextActionTime.Add(amount);
-            nextAbsoluteActionTime = nextAbsoluteActionTime.Add(amount);
+            NextActionTime = NextActionTime.Add(amount);
+            _nextAbsoluteActionTime = _nextAbsoluteActionTime.Add(amount);
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace Heliopolis.World
         /// </summary>
         public TimeSpan NextAbsoluteActionTime
         {
-            get { return nextAbsoluteActionTime; }
+            get { return _nextAbsoluteActionTime; }
         }
 
         /// <summary>
@@ -89,8 +89,8 @@ namespace Heliopolis.World
         /// <param name="milliseconds">The number of milliseconds till the next action.</param>
         protected void SetUpNextTick(TimeSpan milliseconds)
         {
-            nextActionTime = milliseconds;
-            nextAbsoluteActionTime = nextAbsoluteActionTime.Add(milliseconds);
+            NextActionTime = milliseconds;
+            _nextAbsoluteActionTime = _nextAbsoluteActionTime.Add(milliseconds);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace Heliopolis.World
         /// <param name="absoluteMilliseconds">The current absolute game time.</param>
         public void Tick(TimeSpan absoluteMilliseconds)
         {
-            if (absoluteMilliseconds > nextAbsoluteActionTime)
+            if (absoluteMilliseconds > _nextAbsoluteActionTime)
             {
                 ExecuteTick(absoluteMilliseconds);
             }

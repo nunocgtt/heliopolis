@@ -13,7 +13,7 @@ namespace Heliopolis.World
     public class ItemFactory
     {
         [NonSerialized]
-        private static Dictionary<string, Item> itemTemplates = null;
+        private static Dictionary<string, Item> _itemTemplates = null;
 
         /// <summary>
         /// Loads Item templates from an XML file.
@@ -22,7 +22,7 @@ namespace Heliopolis.World
         /// <param name="owner">The owning game world.</param>
         public static void LoadTemplatesFromXml(XmlDocument xmlDoc, GameWorld owner)
         {
-            itemTemplates = new Dictionary<string, Item>();
+            _itemTemplates = new Dictionary<string, Item>();
             XmlNodeList itemNodes = xmlDoc.GetElementsByTagName("Item");
             foreach (XmlNode node in itemNodes)
             {
@@ -47,14 +47,14 @@ namespace Heliopolis.World
         /// <returns>An Item.</returns>
         public static Item GetNewItem(string templateName, Point position)
         {
-            Item returnMe = (Item)itemTemplates[templateName].Clone();
+            Item returnMe = (Item)_itemTemplates[templateName].Clone();
             returnMe.Position = position;
             return returnMe;
         }
 
         private static void AddTemplate(string name, Item addItem)
         {
-            itemTemplates.Add(name, addItem);
+            _itemTemplates.Add(name, addItem);
         }
     }
 }

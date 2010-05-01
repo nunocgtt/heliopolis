@@ -17,21 +17,21 @@ namespace Heliopolis.World
         /// <summary>
         /// Initialises a new instance of the ActorManager class.
         /// </summary>
-        /// <param name="_owner">The owning game world.</param>
-        public ActorManager(GameWorld _owner)
-            : base(_owner)
+        /// <param name="owner">The owning game world.</param>
+        public ActorManager(GameWorld owner)
+            : base(owner)
         {
         }
 
         /// <summary>
         /// Spawns a new actor into the gameworld.
         /// </summary>
-        /// <param name="ActorType">The type of actor to spawn.</param>
+        /// <param name="actorType">The type of actor to spawn.</param>
         /// <param name="position">The starting position of the actor.</param>
-        public void SpawnActor(string ActorType, Point position)
+        public void SpawnActor(string actorType, Point position)
         {
-            Actor toAdd = ActorFactory.GetNewActor(ActorType, position);
-            owner.SpatialTreeIndex.AddToSection(position, toAdd, SpatialObjectType.Actor, "");
+            Actor toAdd = ActorFactory.GetNewActor(actorType, position);
+            Owner.SpatialTreeIndex.AddToSection(position, toAdd, SpatialObjectType.Actor, "");
             LiveActors.Add(toAdd);
         }
     }

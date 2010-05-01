@@ -144,7 +144,6 @@
     <Compile Include="World\TimedEventor.cs" />
     <Compile Include="World\Utilities.cs" />
     <Compile Include="World\World.cs" />
-    <Compile Include="World\WorldEnvironment.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

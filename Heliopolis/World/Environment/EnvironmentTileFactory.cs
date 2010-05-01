@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using Microsoft.Xna.Framework;
 
-namespace Heliopolis.World
+namespace Heliopolis.World.Environment
 {
 
     /// <summary>

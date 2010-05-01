@@ -33,23 +33,23 @@ namespace Heliopolis.World
         /// <summary>
         /// The type of the tile.
         /// </summary>
-        public BuildingTileType buildingTileType;
+        public BuildingTileType BuildingTileType;
         /// <summary>
         /// If this tile is physically accessable.
         /// </summary>
-        public bool canAccess;
+        public bool CanAccess;
         /// <summary>
         /// The texture of this tile.
         /// </summary>
-        public string texture;
+        public string Texture;
         /// <summary>
         /// The position of this tile relative to the top left of the building.
         /// </summary>
-        public Point position;
+        public Point Position;
         /// <summary>
         /// The amount of item space.
         /// </summary>
-        public int itemSpace = 0;
+        public int ItemSpace = 0;
     }
 
     /// <summary>

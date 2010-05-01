@@ -50,11 +50,11 @@ namespace Heliopolis.World
                     XmlNode carryNode = n.SelectSingleNode("holds");
                     XmlNode textureNode = n.SelectSingleNode("Texture");
                     BuildingTile addTile = new BuildingTile();
-                    addTile.texture = textureNode.InnerText;
+                    addTile.Texture = textureNode.InnerText;
                     if (noAccess != null)
-                        addTile.canAccess = false;
+                        addTile.CanAccess = false;
                     else
-                        addTile.canAccess = true;
+                        addTile.CanAccess = true;
                     if (mainAccessPointNode != null)
                     {
                         usesMainAccesPoint = true;
@@ -62,11 +62,11 @@ namespace Heliopolis.World
                     }
                     if (carryNode != null)
                     {
-                        addTile.itemSpace = Int32.Parse(carryNode.InnerText);
+                        addTile.ItemSpace = Int32.Parse(carryNode.InnerText);
                     }
                     else
-                        addTile.itemSpace = 0;
-                    addTile.position = new Point(x, y);
+                        addTile.ItemSpace = 0;
+                    addTile.Position = new Point(x, y);
                     buildingTile[x, y] = addTile;
                     x++;
                     if (x >= buildingSize.X)

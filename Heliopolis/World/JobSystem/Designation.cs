@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Heliopolis.World.Environment;
 using Microsoft.Xna.Framework;
 using Heliopolis.Utilities;
 using Heliopolis.World.State;
 
-namespace Heliopolis.World
+namespace Heliopolis.World.JobSystem
 {
     /// <summary>
     /// Represents a single designation in the game world.
@@ -19,31 +21,29 @@ namespace Heliopolis.World
         /// <summary>
         /// Initialises a new instance of the Designation class.
         /// </summary>
-        /// <param name="_owner">The owning game world.</param>
-        /// <param name="_jobParameters">Any relevant job parameters for this designation.</param>
-        /// <param name="_designationType">The type of designation.</param>
-        public Designation(GameWorld _owner)
-            : base(_owner)
+        /// <param name="owner">The owning game world.</param>
+        protected Designation(GameWorld owner)
+            : base(owner)
         {
-            isTaken = false;
+            _isTaken = false;
             IsComplete = false;
-            owner = _owner;
+            Owner = owner;
             JobType = "";
         }
 
         public string JobType { get; set; }
-        private bool isTaken = false;
+        private bool _isTaken = false;
 
         public bool IsTaken
         {
             get
             {
-                return isTaken;
+                return _isTaken;
             }
             set
             {
-                isTaken = value;
-                updateIsAvailableForTaking();
+                _isTaken = value;
+                UpdateIsAvailableForTaking();
             }
         }
 
@@ -51,49 +51,46 @@ namespace Heliopolis.World
         public Designation PostRequisite { get; set; }
         public Actor TakenBy { get; set; }
 
-        private bool isAvailableForTakingOldValue = false;
-        private List<EnvironmentTile> accessPoints = new List<EnvironmentTile>();
-        private List<EnvironmentTile> accessiblePoints = new List<EnvironmentTile>();
+        private bool _isAvailableForTakingOldValue = false;
+        private List<EnvironmentTile> _accessPoints = new List<EnvironmentTile>();
+        private readonly List<EnvironmentTile> _accessiblePoints = new List<EnvironmentTile>();
 
         public List<EnvironmentTile>  AccessPoints 
         {
             get
             {
-                return accessPoints;
+                return _accessPoints;
             }
             set
             {
-                if (accessPoints.Count > 0)
+                if (_accessPoints.Count > 0)
                 {
-                    foreach (EnvironmentTile tile in accessPoints)
+                    foreach (EnvironmentTile tile in _accessPoints)
                     {
                         tile.RequiringAccess.Remove(this);
                     }
                 }
-                accessiblePoints.Clear();
-                accessPoints = value;
-                foreach (EnvironmentTile tile in accessPoints)
+                _accessiblePoints.Clear();
+                _accessPoints = value;
+                foreach (EnvironmentTile tile in _accessPoints)
                 {
                     tile.RequiringAccess.Add(this);
                     if (tile.CanAccess)
-                        accessiblePoints.Add(tile);
+                        _accessiblePoints.Add(tile);
                 }
-                updateIsAvailableForTaking();
+                UpdateIsAvailableForTaking();
             }
         }
 
         public bool CanBeTakenFromArea(int areaId)
         {
-            foreach (EnvironmentTile tile in accessiblePoints)
-                if (tile.AreaID == areaId)
-                    return true;
-            return false;
+            return _accessiblePoints.Any(tile => tile.AreaID == areaId);
         }
 
         public MovementDestination<Point> GetAccessablePointsByAreaID(int areaId)
         {
             MovementDestination<Point> returnMe = new MovementDestination<Point>();
-            foreach (EnvironmentTile tile in accessiblePoints)
+            foreach (EnvironmentTile tile in _accessiblePoints)
                 if (tile.AreaID == areaId)
                     returnMe.PointsAcceptable.Add(tile.Position);
             return returnMe;
@@ -103,7 +100,7 @@ namespace Heliopolis.World
         {
             get
             {
-                return accessiblePoints.Count > 0;
+                return _accessiblePoints.Count > 0;
             }
         }
 
@@ -142,7 +139,6 @@ namespace Heliopolis.World
         /// depending on the state of this designation, such as if there are prerequisites, locational area checks
         /// and if there are any items to satisfy this designation.
         /// </summary>
-        /// <param name="searcherAreaId">The ID of the searcher.</param>
         /// <returns>Returns true is the designation can be taken.</returns>
         public bool HasPrerequisites
         {
@@ -152,7 +148,7 @@ namespace Heliopolis.World
             }
         }
 
-        protected void addPrerequisite(Designation preReq)
+        protected void AddPrerequisite(Designation preReq)
         {
             prerequisites.Add(preReq);
             preReq.PostRequisite = this;
@@ -165,7 +161,7 @@ namespace Heliopolis.World
         public void RemovePrerequisite(Designation preReq)
         {
             prerequisites.Remove(preReq);
-            updateIsAvailableForTaking();
+            UpdateIsAvailableForTaking();
         }
 
         /// <summary>
@@ -176,7 +172,7 @@ namespace Heliopolis.World
             IsComplete = true;
             if (PostRequisite != null)
                 PostRequisite.RemovePrerequisite(this);
-            owner.DesignationManager.DesignationCompleted(this);
+            Owner.DesignationManager.DesignationCompleted(this);
         }
 
         public bool IsAvailableToTake
@@ -187,18 +183,18 @@ namespace Heliopolis.World
             }
         }
 
-        private void updateIsAvailableForTaking()
+        private void UpdateIsAvailableForTaking()
         {
             bool canNowTake = IsAvailableToTake;
-            if (!isAvailableForTakingOldValue && canNowTake)
+            if (!_isAvailableForTakingOldValue && canNowTake)
             {
-                owner.DesignationManager.MakeDesignationAvailable(this);
+                Owner.DesignationManager.MakeDesignationAvailable(this);
             }
-            else if (isAvailableForTakingOldValue && !canNowTake)
+            else if (_isAvailableForTakingOldValue && !canNowTake)
             {
-                owner.DesignationManager.MakeDesignationUnavailable(this);
+                Owner.DesignationManager.MakeDesignationUnavailable(this);
             }
-            isAvailableForTakingOldValue = canNowTake;
+            _isAvailableForTakingOldValue = canNowTake;
         }
 
         #region IRequiresAccess Members
@@ -206,10 +202,10 @@ namespace Heliopolis.World
         public void AccessChanged(bool canAccess, Point position)
         {
             if (canAccess)
-                accessiblePoints.Add(owner.Environment[position]);
+                _accessiblePoints.Add(Owner.Environment[position]);
             else
-                accessiblePoints.Remove(owner.Environment[position]);
-            updateIsAvailableForTaking();
+                _accessiblePoints.Remove(Owner.Environment[position]);
+            UpdateIsAvailableForTaking();
         }
 
         #endregion
@@ -222,8 +218,8 @@ namespace Heliopolis.World
     /// </summary>
     public class HarvestDesignation : Designation
     {
-        public HarvestDesignation(GameWorld _owner, EnvironmentTile targetTile, string jobtype)
-            : base(_owner)
+        public HarvestDesignation(GameWorld owner, EnvironmentTile targetTile, string jobtype)
+            : base(owner)
         {
             this.JobType = jobtype;
             List<EnvironmentTile> access = new List<EnvironmentTile>();
@@ -236,8 +232,8 @@ namespace Heliopolis.World
         {
             List<ActorState> subStates = new List<ActorState>();
             MovementDestination<Point> movementDestination = this.GetAccessablePointsByAreaID(TakenBy.AreaID);
-            subStates.Add(new ActorStateMove(TakenBy, movementDestination, owner));
-            subStates.Add(new HarvestJob(owner, TakenBy, JobType, this));
+            subStates.Add(new ActorStateMove(TakenBy, movementDestination, Owner));
+            subStates.Add(new HarvestJob(Owner, TakenBy, JobType, this));
             return subStates;
         }
     }
@@ -249,18 +245,18 @@ namespace Heliopolis.World
     {
         public Item ItemToStash { get; set; }
 
-        public StashItemFromGroundDesignation(GameWorld _owner, Item itemToStash, string jobtype)
-            : base(_owner)
+        public StashItemFromGroundDesignation(GameWorld owner, Item itemToStash, string jobtype)
+            : base(owner)
         {
             this.ItemToStash = itemToStash;
             this.JobType = "MoveItem";
-            this.AccessPoints = new List<EnvironmentTile>() { owner.Environment[ItemToStash.Position] };
+            this.AccessPoints = new List<EnvironmentTile>() { Owner.Environment[ItemToStash.Position] };
         }
 
         public override List<ActorState> GetStateStepsToPerform()
         {
             List<ActorState> subStates = new List<ActorState>();
-            subStates.Add(new ActorStateMove(TakenBy, ItemToStash.Position, owner));
+            subStates.Add(new ActorStateMove(TakenBy, ItemToStash.Position, Owner));
             // pick up item
             // find a stash to take it to
             // move to that stash
@@ -272,8 +268,8 @@ namespace Heliopolis.World
     {
         public Item ItemToStash { get; set; }
 
-        public CollectItemDesignation(GameWorld _owner, string itemType)
-            : base(_owner)
+        public CollectItemDesignation(GameWorld owner, string itemType)
+            : base(owner)
         {
             this.JobType = "MoveItem";
             // TODO: Find an item first!!!
@@ -282,9 +278,7 @@ namespace Heliopolis.World
 
         public override List<ActorState> GetStateStepsToPerform()
         {
-            List<ActorState> subStates = new List<ActorState>();
-            subStates.Add(new ActorStateMove(TakenBy, ItemToStash.Position, owner));
-
+            List<ActorState> subStates = new List<ActorState> {new ActorStateMove(TakenBy, ItemToStash.Position, Owner)};
             return subStates;
         }
     }
@@ -307,7 +301,7 @@ namespace Heliopolis.World
         public override List<ActorState> GetStateStepsToPerform()
         {
             List<ActorState> subStates = new List<ActorState>();
-            subStates.Add(new ActorStateMove(TakenBy, ItemToStash.Position, owner));
+            subStates.Add(new ActorStateMove(TakenBy, ItemToStash.Position, Owner));
             // Pick up item
             // take item to buiding
             // place item in building
