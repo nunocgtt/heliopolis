@@ -9,19 +9,19 @@ namespace Heliopolis.World
     [Serializable]
     public class GameWorldObject : object 
     {
-        private Guid id;
+        private Guid _id;
         /// <summary>
         /// The game world that this object belongs to.
         /// </summary>
-        protected GameWorld owner;
+        protected GameWorld Owner;
         /// <summary>
         /// Initialises a new instance of the GameWorldObject class.
         /// </summary>
-        /// <param name="_owner">The owning GameWorld.</param>
-        public GameWorldObject(GameWorld _owner)
+        /// <param name="owner">The owning GameWorld.</param>
+        public GameWorldObject(GameWorld owner)
         {
-            owner = _owner;
-            id = new Guid();
+            Owner = owner;
+            _id = new Guid();
         }
 
         /// <summary>
@@ -29,8 +29,8 @@ namespace Heliopolis.World
         /// </summary>
         public Guid Id
         {
-            get { return id; }
-            set { id = value; }
+            get { return _id; }
+            set { _id = value; }
         }
 
     }

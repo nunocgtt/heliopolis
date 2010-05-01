@@ -14,7 +14,7 @@ namespace Heliopolis.World
         /// <param name="pointList">A list of destinations.</param>
         /// <param name="originPoint">The point searching from.</param>
         /// <returns>The closest point is returned.</returns>
-        public static Point closestPoint(List<Point> pointList, Point originPoint)
+        public static Point ClosestPoint(List<Point> pointList, Point originPoint)
         {
             Point returnMe = new Point(0, 0);
             int smallestDistance = int.MaxValue;
@@ -38,7 +38,7 @@ namespace Heliopolis.World
         /// <param name="onePoint">The position of the first object.</param>
         /// <param name="twoPoint">The position of the second object.</param>
         /// <returns>Returns true if the two supplied positions are next to each other.</returns>
-        public static bool colocatedPoints(Point onePoint, Point twoPoint)
+        public static bool ColocatedPoints(Point onePoint, Point twoPoint)
         {
             return ((onePoint.X == twoPoint.X - 1) && (onePoint.Y == twoPoint.Y)) ||
                 ((onePoint.X == twoPoint.X + 1) && (onePoint.Y == twoPoint.Y)) ||

@@ -7,9 +7,9 @@ namespace Heliopolis.World
 {
     public class TimedEventManager : GameWorldObject
     {
-        private TimeSpan totalGameTime;
-        private SortedDictionary<TimeSpan, TimedEventor> eventorsByTime = new SortedDictionary<TimeSpan, TimedEventor>();
-        private Dictionary<TimedEventor, TimeSpan> listOfActiveEventors = new Dictionary<TimedEventor, TimeSpan>();
+        private TimeSpan _totalGameTime;
+        private readonly SortedDictionary<TimeSpan, TimedEventor> _eventorsByTime = new SortedDictionary<TimeSpan, TimedEventor>();
+        private readonly Dictionary<TimedEventor, TimeSpan> _listOfActiveEventors = new Dictionary<TimedEventor, TimeSpan>();
 
         public int Scale { get; set; }
         public bool Paused { get; set; }
@@ -18,9 +18,9 @@ namespace Heliopolis.World
         /// <summary>
         /// Initialises a new instance of the ActorManager class.
         /// </summary>
-        /// <param name="_owner">The owning game world.</param>
-        public TimedEventManager(GameWorld _owner)
-            : base(_owner)
+        /// <param name="owner">The owning game world.</param>
+        public TimedEventManager(GameWorld owner)
+            : base(owner)
         {
             Scale = 1;
             Paused = true;
@@ -37,31 +37,31 @@ namespace Heliopolis.World
                 return;
 
             // Implement scaling here
-            totalGameTime = TimeSpan.FromTicks(totalGameTime.Add(timeSpan).Ticks * Scale);
+            _totalGameTime = TimeSpan.FromTicks(_totalGameTime.Add(timeSpan).Ticks * Scale);
 
-            if (eventorsByTime.Count > 0)
+            if (_eventorsByTime.Count > 0)
             {
                 /* We want to process all the actors whos next absolute action time
                    is less than the current game time tick */
 
-                KeyValuePair<TimeSpan, TimedEventor> kvp = eventorsByTime.First();
-                while (kvp.Key.CompareTo(totalGameTime) > 0)
+                KeyValuePair<TimeSpan, TimedEventor> kvp = _eventorsByTime.First();
+                while (kvp.Key.CompareTo(_totalGameTime) > 0)
                 {
                     CurrentProcessingTimeSpan = kvp.Key;
-                    kvp.Value.Tick(totalGameTime);
+                    kvp.Value.Tick(_totalGameTime);
                     if (!kvp.Value.TimedEventDisabled)
                     {
-                        eventorsByTime.Remove(kvp.Key);
+                        _eventorsByTime.Remove(kvp.Key);
                         // need to be careful about adding the same key so vary by 100 nanoseconds
-                        while (eventorsByTime.ContainsKey(kvp.Value.NextAbsoluteActionTime))
+                        while (_eventorsByTime.ContainsKey(kvp.Value.NextAbsoluteActionTime))
                         {
                             kvp.Value.IncrementActionTime(new TimeSpan(1));
                         }
-                        eventorsByTime.Add(kvp.Value.NextAbsoluteActionTime, kvp.Value);
-                        listOfActiveEventors[kvp.Value] = kvp.Value.NextAbsoluteActionTime;
+                        _eventorsByTime.Add(kvp.Value.NextAbsoluteActionTime, kvp.Value);
+                        _listOfActiveEventors[kvp.Value] = kvp.Value.NextAbsoluteActionTime;
                     }
-                    if (eventorsByTime.Count > 0)
-                        kvp = eventorsByTime.First();
+                    if (_eventorsByTime.Count > 0)
+                        kvp = _eventorsByTime.First();
                     else
                         break;
                 }
@@ -70,12 +70,12 @@ namespace Heliopolis.World
 
         public void StartTimedEventor(TimedEventor timedEventor, TimeSpan firstActionTime)
         {
-            while (eventorsByTime.ContainsKey(timedEventor.NextAbsoluteActionTime))
+            while (_eventorsByTime.ContainsKey(timedEventor.NextAbsoluteActionTime))
             {
                 timedEventor.IncrementActionTime(new TimeSpan(1));
             }
-            listOfActiveEventors.Add(timedEventor, firstActionTime);
-            eventorsByTime.Add(firstActionTime, timedEventor);
+            _listOfActiveEventors.Add(timedEventor, firstActionTime);
+            _eventorsByTime.Add(firstActionTime, timedEventor);
         }
 
         public void StartTimedAtCurrentTime(TimedEventor timedEventor)
@@ -85,9 +85,9 @@ namespace Heliopolis.World
 
         public void StopTimedEventor(TimedEventor timedEventor)
         {
-            TimeSpan timeToRemove = listOfActiveEventors[timedEventor];
-            listOfActiveEventors.Remove(timedEventor);
-            eventorsByTime.Remove(timeToRemove);
+            TimeSpan timeToRemove = _listOfActiveEventors[timedEventor];
+            _listOfActiveEventors.Remove(timedEventor);
+            _eventorsByTime.Remove(timeToRemove);
         }
     }
 }

@@ -10,27 +10,25 @@ namespace Heliopolis.World
     /// Manages buildings, such as creation and access to buildings.
     /// </summary>
     [Serializable]
-    public class BuildingManager
+    public class BuildingManager : GameWorldObject
     {
-        private List<Building> buildings;
-        private GameWorld owner;
+        private readonly List<Building> _buildings;
 
         /// <summary>
         /// All the buildings in the game world.
         /// </summary>
         public List<Building> Buildings
         {
-            get { return buildings; }
+            get { return _buildings; }
         }
 
         /// <summary>
         /// Initialises a new instance of the BuildingManager class.
         /// </summary>
-        /// <param name="_owner">The owning game world.</param>
-        public BuildingManager(GameWorld _owner)
+        /// <param name="owner">The owning game world.</param>
+        public BuildingManager(GameWorld owner) : base(owner)
         {
-            owner = _owner;
-            buildings = new List<Building>();
+            _buildings = new List<Building>();
         }
 
         /// <summary>
@@ -42,7 +40,7 @@ namespace Heliopolis.World
         public Building StartBuildingConstruction(string buildingType, Point position)
         {
             Building spawnMe = BuildingFactory.GetNewBuilding(buildingType, position);
-            buildings.Add(spawnMe);
+            _buildings.Add(spawnMe);
             spawnMe.StartBuilding();
             return spawnMe;
         }

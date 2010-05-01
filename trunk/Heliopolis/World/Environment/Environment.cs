@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Heliopolis.Utilities;
 using Heliopolis.Engine;
 
-namespace Heliopolis.World
+namespace Heliopolis.World.Environment
 {
     /// <summary>
     /// Represents a game environment.
@@ -19,13 +19,13 @@ namespace Heliopolis.World
     {
         // keeping the pathing array different because eventually
         // i want to multithread the pathing routine and this will require locking/unlocking
-        private EnvironmentTile[,] gameWorld;
-        private Point worldSize;
-        private Dictionary<int, Area> areaDictionary;
+        private EnvironmentTile[,] _gameWorld;
+        private Point _worldSize;
+        private Dictionary<int, Area> _areaDictionary;
         [NonSerialized]
-        private EdgeTraverse edgeTraversal;
+        private EdgeTraverse _edgeTraversal;
         // Constants
-        private int maxPathNodes = 1000;
+        private const int MaxPathNodes = 1000;
 
         /// <summary>
         /// The tile at position (X,Y)
@@ -35,7 +35,7 @@ namespace Heliopolis.World
         /// <returns>The tile.</returns>
         public EnvironmentTile this[int x, int y]
         {
-            get { return gameWorld[x, y]; }
+            get { return _gameWorld[x, y]; }
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Heliopolis.World
         /// <returns>The tile.</returns>
         public EnvironmentTile this[Point pos]
         {
-            get { return gameWorld[pos.X, pos.Y]; }
+            get { return _gameWorld[pos.X, pos.Y]; }
         }
 
         /// <summary>
@@ -53,8 +53,8 @@ namespace Heliopolis.World
         /// </summary>
         public Dictionary<int, Area> AreaDictionary
         {
-            get { return areaDictionary; }
-            set { areaDictionary = value; }
+            get { return _areaDictionary; }
+            set { _areaDictionary = value; }
         }
 
         /// <summary>
@@ -62,8 +62,8 @@ namespace Heliopolis.World
         /// </summary>
         public EdgeTraverse EdgeTraversal
         {
-            get { return edgeTraversal; }
-            set { edgeTraversal = value; }
+            get { return _edgeTraversal; }
+            set { _edgeTraversal = value; }
         }
 
         /// <summary>
@@ -71,8 +71,8 @@ namespace Heliopolis.World
         /// </summary>
         public Point WorldSize
         {
-            get { return worldSize; }
-            set { worldSize = value; }
+            get { return _worldSize; }
+            set { _worldSize = value; }
         }
 
         /// <summary>
@@ -80,17 +80,17 @@ namespace Heliopolis.World
         /// </summary>
         public EnvironmentTile[,] GameWorld
         {
-            get { return gameWorld; }
+            get { return _gameWorld; }
             set
             {
-                gameWorld = value;
-                setTileLinks();
+                _gameWorld = value;
+                SetTileLinks();
             }
         }
 
         public List<Point> GetSuccessors(Point point)
         {
-            return gameWorld[point.X, point.Y].GetAccessPoints();
+            return _gameWorld[point.X, point.Y].GetAccessPoints();
         }
 
         public List<Node<Point>> GetSuccessorsWithDir(Point point, Point parentPoint)
@@ -98,40 +98,40 @@ namespace Heliopolis.World
             bool hasParent = (parentPoint == null);
             List<Node<Point>> returnList = new List<Node<Point>>();
 
-            EnvironmentTile currentTile = gameWorld[point.X, point.Y];
-            EnvironmentTile parentTile = hasParent ? gameWorld[parentPoint.X, parentPoint.Y] : null;
+            EnvironmentTile currentTile = _gameWorld[point.X, point.Y];
+            EnvironmentTile parentTile = hasParent ? _gameWorld[parentPoint.X, parentPoint.Y] : null;
 
             if (currentTile.WestTile != null)
             {
                 if (currentTile.WestTile.CanAccess)
                 {
                     //Note: Those directions are where the node is coming *FROM*
-                    Node<Point> NewNode = new Node<Point>(currentTile.WestTile.Position, Direction.East);
-                    returnList.Add(NewNode);
+                    Node<Point> newNode = new Node<Point>(currentTile.WestTile.Position, Direction.East);
+                    returnList.Add(newNode);
                 }
             }
             if (currentTile.EastTile != null)
             {
                 if (currentTile.EastTile.CanAccess)
                 {
-                    Node<Point> NewNode = new Node<Point>(currentTile.EastTile.Position, Direction.West);
-                    returnList.Add(NewNode);
+                    Node<Point> newNode = new Node<Point>(currentTile.EastTile.Position, Direction.West);
+                    returnList.Add(newNode);
                 }
             }
             if (currentTile.NorthTile != null)
             {
                 if (currentTile.NorthTile.CanAccess)
                 {
-                    Node<Point> NewNode = new Node<Point>(currentTile.NorthTile.Position, Direction.South);
-                    returnList.Add(NewNode);
+                    Node<Point> newNode = new Node<Point>(currentTile.NorthTile.Position, Direction.South);
+                    returnList.Add(newNode);
                 }
             }
             if (currentTile.SouthTile != null)
             {
                 if (currentTile.SouthTile.CanAccess)
                 {
-                    Node<Point> NewNode = new Node<Point>(currentTile.SouthTile.Position, Direction.North);
-                    returnList.Add(NewNode);
+                    Node<Point> newNode = new Node<Point>(currentTile.SouthTile.Position, Direction.North);
+                    returnList.Add(newNode);
                 }
             }
             // Remove the parent if we have one
@@ -163,39 +163,39 @@ namespace Heliopolis.World
         /// <summary>
         /// Initialises a new instance of the Environment class.
         /// </summary>
-        /// <param name="_worldSize">The size of the game world.</param>
-        /// <param name="_owner">The owning game world.</param>
-        public Environment(Point _worldSize, GameWorld _owner) : base(_owner)
+        /// <param name="worldSize">The size of the game world.</param>
+        /// <param name="owner">The owning game world.</param>
+        public Environment(Point worldSize, GameWorld owner) : base(owner)
         {
-            worldSize = _worldSize;
-            gameWorld = new EnvironmentTile[worldSize.X, worldSize.Y];
-            areaDictionary = new Dictionary<int, Area>();
+            this._worldSize = worldSize;
+            _gameWorld = new EnvironmentTile[this._worldSize.X, this._worldSize.Y];
+            _areaDictionary = new Dictionary<int, Area>();
         }
 
         public void InitialiseEnvironment()
         {
-            Global.PathFinder.Initialise(maxPathNodes, this, worldSize);
+            Global.PathFinder.Initialise(MaxPathNodes, this, _worldSize);
             Global.FillFinder.Initialise(this);
-            edgeTraversal = new EdgeTraverse(this);
+            _edgeTraversal = new EdgeTraverse(this);
         }
 
         /// <summary>
         /// Sets all the tile pointers to their adjacent tiles.
         /// </summary>
-        private void setTileLinks()
+        private void SetTileLinks()
         {
-            for (int i = 0; i < worldSize.X; i++)
+            for (int i = 0; i < _worldSize.X; i++)
             {
-                for (int j = 0; j < worldSize.Y; j++)
+                for (int j = 0; j < _worldSize.Y; j++)
                 {
                     if (i != 0)
-                        gameWorld[i, j].WestTile = gameWorld[i - 1, j];
-                    if (i != worldSize.X - 1)
-                        gameWorld[i, j].EastTile = gameWorld[i + 1, j];
+                        _gameWorld[i, j].WestTile = _gameWorld[i - 1, j];
+                    if (i != _worldSize.X - 1)
+                        _gameWorld[i, j].EastTile = _gameWorld[i + 1, j];
                     if (j != 0)
-                        gameWorld[i, j].NorthTile = gameWorld[i, j - 1];
-                    if (j != worldSize.Y - 1)
-                        gameWorld[i, j].SouthTile = gameWorld[i, j + 1];
+                        _gameWorld[i, j].NorthTile = _gameWorld[i, j - 1];
+                    if (j != _worldSize.Y - 1)
+                        _gameWorld[i, j].SouthTile = _gameWorld[i, j + 1];
                 }
             }
         }
@@ -205,11 +205,11 @@ namespace Heliopolis.World
         /// </summary>
         /// <param name="type">The tile to create.</param>
         /// <param name="position">The position of the tile.</param>
-        private EnvironmentTile spawnTile(string type, Point position)
+        private EnvironmentTile SpawnTile(string type, Point position)
         {
-            gameWorld[position.X, position.Y] = EnvironmentTileFactory.GetNewTile(type, position);
-            owner.SpatialTreeIndex.AddToSection(position, gameWorld[position.X, position.Y], SpatialObjectType.EnvironmentTile, "");
-            return gameWorld[position.X, position.Y];
+            _gameWorld[position.X, position.Y] = EnvironmentTileFactory.GetNewTile(type, position);
+            Owner.SpatialTreeIndex.AddToSection(position, _gameWorld[position.X, position.Y], SpatialObjectType.EnvironmentTile, "");
+            return _gameWorld[position.X, position.Y];
         }
 
         /// <summary>
@@ -217,25 +217,25 @@ namespace Heliopolis.World
         /// </summary>
         public void LoadTestEnvironment()
         {
-            owner.SpatialTreeIndex.Initialise();
+            Owner.SpatialTreeIndex.Initialise();
             Random someNumber = new Random(0);
-            for (int i = 0; i < worldSize.X; i++)
+            for (int i = 0; i < _worldSize.X; i++)
             {
-                for (int j = 0; j < worldSize.Y; j++)
+                for (int j = 0; j < _worldSize.Y; j++)
                 {
                     int tileToUse = someNumber.Next(0, 6);
                     if (tileToUse >= 5)
                     {
-                        EnvironmentTile tileAdded = spawnTile("grass", new Point(i, j));
-                        tileAdded.InteractableObject = new HarvestableInteractableObject(owner,tileAdded, "tree1", 30, "wood", "Woodchopping");
+                        EnvironmentTile tileAdded = SpawnTile("grass", new Point(i, j));
+                        tileAdded.InteractableObject = new HarvestableInteractableObject(Owner,tileAdded, "tree1", 30, "wood", "Woodchopping");
                     }
                     else if (tileToUse >= 1)
                     {
-                        spawnTile("grass", new Point(i, j));
+                        SpawnTile("grass", new Point(i, j));
                     }
                     else
                     {
-                        spawnTile("rock", new Point(i, j));
+                        SpawnTile("rock", new Point(i, j));
                     }
                 }
             }
@@ -244,8 +244,8 @@ namespace Heliopolis.World
 
         public void InitialiseHelperClasses()
         {
-            setTileLinks();
-            edgeTraversal.buildEdgeData();
+            SetTileLinks();
+            _edgeTraversal.buildEdgeData();
             BuildInitialWallGroup();
             BuildInitialGroups();
         }
@@ -256,13 +256,13 @@ namespace Heliopolis.World
         /// <returns></returns>
         public EnvironmentTile FindUngroupedTile()
         {
-            for (int i = 0; i < worldSize.X; i++)
+            for (int i = 0; i < _worldSize.X; i++)
             {
-                for (int j = 0; j < worldSize.Y; j++)
+                for (int j = 0; j < _worldSize.Y; j++)
                 {
-                    if (gameWorld[i, j].AreaID == 0)
+                    if (_gameWorld[i, j].AreaID == 0)
                     {
-                        return gameWorld[i, j];
+                        return _gameWorld[i, j];
                     }
                 }
             }
@@ -274,18 +274,18 @@ namespace Heliopolis.World
         /// </summary>
         public void BuildInitialWallGroup()
         {
-            if (!areaDictionary.ContainsKey(-1))
+            if (!_areaDictionary.ContainsKey(-1))
             {
-                areaDictionary.Add(-1, new Area(-1));
+                _areaDictionary.Add(-1, new Area(-1));
             }
-            for (int i = 0; i < worldSize.X; i++)
+            for (int i = 0; i < _worldSize.X; i++)
             {
-                for (int j = 0; j < worldSize.Y; j++)
+                for (int j = 0; j < _worldSize.Y; j++)
                 {
                     if (!this[i,j].CanAccess)
                     {
-                        areaDictionary[-1].memberCount++;
-                        areaDictionary[-1].members.Add(this[i, j]);
+                        _areaDictionary[-1].MemberCount++;
+                        _areaDictionary[-1].Members.Add(this[i, j]);
                     }
                 }
             }
@@ -301,21 +301,21 @@ namespace Heliopolis.World
             while ((startTile = FindUngroupedTile()) != null)
             {
                 nextGroupId++;
-                if (!areaDictionary.ContainsKey(nextGroupId))
+                if (!_areaDictionary.ContainsKey(nextGroupId))
                 {
-                    areaDictionary.Add(nextGroupId, new Area(nextGroupId));
+                    _areaDictionary.Add(nextGroupId, new Area(nextGroupId));
                 }
                 FillRequest<Point> newRequest = new FillRequest<Point>(startTile.Position);
                 Global.FillFinder.NewSearch(newRequest);
-                SearchState returnState = Global.FillFinder.SearchStep(worldSize.X * worldSize.Y);
+                SearchState returnState = Global.FillFinder.SearchStep(_worldSize.X * _worldSize.Y);
                 if (returnState == SearchState.SEARCH_STATE_SUCCEEDED)
                 {
                     FillfindAnswer<Point> theAnswer = Global.FillFinder.finalResult();
                     foreach (Point p in theAnswer.pointsFilled)
                     {
-                        gameWorld[p.X, p.Y].AreaID = nextGroupId;
-                        areaDictionary[nextGroupId].memberCount++;
-                        areaDictionary[nextGroupId].members.Add(gameWorld[p.X, p.Y]);
+                        _gameWorld[p.X, p.Y].AreaID = nextGroupId;
+                        _areaDictionary[nextGroupId].MemberCount++;
+                        _areaDictionary[nextGroupId].Members.Add(_gameWorld[p.X, p.Y]);
                     }
                 }
             }
@@ -328,11 +328,11 @@ namespace Heliopolis.World
         /// <param name="theTile">The tile changing state.</param>
         public void ManageAccessStateChange(EnvironmentTile theTile)
         {
-            edgeTraversal.CanAccessChanged(theTile);
+            _edgeTraversal.CanAccessChanged(theTile);
             if (theTile.CanAccess)
             {
-                areaDictionary[-1].members.Remove(theTile);
-                areaDictionary[-1].memberCount--;
+                _areaDictionary[-1].Members.Remove(theTile);
+                _areaDictionary[-1].MemberCount--;
                 // Here we need to check if two areas have merged
                 List<Point> accessPoints = theTile.GetAccessPoints();
                 foreach (Point point in accessPoints)
@@ -346,8 +346,8 @@ namespace Heliopolis.World
                             if (firstTile.AreaID != secondTile.AreaID)
                             {
                                 // Merge requried
-                                Area mergeOne = areaDictionary[firstTile.AreaID];
-                                Area mergeTwo = areaDictionary[secondTile.AreaID];
+                                Area mergeOne = _areaDictionary[firstTile.AreaID];
+                                Area mergeTwo = _areaDictionary[secondTile.AreaID];
                                 theTile.AreaID = Area.MergeTwoAreas(mergeOne, mergeTwo);
                             }                                
                         }
@@ -361,12 +361,12 @@ namespace Heliopolis.World
             else
             {
                 // now here we need to use the edge state to determine splitting up an area
-                areaDictionary[theTile.AreaID].members.Remove(theTile);
-                areaDictionary[theTile.AreaID].memberCount--;
+                _areaDictionary[theTile.AreaID].Members.Remove(theTile);
+                _areaDictionary[theTile.AreaID].MemberCount--;
                 theTile.AreaID = -1;
             }
-            areaDictionary[theTile.AreaID].members.Add(theTile);
-            areaDictionary[theTile.AreaID].memberCount++;
+            _areaDictionary[theTile.AreaID].Members.Add(theTile);
+            _areaDictionary[theTile.AreaID].MemberCount++;
         }
 
         #region IIsometricTileProvider Members
@@ -379,10 +379,7 @@ namespace Heliopolis.World
             {
                 textures.Add(this[position].InteractableObject.Texture);
             }
-            foreach (Actor drawActor in this[position].ActorsOnTile)
-            {
-                textures.Add(drawActor.Texture);
-            }
+            textures.AddRange(this[position].ActorsOnTile.Select(drawActor => drawActor.Texture));
             return textures;
         }
 
@@ -394,7 +391,7 @@ namespace Heliopolis.World
         {
             get
             {
-                return worldSize;
+                return _worldSize;
             }
         }
 

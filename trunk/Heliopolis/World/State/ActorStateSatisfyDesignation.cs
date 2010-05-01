@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Heliopolis.Utilities;
+using Heliopolis.World.JobSystem;
 using Microsoft.Xna.Framework;
 
 namespace Heliopolis.World.State
@@ -26,20 +27,20 @@ namespace Heliopolis.World.State
             : base(_myActor, _owner)
         {
             myDesignation = _myDesignation;
-            subStates = new LinkedList<ActorState>();
+            SubStates = new LinkedList<ActorState>();
             List<ActorState> subStatesFromDesignation = myDesignation.GetStateStepsToPerform();
             foreach (ActorState substate in subStatesFromDesignation)
-                subStates.AddFirst(substate);
+                SubStates.AddFirst(substate);
         }
 
-        protected override bool checkFinishedState()
+        protected override bool CheckFinishedState()
         {
             // Designation is done when we have a.moved and b.performed the job
-            if (subStates.Count == 0)
+            if (SubStates.Count == 0)
             {
                 myDesignation.CompleteDesignation();
             }
-            return (subStates.Count == 0);
+            return (SubStates.Count == 0);
         }
     }
 }

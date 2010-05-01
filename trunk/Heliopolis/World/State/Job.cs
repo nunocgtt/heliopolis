@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Heliopolis.World.JobSystem;
 using Microsoft.Xna.Framework;
 using System.Xml;
 using Heliopolis.World.State;
@@ -98,7 +99,7 @@ namespace Heliopolis.World
             throw new NotImplementedException();
         }
 
-        protected override bool checkFinishedState()
+        protected override bool CheckFinishedState()
         {
             return this.IsFinished;
         }
@@ -120,7 +121,7 @@ namespace Heliopolis.World
             PickerUpper.PickupItem(TargetItem);
         }
 
-        protected override bool checkFinishedState()
+        protected override bool CheckFinishedState()
         {
             return this.IsFinished;
         }
@@ -144,7 +145,7 @@ namespace Heliopolis.World
             ActorPlacingItem.PlaceItem(PutItemPlace, TargetItem);
         }
 
-        protected override bool checkFinishedState()
+        protected override bool CheckFinishedState()
         {
             return this.IsFinished;
         }

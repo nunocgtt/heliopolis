@@ -63,7 +63,7 @@ namespace Heliopolis.World
             set
             {
                 // Might need to change sections now
-                owner.SpatialTreeIndex.CheckChangeSection(position,value,this, SpatialObjectType.Item, this.itemType);
+                Owner.SpatialTreeIndex.CheckChangeSection(position,value,this, SpatialObjectType.Item, this.itemType);
                 position = value;
             }
         }
@@ -87,12 +87,12 @@ namespace Heliopolis.World
                 // Item is being picked up
                 if ((value == ItemStates.BeingCarried || value == ItemStates.InBackpack) && (itemState == ItemStates.OnGround || itemState == ItemStates.InStorage))
                 {
-                    owner.SpatialTreeIndex.RemoveFromSection(this.position, this, SpatialObjectType.Item, itemType);
+                    Owner.SpatialTreeIndex.RemoveFromSection(this.position, this, SpatialObjectType.Item, itemType);
                 }
                 // Item is being put down
                 if ((value == ItemStates.OnGround || value == ItemStates.InStorage) && (itemState == ItemStates.BeingCarried || itemState == ItemStates.InBackpack))
                 {
-                    owner.SpatialTreeIndex.AddToSection(this.position, this, SpatialObjectType.Item, itemType);
+                    Owner.SpatialTreeIndex.AddToSection(this.position, this, SpatialObjectType.Item, itemType);
                 }
                 itemState = value; 
             }

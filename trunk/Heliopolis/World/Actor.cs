@@ -1,325 +1,314 @@
+#region
+
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Microsoft.Xna.Framework;
-using System.Xml;
 using Heliopolis.Utilities;
 using Heliopolis.World.State;
+using Microsoft.Xna.Framework;
+
+#endregion
 
 namespace Heliopolis.World
 {
     /// <summary>
-    /// Represents a single entity in the GameWorld that is an actual being.
+    ///   Represents a single entity in the GameWorld that is an actual being.
     /// </summary>
-    /// <remarks>This entity has a few characteristics that mark it as being different from a static object.
-    /// The first is that it contains an inventory and can hold items. The second is that it has a complex
-    /// internal state, which is managed by the ActorState class.
-    /// The Actors are also able to fulfill designations.
-    /// Actors also retain an internal set of counters, for things like health, hunger, sleep and other needs.</remarks>
+    /// <remarks>
+    ///   This entity has a few characteristics that mark it as being different from a static object.
+    ///   The first is that it contains an inventory and can hold items. The second is that it has a complex
+    ///   internal state, which is managed by the ActorState class.
+    ///   The Actors are also able to fulfill designations.
+    ///   Actors also retain an internal set of counters, for things like health, hunger, sleep and other needs.
+    /// </remarks>
     [Serializable]
-    public class Actor : TimedEventor, System.ICloneable, ICanHoldItem, ISpatialIndexMember
+    public class Actor : TimedEventor, ICloneable, ICanHoldItem, ISpatialIndexMember
     {
-        private Point position;
-        private MovementDestination<Point> destinationPosition;
-        private List<Item> inventory;
-        private LinkedList<Direction> directions = null;
-        private int hitpoints;
-        private Dictionary<string, int> properties = null;
-        private List<string> jobsAble = null;
-        private string texture;
-        private ActorState state;
-        private Dictionary<string, TimeSpan> actionTimes;
-        private string actorType;
+        private Point _position;
+        private MovementDestination<Point> _destinationPosition;
+        private List<Item> _inventory;
+        private int _hitpoints;
+        private Dictionary<string, int> _properties;
+        private readonly List<string> _jobsAble;
+        private string _texture;
+        private ActorState _state;
+        private Dictionary<string, TimeSpan> _actionTimes;
+        private string _actorType;
 
         /// <summary>
-        /// The current section/area ID of this actor.
+        ///   The current section/area ID of this actor.
         /// </summary>
         public int AreaID
         {
-            get { return owner.Environment.GameWorld[position.X, position.Y].AreaID; }
+            get { return Owner.Environment.GameWorld[_position.X, _position.Y].AreaID; }
         }
 
         /// <summary>
-        /// The type of this actor.
+        ///   The type of this actor.
         /// </summary>
         public string ActorType
         {
-            get { return actorType; }
-            set { actorType = value; }
+            get { return _actorType; }
+            set { _actorType = value; }
         }
 
         /// <summary>
-        /// Initialises a new instance of the Actor class.
+        ///   Initialises a new instance of the Actor class.
         /// </summary>
-        /// <param name="_owner">The owning GameWorld.</param>
-        /// <param name="_actorType">The actor type.</param>
-        /// <param name="_texture">The texture to draw.</param>
-        /// <param name="_hitPoints">The starting number of hitpoints.</param>
-        /// <param name="_properties">Any internal properties of this actor.</param>
-        /// <param name="_jobsAble">The jobs this actor can initially perform.</param>
-        public Actor(GameWorld _owner,
-            string _actorType,
-            string _texture,
-            int _hitPoints,
-            Dictionary<string, int> _properties,
-            List<string> _jobsAble) : base (_owner)
+        /// <param name = "owner">The owning GameWorld.</param>
+        /// <param name = "actorType">The actor type.</param>
+        /// <param name = "texture">The texture to draw.</param>
+        /// <param name = "hitPoints">The starting number of hitpoints.</param>
+        /// <param name = "properties">Any internal properties of this actor.</param>
+        /// <param name = "jobsAble">The jobs this actor can initially perform.</param>
+        public Actor(GameWorld owner,
+                     string actorType,
+                     string texture,
+                     int hitPoints,
+                     Dictionary<string, int> properties,
+                     List<string> jobsAble) : base(owner)
         {
-            texture = _texture;
-            hitpoints = _hitPoints;
-            properties = _properties;
-            jobsAble = _jobsAble;
-            actorType = _actorType;
-            position = new Point(-1, -1);
-            this.TimedEventDisabled = true;
+            this._texture = texture;
+            _hitpoints = hitPoints;
+            this._properties = properties;
+            this._jobsAble = jobsAble;
+            this._actorType = actorType;
+            _position = new Point(-1, -1);
+            TimedEventDisabled = true;
         }
 
         /// <summary>
-        /// Contains the various actions this actor can peform, and how long it takes to do each.
+        ///   Contains the various actions this actor can peform, and how long it takes to do each.
         /// </summary>
         public Dictionary<string, TimeSpan> ActionTimes
         {
-            get { return actionTimes; }
-            set { actionTimes = value; }
+            get { return _actionTimes; }
+            set { _actionTimes = value; }
         }
 
         /// <summary>
-        /// If this actor is moving, this is a list of the directions to take to reach its destination.
+        ///   If this actor is moving, this is a list of the directions to take to reach its destination.
         /// </summary>
-        public LinkedList<Direction> Directions
-        {
-            get { return directions; }
-        }
+        public LinkedList<Direction> Directions { get; private set; }
 
         /// <summary>
-        /// Contains the current Actor's state.
+        ///   Contains the current Actor's state.
         /// </summary>
         public ActorState State
         {
-            get { return state; }
-            set { changeState(value); }
+            get { return _state; }
+            set { ChangeState(value); }
         }
 
         /// <summary>
-        /// When set, this will make the actor determine a new path to the destination position.
+        ///   When set, this will make the actor determine a new path to the destination position.
         /// </summary>
         public MovementDestination<Point> DestinationPosition
         {
             set
             {
-                destinationPosition = value;
-                moveToPosition(value);
+                _destinationPosition = value;
+                MoveToPosition(value);
             }
-            get { return destinationPosition; }
+            get { return _destinationPosition; }
         }
 
         /// <summary>
-        /// The texture of this actor to render.
+        ///   The texture of this actor to render.
         /// </summary>
         public string Texture
         {
-            get { return texture; }
-            set { texture = value; }
+            get { return _texture; }
+            set { _texture = value; }
         }
 
         /// <summary>
-        /// A list of jobs that this actor is able to perform.
+        ///   A list of jobs that this actor is able to perform.
         /// </summary>
         public List<string> JobsAble
         {
-            get { return jobsAble; }
+            get { return _jobsAble; }
         }
 
         /// <summary>
-        /// The number of hitpoints of this actor.
+        ///   The number of hitpoints of this actor.
         /// </summary>
         public int Hitpoints
         {
-            get { return hitpoints; }
-            set 
-            {
-                hitpoints = value; 
-            }
+            get { return _hitpoints; }
+            set { _hitpoints = value; }
         }
 
         /// <summary>
-        /// A list of items this actor is currently carrying.
+        ///   A list of items this actor is currently carrying.
         /// </summary>
         public List<Item> Inventory
         {
-            get { return inventory; }
-            set { inventory = value; }
+            get { return _inventory; }
+            set { _inventory = value; }
         }
 
         /// <summary>
-        /// The position of this Actor in the game world.
+        ///   The position of this Actor in the game world.
         /// </summary>
         public Point Position
         {
-            get { return position; }
-            set
-            {
-                changePosition(value);
-            }
+            get { return _position; }
+            set { ChangePosition(value); }
         }
 
         /// <summary>
-        /// Moves this actor into a new state.
+        ///   Moves this actor into a new state.
         /// </summary>
-        /// <param name="newState">The new state.</param>
-        private void changeState(ActorState newState)
+        /// <param name = "newState">The new state.</param>
+        private void ChangeState(ActorState newState)
         {
-            state = newState;
-            state.OnEnter();
+            _state = newState;
+            _state.OnEnter();
         }
 
         #region ICanHoldItem Members
 
         /// <summary>
-        /// Pick up an item and place into this actors inventory.
+        ///   Pick up an item and place into this actors inventory.
         /// </summary>
-        /// <param name="item">The item to pick up.</param>
+        /// <param name = "item">The item to pick up.</param>
         public void PickupItem(Item item)
         {
-            inventory.Add(item);
+            _inventory.Add(item);
             item.ItemState = ItemStates.BeingCarried;
             item.Holder = this;
         }
 
         /// <summary>
-        /// Place a certain item type on to another ICanHoldItem. **NOT IMPLEMENTED**
+        ///   Place a certain item type on to another ICanHoldItem. **NOT IMPLEMENTED**
         /// </summary>
-        /// <param name="itemHolder">The ICanHoldItem to give the item to.</param>
-        /// <param name="itemType">The type of item to place.</param>
+        /// <param name = "itemHolder">The ICanHoldItem to give the item to.</param>
+        /// <param name = "item">The item to place.</param>
         public void PlaceItem(ICanHoldItem itemHolder, Item item)
         {
             itemHolder.PickupItem(item);
-            inventory.Remove(item);
+            _inventory.Remove(item);
         }
 
         /// <summary>
-        /// Put an item on the ground at this actors current position.
+        ///   Put an item on the ground at this actors current position.
         /// </summary>
         public void PlaceItemOnGround(Item item)
         {
             item.ItemState = ItemStates.OnGround;
-            item.Position = this.position;
-            inventory.Remove(item);
+            item.Position = _position;
+            _inventory.Remove(item);
         }
 
         #endregion
 
         /// <summary>
-        /// Pathfinding logic to get this actor to the specified position.
+        ///   Pathfinding logic to get this actor to the specified position.
         /// </summary>
-        /// <param name="newPosition">The new position to move to.</param>
-        private void moveToPosition(MovementDestination<Point> newPosition)
+        /// <param name = "newPosition">The new position to move to.</param>
+        private void MoveToPosition(MovementDestination<Point> newPosition)
         {
             PathFinder<Point> pathFinder = Global.PathFinder;
-            if (newPosition.PointToMoveTo != position)
+            if (newPosition.PointToMoveTo != _position)
             {
                 PathfindRequest<Point> newrequest = null;
-                if (newPosition.MovementDestinationType == MovementDestinationType.SinglePoint)
+                switch (newPosition.MovementDestinationType)
                 {
-                    newrequest = new PathfindRequest<Point>(position, newPosition.PointToMoveTo, this);
+                    case MovementDestinationType.SinglePoint:
+                        newrequest = new PathfindRequest<Point>(_position, newPosition.PointToMoveTo, this);
+                        break;
+                    case MovementDestinationType.MultiPoint:
+                        newrequest = new PathfindRequest<Point>(_position, this, newPosition.PointsAcceptable);
+                        break;
+                    default:
+                        throw new Exception("Can not move to an unaccessable position.");
                 }
-                else if (newPosition.MovementDestinationType == MovementDestinationType.MultiPoint)
-                {
-                    newrequest = new PathfindRequest<Point>(position, this, newPosition.PointsAcceptable);
-                }
-                else
-                    throw new Exception("Can not move to an unaccessable position.");
                 pathFinder.NewSearch(newrequest);
                 if (pathFinder.SearchStep(999) == SearchState.SEARCH_STATE_SUCCEEDED)
                 {
                     PathfindAnswer theAnswer = pathFinder.finalResult();
-                    directions = theAnswer.directions;
+                    Directions = theAnswer.directions;
                 }
                 else
                     throw new Exception("Unable to path to that position.");
             }
             else
             {
-                directions.Clear();
+                Directions.Clear();
             }
         }
 
         /// <summary>
-        /// Check to see if this actor has moved into a new section/area.
+        ///   Check to see if this actor has moved into a new section/area.
         /// </summary>
-        /// <param name="newPosition">The new position to move to.</param>
-        private void changePosition(Point newPosition)
+        /// <param name = "newPosition">The new position to move to.</param>
+        private void ChangePosition(Point newPosition)
         {
-            if (this.Position != new Point(-1,-1))
-                owner.Environment[this.Position].ActorsOnTile.Remove(this);
-            owner.SpatialTreeIndex.CheckChangeSection(position, newPosition, this, SpatialObjectType.Actor,"");
-            position = newPosition;
-            owner.Environment[this.Position].ActorsOnTile.Add(this);
+            if (Position != new Point(-1, -1))
+                Owner.Environment[Position].ActorsOnTile.Remove(this);
+            Owner.SpatialTreeIndex.CheckChangeSection(_position, newPosition, this, SpatialObjectType.Actor, "");
+            _position = newPosition;
+            Owner.Environment[Position].ActorsOnTile.Add(this);
         }
 
         /// <summary>
-        /// Move this actor in the next direction contained in it's internal Directions list.
+        ///   Move this actor in the next direction contained in it's internal Directions list.
         /// </summary>
-        public void moveNextDirection()
+        public void MoveNextDirection()
         {
-            if (directions.Count > 0)
+            if (Directions.Count <= 0) return;
+            Direction currentDirection = Directions.First.Value;
+            switch (currentDirection)
             {
-                Direction currentDirection = directions.First.Value;
-                switch (currentDirection)
-                {
-                    case Direction.South:
-                        changePosition(new Point(position.X,position.Y+1));
-                        break;
-                    case Direction.North:
-                        changePosition(new Point(position.X, position.Y - 1));
-                        break;
-                    case Direction.West:
-                        changePosition(new Point(position.X - 1, position.Y));
-                        break;
-                    case Direction.East:
-                        changePosition(new Point(position.X + 1, position.Y));
-                        break;
-                    case Direction.Nowhere:
-                        break;
-                }
-                directions.RemoveFirst();
+                case Direction.South:
+                    ChangePosition(new Point(_position.X, _position.Y + 1));
+                    break;
+                case Direction.North:
+                    ChangePosition(new Point(_position.X, _position.Y - 1));
+                    break;
+                case Direction.West:
+                    ChangePosition(new Point(_position.X - 1, _position.Y));
+                    break;
+                case Direction.East:
+                    ChangePosition(new Point(_position.X + 1, _position.Y));
+                    break;
+                case Direction.Nowhere:
+                    break;
             }
+            Directions.RemoveFirst();
         }
 
         /// <summary>
-        /// Process this actors move.
+        ///   Process this actors move.
         /// </summary>
-        /// <param name="absoluteMilliseconds">The absolute game time.</param>
+        /// <param name = "absoluteMilliseconds">The absolute game time.</param>
         public override void ExecuteTick(TimeSpan absoluteMilliseconds)
         {
-            state.Tick();
-            if (state.StateFinished)
+            _state.Tick();
+            if (_state.StateFinished)
             {
-                state = new ActorStateIdle(this, owner);
+                _state = new ActorStateIdle(this, Owner);
             }
             // Want to set up the next tick
-            SetUpNextTick(actionTimes[state.ActionType]);
+            SetUpNextTick(_actionTimes[_state.ActionType]);
         }
 
         public void Start()
         {
-            this.TimedEventDisabled = false;
+            TimedEventDisabled = false;
         }
 
         /// <summary>
-        /// Creates a new copy of this class.
+        ///   Creates a new copy of this class.
         /// </summary>
         /// <returns>An Actor copy.</returns>
         public object Clone()
         {
-            Actor returnMe = (Actor)MemberwiseClone();
+            Actor returnMe = (Actor) MemberwiseClone();
             returnMe.Inventory = new List<Item>();
             returnMe.ActionTimes = new Dictionary<string, TimeSpan>();
-            returnMe.State = new ActorStateIdle(returnMe, owner);
+            returnMe.State = new ActorStateIdle(returnMe, Owner);
             return returnMe;
         }
-
     }
-
-    
-
 }

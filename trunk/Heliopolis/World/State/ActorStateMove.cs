@@ -46,7 +46,7 @@ namespace Heliopolis.World.State
         /// </summary>
         public override void OnEnter()
         {
-            myActor.DestinationPosition = movementDestination;
+            MyActor.DestinationPosition = movementDestination;
             base.OnEnter();
         }
 
@@ -55,13 +55,13 @@ namespace Heliopolis.World.State
         /// </summary>
         public override void Tick()
         {
-            myActor.moveNextDirection();
+            MyActor.MoveNextDirection();
             base.Tick();
         }
 
-        protected override bool checkFinishedState()
+        protected override bool CheckFinishedState()
         {
-            return (myActor.Directions.Count == 0);
+            return (MyActor.Directions.Count == 0);
         }
     }
 }

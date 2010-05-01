@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using Microsoft.Xna.Framework;
 
@@ -12,7 +11,7 @@ namespace Heliopolis.World
     public class ActorFactory
     {
         [NonSerialized]
-        private static Dictionary<string, Actor> actorTemplates = null;
+        private static Dictionary<string, Actor> _actorTemplates = null;
 
         /// <summary>
         /// Loads Actor templates from an XML file.
@@ -21,7 +20,7 @@ namespace Heliopolis.World
         /// <param name="owner">The owning game world.</param>
         public static void LoadTemplatesFromXml(XmlDocument xmlDoc, GameWorld owner)
         {
-            actorTemplates = new Dictionary<string, Actor>();
+            _actorTemplates = new Dictionary<string, Actor>();
             XmlNodeList actorNodes = xmlDoc.GetElementsByTagName("Actor");
             foreach (XmlNode node in actorNodes)
             {
@@ -33,14 +32,16 @@ namespace Heliopolis.World
                 Dictionary<string, int> property = new Dictionary<string, int>();
                 List<string> jobs = new List<string>();
                 List<int> magnitude = new List<int>();
-                foreach (XmlNode n in propertyNodes)
-                {
-                    property.Add(n.Attributes["name"].Value, int.Parse(n.Attributes["magnitude"].Value));
-                }
-                foreach (XmlNode n in jobNodes)
-                {
-                    jobs.Add(n.InnerText);
-                }
+                if (propertyNodes != null)
+                    foreach (XmlNode n in propertyNodes)
+                    {
+                        property.Add(n.Attributes["name"].Value, int.Parse(n.Attributes["magnitude"].Value));
+                    }
+                if (jobNodes != null)
+                    foreach (XmlNode n in jobNodes)
+                    {
+                        jobs.Add(n.InnerText);
+                    }
                 Actor addActor = new Actor(
                     owner,
                     node.Attributes["name"].Value,
@@ -60,7 +61,7 @@ namespace Heliopolis.World
         /// <returns>Returns an Actor.</returns>
         public static Actor GetNewActor(string templateName, Point intialPosition)
         {
-            Actor returnMe = (Actor)actorTemplates[templateName].Clone();
+            Actor returnMe = (Actor)_actorTemplates[templateName].Clone();
             returnMe.Id = new Guid();
             returnMe.Position = intialPosition;
             returnMe.ActionTimes.Add("movement", TimeSpan.FromMilliseconds(200));
@@ -75,7 +76,7 @@ namespace Heliopolis.World
 
         private static void AddTemplate(string name, Actor addActor)
         {
-            actorTemplates.Add(name, addActor);
+            _actorTemplates.Add(name, addActor);
         }
     }
 }

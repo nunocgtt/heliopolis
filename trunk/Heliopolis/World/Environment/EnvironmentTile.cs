@@ -1,11 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
-using System.Xml;
 using System;
 using Heliopolis.Utilities;
-using Heliopolis.Engine;
 
-namespace Heliopolis.World
+namespace Heliopolis.World.Environment
 {
     /// <summary>
     /// Represents a single tile in the game environment.
@@ -13,19 +12,19 @@ namespace Heliopolis.World
     [Serializable]
     public class EnvironmentTile : GameWorldObject, System.ICloneable, ISpatialIndexMember
     {
-        private int areaID;
-        private string texture;
-        private Point position;
-        private bool canAccess;
-        private List<EnvironmentTile> adjacentTiles;
-        private List<Item> itemsOnGround = new List<Item>();
-        private List<IRequiresAccess> requiringAccess = new List<IRequiresAccess>();
+        private int _areaId;
+        private string _texture;
+        private Point _position;
+        private bool _canAccess;
+        private List<EnvironmentTile> _adjacentTiles;
+        private List<Item> _itemsOnGround = new List<Item>();
+        private readonly List<IRequiresAccess> _requiringAccess = new List<IRequiresAccess>();
 
         public List<IRequiresAccess> RequiringAccess
         {
             get
             {
-                return requiringAccess;
+                return _requiringAccess;
             }
         }
 
@@ -36,8 +35,8 @@ namespace Heliopolis.World
         /// </summary>
         public int AreaID
         {
-            get { return areaID; }
-            set { areaID = value; }
+            get { return _areaId; }
+            set { _areaId = value; }
         }
 
         /// <summary>
@@ -45,8 +44,8 @@ namespace Heliopolis.World
         /// </summary>
         public List<EnvironmentTile> AdjacentTiles
         {
-            get { return adjacentTiles; }
-            set { adjacentTiles = value; }
+            get { return _adjacentTiles; }
+            set { _adjacentTiles = value; }
         }
  
         /// <summary>
@@ -56,10 +55,7 @@ namespace Heliopolis.World
         /// <returns>Returns true if access is available.</returns>
         public bool TileCanAccess(Direction direction)
         {
-            if (adjacentTiles[(int)direction] == null)
-                return false;
-            else
-                return adjacentTiles[(int)direction].CanAccess;
+            return _adjacentTiles[(int)direction] != null && _adjacentTiles[(int)direction].CanAccess;
         }
 
         /// <summary>
@@ -67,32 +63,32 @@ namespace Heliopolis.World
         /// </summary>
         public EnvironmentTile WestTile
         {
-            get { return adjacentTiles[(int)Direction.West]; }
-            set { adjacentTiles[(int)Direction.West] = value; }
+            get { return _adjacentTiles[(int)Direction.West]; }
+            set { _adjacentTiles[(int)Direction.West] = value; }
         }
         /// <summary>
         /// The tile to the right.
         /// </summary>
         public EnvironmentTile EastTile
         {
-            get { return adjacentTiles[(int)Direction.East]; }
-            set { adjacentTiles[(int)Direction.East] = value; }
+            get { return _adjacentTiles[(int)Direction.East]; }
+            set { _adjacentTiles[(int)Direction.East] = value; }
         }
         /// <summary>
         /// The tile above.
         /// </summary>
         public EnvironmentTile NorthTile
         {
-            get { return adjacentTiles[(int)Direction.North]; }
-            set { adjacentTiles[(int)Direction.North] = value; }
+            get { return _adjacentTiles[(int)Direction.North]; }
+            set { _adjacentTiles[(int)Direction.North] = value; }
         }
         /// <summary>
         /// The tile below.
         /// </summary>
         public EnvironmentTile SouthTile
         {
-            get { return adjacentTiles[(int)Direction.South]; }
-            set { adjacentTiles[(int)Direction.South] = value; }
+            get { return _adjacentTiles[(int)Direction.South]; }
+            set { _adjacentTiles[(int)Direction.South] = value; }
         }
 
         /// <summary>
@@ -100,8 +96,8 @@ namespace Heliopolis.World
         /// </summary>
         public string Texture
         {
-            get { return texture; }
-            set { texture = value; }
+            get { return _texture; }
+            set { _texture = value; }
         }
 
         /// <summary>
@@ -111,16 +107,16 @@ namespace Heliopolis.World
         {
             get 
             {
-                return canAccess; 
+                return _canAccess; 
             }
             set
             {
-                owner.Environment.ManageAccessStateChange(this);
-                foreach (IRequiresAccess listener in requiringAccess)
+                Owner.Environment.ManageAccessStateChange(this);
+                foreach (IRequiresAccess listener in _requiringAccess)
                 {
                     listener.AccessChanged(value, this.Position);
                 }
-                canAccess = value;
+                _canAccess = value;
             }
         }
 
@@ -129,8 +125,8 @@ namespace Heliopolis.World
         /// </summary>
         public Point Position
         {
-            get { return position; }
-            set { position = value; }
+            get { return _position; }
+            set { _position = value; }
         }
 
         public InteractableObject InteractableObject { get; set; }
@@ -138,17 +134,14 @@ namespace Heliopolis.World
         /// <summary>
         /// Initialises a new instance of the EnvironmentTile class.
         /// </summary>
-        /// <param name="_texture">The texture.</param>
-        /// <param name="_resource">Any resources to harvest.</param>
-        /// <param name="_resourceLeft">The amount of resources left.</param>
-        /// <param name="_exhaustedTile">Resources exhausted tile.</param>
-        /// <param name="_canAccess">If actors can access this tile.</param>
-        /// <param name="_owner">The game world owner.</param>
-        public EnvironmentTile(string _texture, bool _canAccess, GameWorld _owner) : base(_owner)
+        /// <param name="texture">The texture.</param>
+        /// <param name="canAccess">If actors can access this tile.</param>
+        /// <param name="owner">The game world owner.</param>
+        public EnvironmentTile(string texture, bool canAccess, GameWorld owner) : base(owner)
         {
-            texture = _texture;
-            canAccess = _canAccess;
-            areaID = 0;
+            this._texture = texture;
+            this._canAccess = canAccess;
+            _areaId = 0;
         }
 
         /// <summary>
@@ -157,18 +150,10 @@ namespace Heliopolis.World
         /// <returns>A list of Point.</returns>
         public List<Point> GetAccessPoints()
         {
-            List<Point> returnMe = new List<Point>();
-            foreach (EnvironmentTile tile in adjacentTiles)
-            {
-                if (tile != null)
-                {
-                    if (tile.CanAccess)
-                    {
-                        returnMe.Add(tile.Position);
-                    }
-                }
-            }
-            return returnMe;
+            return (from tile in _adjacentTiles 
+                    where tile != null 
+                    where tile.CanAccess 
+                    select tile.Position).ToList();
         }
 
         /// <summary>

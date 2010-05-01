@@ -53,11 +53,11 @@ namespace Heliopolis.World.State
         /// <summary>
         /// The actor that this state belongs to.
         /// </summary>
-        protected Actor myActor;
+        protected Actor MyActor;
         /// <summary>
         /// A list of substates, to be processed in order (FIFO).
         /// </summary>
-        protected  LinkedList<ActorState> subStates = null;
+        protected  LinkedList<ActorState> SubStates = null;
         /// <summary>
         /// The action type.
         /// </summary>
@@ -65,28 +65,24 @@ namespace Heliopolis.World.State
         /// <summary>
         /// A method to be set up by inheriting states to check if the state has finished.
         /// </summary>
-        protected abstract bool checkFinishedState();
+        protected abstract bool CheckFinishedState();
 
-        private bool firstSubstateEntered = false;
-        private bool stateFinished;
+        private bool _firstSubstateEntered = false;
 
         /// <summary>
         /// Initialises a new instance of the ActorState class.
         /// </summary>
-        /// <param name="_myActor">The actor who this state belongs to.</param>
-        /// <param name="_owner">The owning game world.</param>
-        public ActorState(Actor _myActor, GameWorld _owner) : base(_owner)
+        /// <param name="myActor">The actor who this state belongs to.</param>
+        /// <param name="owner">The owning game world.</param>
+        protected ActorState(Actor myActor, GameWorld owner) : base(owner)
         {
-            myActor = _myActor;
+            MyActor = myActor;
         }
 
         /// <summary>
         /// Returns true if this state has finished its tasks.
         /// </summary>
-        public bool StateFinished
-        {
-            get { return stateFinished; }
-        }
+        public bool StateFinished { get; private set; }
 
         /// <summary>
         /// The current action type of this state. Returns a substate's action type if it is active.
@@ -95,11 +91,11 @@ namespace Heliopolis.World.State
         {
             get
             {
-                if (subStates != null)
+                if (SubStates != null)
                 {
-                    if (subStates.Count > 0)
+                    if (SubStates.Count > 0)
                     {
-                        return subStates.First.Value.ActionType;
+                        return SubStates.First.Value.ActionType;
                     }
                 }
                 return actionType;
@@ -112,9 +108,9 @@ namespace Heliopolis.World.State
         /// <param name="addState">An ActorState to add.</param>
         protected void AddSubState(ActorState addState)
         {
-            if (subStates == null)
-                subStates = new LinkedList<ActorState>();
-            subStates.AddLast(addState);
+            if (SubStates == null)
+                SubStates = new LinkedList<ActorState>();
+            SubStates.AddLast(addState);
         }
 
         /// <summary>
@@ -125,18 +121,16 @@ namespace Heliopolis.World.State
         private void ExecuteAcrossSubStates(RunOnSubStates runOnSubStates)
         {
             runOnSubStates();
-            if (subStates.Count > 0)
+            if (SubStates.Count <= 0) return;
+            while (SubStates.First.Value.StateFinished)
             {
-                while (subStates.First.Value.StateFinished)
+                SubStates.RemoveFirst();
+                if (SubStates.Count > 0)
                 {
-                    subStates.RemoveFirst();
-                    if (subStates.Count > 0)
-                    {
-                        subStates.First.Value.OnEnter();
-                    }
-                    else
-                        break;
+                    SubStates.First.Value.OnEnter();
                 }
+                else
+                    break;
             }
         }
 
@@ -145,14 +139,14 @@ namespace Heliopolis.World.State
         /// </summary>
         public virtual void OnEnter()
         {
-            if (subStates != null)
+            if (SubStates != null)
             {
-                if (subStates.Count > 0)
+                if (SubStates.Count > 0)
                 {
-                    ExecuteAcrossSubStates(subStates.First.Value.OnEnter);
+                    ExecuteAcrossSubStates(SubStates.First.Value.OnEnter);
                 }
             }
-            checkStateDone();
+            CheckStateDone();
         }
 
         /// <summary>
@@ -160,26 +154,26 @@ namespace Heliopolis.World.State
         /// </summary>
         public virtual void Tick()
         {
-            if (subStates != null)
+            if (SubStates != null)
             {
-                if (subStates.Count > 0)
+                if (SubStates.Count > 0)
                 {
-                    if (!firstSubstateEntered)
+                    if (!_firstSubstateEntered)
                     {
-                        ExecuteAcrossSubStates(subStates.First.Value.OnEnter);
-                        firstSubstateEntered = true;
+                        ExecuteAcrossSubStates(SubStates.First.Value.OnEnter);
+                        _firstSubstateEntered = true;
                     }
-                    ExecuteAcrossSubStates(subStates.First.Value.Tick);
+                    ExecuteAcrossSubStates(SubStates.First.Value.Tick);
                 }
             }
-            checkStateDone();
+            CheckStateDone();
         }
 
-        private void checkStateDone()
+        private void CheckStateDone()
         {
-            if (checkFinishedState())
+            if (CheckFinishedState())
             {
-                stateFinished = true;
+                StateFinished = true;
             }
         }
     }

@@ -21,7 +21,7 @@ namespace Heliopolis.World.State
             : base(_myActor, _owner)
         {
             actionType = "idle";
-            subStates.AddLast(new ActorStateMove(_myActor, new Point(0,0), _owner));
+            SubStates.AddLast(new ActorStateMove(_myActor, new Point(0,0), _owner));
             //subStates.AddLast(new ActorStateStashItem
         }
 
@@ -40,7 +40,7 @@ namespace Heliopolis.World.State
         }
 
         // Idle will create new states to replace itself, so it will never "finish".
-        protected override bool checkFinishedState()
+        protected override bool CheckFinishedState()
         {
             return false;
         }

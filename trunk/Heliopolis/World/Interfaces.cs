@@ -40,7 +40,7 @@ namespace Heliopolis.World
         /// Give an item to another ICanHoldItem
         /// </summary>
         /// <param name="itemHolder">The ICanHoldItem to give the item to.</param>
-        /// <param name="itemType">The type of item to give.</param>
+        /// <param name="itemToPlace">The item to give.</param>
         void PlaceItem(ICanHoldItem itemHolder, Item itemToPlace);
         /// <summary>
         /// Put an item on the ground.

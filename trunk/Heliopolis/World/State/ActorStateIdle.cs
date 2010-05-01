@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Heliopolis.World.JobSystem;
 
 namespace Heliopolis.World.State
 {
@@ -27,14 +28,14 @@ namespace Heliopolis.World.State
         /// </summary>
         public override void Tick()
         {
-            foreach (string s in myActor.JobsAble)
+            foreach (string s in MyActor.JobsAble)
             {
                 Designation someDesignation;
                 
-                if (owner.DesignationManager.CheckAvailableDesignation(myActor.AreaID, s, myActor.Position, out someDesignation))
+                if (Owner.DesignationManager.CheckAvailableDesignation(MyActor.AreaID, s, MyActor.Position, out someDesignation))
                 {
-                    someDesignation.AssignDesignation(myActor);
-                    myActor.State = new ActorStateSatisfyDesignation(myActor, someDesignation, owner);
+                    someDesignation.AssignDesignation(MyActor);
+                    MyActor.State = new ActorStateSatisfyDesignation(MyActor, someDesignation, Owner);
                     break;
                 }
             }
@@ -42,7 +43,7 @@ namespace Heliopolis.World.State
         }
 
         // Idle will create new states to replace itself, so it will never "finish".
-        protected override bool checkFinishedState()
+        protected override bool CheckFinishedState()
         {
             return false;
         }
