@@ -1,12 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Heliopolis.World.JobSystem;
-using Microsoft.Xna.Framework;
-using System.Xml;
-using Heliopolis.World.State;
 
-namespace Heliopolis.World
+namespace Heliopolis.World.State
 {
     /// <summary>
     /// Represents a single job that an actor can perform.
@@ -47,7 +42,7 @@ namespace Heliopolis.World
         /// <param name="actor"></param>
         /// <param name="jobtype">The type of this job.</param>
         /// <param name="owningDesignation"></param>
-        public Job(GameWorld owner, Actor actor, string jobtype, Designation owningDesignation)
+        protected Job(GameWorld owner, Actor actor, string jobtype, Designation owningDesignation)
             : base(actor,owner)
         {
             _jobType = jobtype;
@@ -135,11 +130,11 @@ namespace Heliopolis.World
         public ICanHoldItem PutItemPlace { get; set; }
         public Item TargetItem { get; set; }
 
-        public PlaceItem(GameWorld _owner, Actor _actor, string _jobType, Designation parentDesignation, ICanHoldItem putItemPlace, Item targetItem)
-            : base(_owner, _actor, _jobType, parentDesignation)
+        public PlaceItem(GameWorld owner, Actor actor, string jobType, Designation parentDesignation, ICanHoldItem putItemPlace, Item targetItem)
+            : base(owner, actor, jobType, parentDesignation)
         {
             PutItemPlace = putItemPlace;
-            ActorPlacingItem = _actor;
+            ActorPlacingItem = actor;
         }
 
         public override void Tick()
