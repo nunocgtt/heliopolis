@@ -290,7 +290,7 @@ namespace Heliopolis.World
                 _state = new ActorStateIdle(this, Owner);
             }
             // Want to set up the next tick
-            SetUpNextTick(_actionTimes[_state.ActionType]);
+            SetUpNextTick(_actionTimes[_state.CurrentActionType]);
         }
 
         public void Start()

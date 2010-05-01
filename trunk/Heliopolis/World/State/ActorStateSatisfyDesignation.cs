@@ -16,19 +16,19 @@ namespace Heliopolis.World.State
     [Serializable]
     public class ActorStateSatisfyDesignation : ActorState
     {
-        private Designation myDesignation;
+        private readonly Designation _myDesignation;
         /// <summary>
         /// Initialises a new instance of the ActorStateSatisfyDesignation class.
         /// </summary>
-        /// <param name="_myActor">The actor who this state belongs to.</param>
-        /// <param name="_myDesignation">The designation to satisfy.</param>
-        /// <param name="_owner">The owning game world.</param>
-        public ActorStateSatisfyDesignation(Actor _myActor, Designation _myDesignation, GameWorld _owner)
-            : base(_myActor, _owner)
+        /// <param name="myActor">The actor who this state belongs to.</param>
+        /// <param name="myDesignation">The designation to satisfy.</param>
+        /// <param name="owner">The owning game world.</param>
+        public ActorStateSatisfyDesignation(Actor myActor, Designation myDesignation, GameWorld owner)
+            : base(myActor, owner)
         {
-            myDesignation = _myDesignation;
+            this._myDesignation = myDesignation;
             SubStates = new LinkedList<ActorState>();
-            List<ActorState> subStatesFromDesignation = myDesignation.GetStateStepsToPerform();
+            List<ActorState> subStatesFromDesignation = this._myDesignation.GetStateStepsToPerform();
             foreach (ActorState substate in subStatesFromDesignation)
                 SubStates.AddFirst(substate);
         }
@@ -38,7 +38,7 @@ namespace Heliopolis.World.State
             // Designation is done when we have a.moved and b.performed the job
             if (SubStates.Count == 0)
             {
-                myDesignation.CompleteDesignation();
+                _myDesignation.CompleteDesignation();
             }
             return (SubStates.Count == 0);
         }

@@ -20,7 +20,7 @@ namespace Heliopolis.World.State
         public ActorStateStashItem(Actor _myActor, GameWorld _owner)
             : base(_myActor, _owner)
         {
-            actionType = "idle";
+            ActionType = "idle";
             SubStates.AddLast(new ActorStateMove(_myActor, new Point(0,0), _owner));
             //subStates.AddLast(new ActorStateStashItem
         }

@@ -61,7 +61,7 @@ namespace Heliopolis.World.State
         /// <summary>
         /// The action type.
         /// </summary>
-        protected string actionType;
+        protected string ActionType;
         /// <summary>
         /// A method to be set up by inheriting states to check if the state has finished.
         /// </summary>
@@ -87,7 +87,7 @@ namespace Heliopolis.World.State
         /// <summary>
         /// The current action type of this state. Returns a substate's action type if it is active.
         /// </summary>
-        public string ActionType
+        public string CurrentActionType
         {
             get
             {
@@ -95,10 +95,10 @@ namespace Heliopolis.World.State
                 {
                     if (SubStates.Count > 0)
                     {
-                        return SubStates.First.Value.ActionType;
+                        return SubStates.First.Value.CurrentActionType;
                     }
                 }
-                return actionType;
+                return ActionType;
             }
         }
 
