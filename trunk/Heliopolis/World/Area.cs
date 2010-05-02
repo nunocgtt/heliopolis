@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Heliopolis.World.Environment;
 
 namespace Heliopolis.World
@@ -22,18 +20,18 @@ namespace Heliopolis.World
         /// <summary>
         /// The unique ID of this area.
         /// </summary>
-        public int Id;
+        private readonly int _id;
         /// <summary>
         /// All the tiles in this area.
         /// </summary>
-        public List<EnvironmentTile> Members;
+        public readonly List<EnvironmentTile> Members;
         /// <summary>
         /// Initialises a new instance of the Area class.
         /// </summary>
         /// <param name="nextGroupId">The ID of this area.</param>
         public Area(int nextGroupId)
         {
-            Id = nextGroupId;
+            _id = nextGroupId;
             MemberCount = 0;
             Members = new List<EnvironmentTile>();
         }
@@ -60,13 +58,13 @@ namespace Heliopolis.World
             }
             foreach (EnvironmentTile memberTile in copyFrom.Members)
             {
-                memberTile.AreaID = copyTo.Id;
+                memberTile.AreaID = copyTo._id;
                 copyTo.MemberCount++;
                 copyTo.Members.Add(memberTile);
             }
             copyFrom.MemberCount = 0;
             copyFrom.Members.Clear();
-            return copyTo.Id;
+            return copyTo._id;
         }
     }
 }

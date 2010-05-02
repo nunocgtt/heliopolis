@@ -18,7 +18,7 @@ namespace Heliopolis.World
         /// Initialises a new instance of the GameWorldObject class.
         /// </summary>
         /// <param name="owner">The owning GameWorld.</param>
-        public GameWorldObject(GameWorld owner)
+        protected GameWorldObject(GameWorld owner)
         {
             Owner = owner;
             _id = new Guid();

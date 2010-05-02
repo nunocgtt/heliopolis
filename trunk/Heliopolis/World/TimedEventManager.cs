@@ -39,32 +39,30 @@ namespace Heliopolis.World
             // Implement scaling here
             _totalGameTime = TimeSpan.FromTicks(_totalGameTime.Add(timeSpan).Ticks * Scale);
 
-            if (_eventorsByTime.Count > 0)
-            {
-                /* We want to process all the actors whos next absolute action time
+            if (_eventorsByTime.Count <= 0) return;
+            /* We want to process all the actors whos next absolute action time
                    is less than the current game time tick */
 
-                KeyValuePair<TimeSpan, TimedEventor> kvp = _eventorsByTime.First();
-                while (kvp.Key.CompareTo(_totalGameTime) > 0)
+            KeyValuePair<TimeSpan, TimedEventor> kvp = _eventorsByTime.First();
+            while (kvp.Key.CompareTo(_totalGameTime) > 0)
+            {
+                CurrentProcessingTimeSpan = kvp.Key;
+                kvp.Value.Tick(_totalGameTime);
+                if (!kvp.Value.TimedEventDisabled)
                 {
-                    CurrentProcessingTimeSpan = kvp.Key;
-                    kvp.Value.Tick(_totalGameTime);
-                    if (!kvp.Value.TimedEventDisabled)
+                    _eventorsByTime.Remove(kvp.Key);
+                    // need to be careful about adding the same key so vary by 100 nanoseconds
+                    while (_eventorsByTime.ContainsKey(kvp.Value.NextAbsoluteActionTime))
                     {
-                        _eventorsByTime.Remove(kvp.Key);
-                        // need to be careful about adding the same key so vary by 100 nanoseconds
-                        while (_eventorsByTime.ContainsKey(kvp.Value.NextAbsoluteActionTime))
-                        {
-                            kvp.Value.IncrementActionTime(new TimeSpan(1));
-                        }
-                        _eventorsByTime.Add(kvp.Value.NextAbsoluteActionTime, kvp.Value);
-                        _listOfActiveEventors[kvp.Value] = kvp.Value.NextAbsoluteActionTime;
+                        kvp.Value.IncrementActionTime(new TimeSpan(1));
                     }
-                    if (_eventorsByTime.Count > 0)
-                        kvp = _eventorsByTime.First();
-                    else
-                        break;
+                    _eventorsByTime.Add(kvp.Value.NextAbsoluteActionTime, kvp.Value);
+                    _listOfActiveEventors[kvp.Value] = kvp.Value.NextAbsoluteActionTime;
                 }
+                if (_eventorsByTime.Count > 0)
+                    kvp = _eventorsByTime.First();
+                else
+                    break;
             }
         }
 
