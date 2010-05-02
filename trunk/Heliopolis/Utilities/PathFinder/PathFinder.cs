@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace Heliopolis.Utilities
+namespace Heliopolis.Utilities.PathFinder
 {
-   
-    public enum Direction : int
+    public enum Direction
     {
         North = 0,
         South = 1,
@@ -18,12 +16,12 @@ namespace Heliopolis.Utilities
 
     public enum SearchState
     {
-        SEARCH_STATE_NOT_INITIALISED,
-        SEARCH_STATE_SEARCHING,
-        SEARCH_STATE_SUCCEEDED,
-        SEARCH_STATE_FAILED,
-        SEARCH_STATE_OUT_OF_MEMORY,
-        SEARCH_STATE_INVALID
+        SearchStateNotInitialised,
+        SearchStateSearching,
+        SearchStateSucceeded,
+        SearchStateFailed,
+        SearchStateOutOfMemory,
+        SearchStateInvalid
     };
 
     /// <summary>
@@ -31,54 +29,52 @@ namespace Heliopolis.Utilities
     /// </summary>
     public abstract class PathFinder<T>
     {
-        private Point max;
-        private ISearchAble<T> searchGrid;
-	    private SearchState searchState;
-        private int stepCount;
-        private Node<T> startNode;
-        private Node<T> goalNode;
-        private bool cancelRequest;
-        private Dictionary<T, Node<T>> sortedOpenList;
-        private LinkedList<Node<T>> openList;
-        private Dictionary<T, Node<T>> closedList;
-        private LinkedList<Direction> finalDirections;
-        private List<T> possibleSolutions;
-        private bool singlePointSolution;
-        private TraceManager<T> traceManager = new TraceManager<T>();
+        private ISearchAble<T> _searchGrid;
+	    private SearchState _searchState;
+        private int _stepCount;
+        private Node<T> _startNode;
+        private Node<T> _goalNode;
+        private bool _cancelRequest;
+        private Dictionary<T, Node<T>> _sortedOpenList;
+        private LinkedList<Node<T>> _openList;
+        private Dictionary<T, Node<T>> _closedList;
+        private LinkedList<Direction> _finalDirections;
+        private List<T> _possibleSolutions;
+        private bool _singlePointSolution;
+        private readonly TraceManager<T> _traceManager = new TraceManager<T>();
 
-        public PathFinder()
+        protected PathFinder()
         {
-            createAll();
+            CreateAll();
         }
 
-        public PathFinder(int MaxNodes, ISearchAble<T> _gameGrid, Point maxsize)
+        protected PathFinder(int maxNodes, ISearchAble<T> gameGrid, Point maxsize)
         {
-            createAll();
-            Initialise(MaxNodes, _gameGrid, maxsize);
+            CreateAll();
+            Initialise(maxNodes, gameGrid, maxsize);
         }
 
-        private void createAll()
+        private void CreateAll()
         {
-            searchState = SearchState.SEARCH_STATE_NOT_INITIALISED;
-            cancelRequest = false;
-            openList = new LinkedList<Node<T>>();
-            sortedOpenList = new Dictionary<T, Node<T>>();
-            closedList = new Dictionary<T, Node<T>>();
-            finalDirections = new LinkedList<Direction>();
+            _searchState = SearchState.SearchStateNotInitialised;
+            _cancelRequest = false;
+            _openList = new LinkedList<Node<T>>();
+            _sortedOpenList = new Dictionary<T, Node<T>>();
+            _closedList = new Dictionary<T, Node<T>>();
+            _finalDirections = new LinkedList<Direction>();
         }
 
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="MaxNodes">Maximum number of nodes searched before the search fails.</param>
-        /// <param name="_gameGrid">Contents of the game environment.</param>
+        /// <param name="maxNodes">Maximum number of nodes searched before the search fails.</param>
+        /// <param name="gameGrid">Contents of the game environment.</param>
         /// <param name="maxsize">X/Y size of the game environment.</param>
-        public void Initialise(int MaxNodes, ISearchAble<T> _gameGrid, Point maxsize)
+        public void Initialise(int maxNodes, ISearchAble<T> gameGrid, Point maxsize)
         {
-            searchGrid = _gameGrid;
-            max = maxsize;
-            traceManager.WriteLine("Initialise - " + MaxNodes.ToString() + 
-                " - " + maxsize.ToString(), "path");
+            _searchGrid = gameGrid;
+            _traceManager.WriteLine("Initialise - " + maxNodes + 
+                " - " + maxsize, "path");
         }
 
         /// <summary>
@@ -87,28 +83,28 @@ namespace Heliopolis.Utilities
         /// <param name="request">Contains all the necessary information to perform the search by.</param>
         public void NewSearch(PathfindRequest<T> request)
         {
-            if (sortedOpenList.Count > 0)
-                sortedOpenList.Clear();
-            if (openList.Count > 0)
-                openList.Clear();
-            if (closedList.Count > 0)
-                closedList.Clear();
-            if (finalDirections.Count > 0)
-                finalDirections = new LinkedList<Direction>();
-            startNode = new Node<T>(request.start);
-            singlePointSolution = request.SinglePointSolution;
-            if (singlePointSolution)
-                goalNode = new Node<T>(request.end);
+            if (_sortedOpenList.Count > 0)
+                _sortedOpenList.Clear();
+            if (_openList.Count > 0)
+                _openList.Clear();
+            if (_closedList.Count > 0)
+                _closedList.Clear();
+            if (_finalDirections.Count > 0)
+                _finalDirections = new LinkedList<Direction>();
+            _startNode = new Node<T>(request.start);
+            _singlePointSolution = request.SinglePointSolution;
+            if (_singlePointSolution)
+                _goalNode = new Node<T>(request.end);
             else
-                goalNode = new Node<T>(request.possibleSolutions[0]);
-            startNode.H = GoalDistanceEstimate(request.start, request.end);
-            startNode.F = startNode.H + startNode.G;
+                _goalNode = new Node<T>(request.possibleSolutions[0]);
+            _startNode.H = GoalDistanceEstimate(request.start, request.end);
+            _startNode.F = _startNode.H + _startNode.G;
             // Add the start node into the open list to begin the search
-            pushHeap(startNode);
-            stepCount = 0;
-            searchState = SearchState.SEARCH_STATE_SEARCHING;
-            traceManager.WriteLine("New Request - " + request.ToString(), "path");
-            possibleSolutions = request.possibleSolutions;
+            PushHeap(_startNode);
+            _stepCount = 0;
+            _searchState = SearchState.SearchStateSearching;
+            _traceManager.WriteLine("New Request - " + request, "path");
+            _possibleSolutions = request.possibleSolutions;
         }
 
         /// <summary>
@@ -120,25 +116,25 @@ namespace Heliopolis.Utilities
         {
             for (int i = 0; i < numberOfSteps; i++)
             {
-                if (searchState != SearchState.SEARCH_STATE_SEARCHING)
+                if (_searchState != SearchState.SearchStateSearching)
                 {
-                    return searchState;
+                    return _searchState;
                 }
-                if ((openList.Count == 0) || cancelRequest)
+                if ((_openList.Count == 0) || _cancelRequest)
                 {
-                    searchState = SearchState.SEARCH_STATE_FAILED;
-                    return searchState;
+                    _searchState = SearchState.SearchStateFailed;
+                    return _searchState;
                 }
-                stepCount++;
-                Node<T> nextNode = popHeap();
+                _stepCount++;
+                Node<T> nextNode = PopHeap();
                 bool hitSolution = false;
-                if (nextNode.Position.Equals(goalNode.Position))
+                if (nextNode.Position.Equals(_goalNode.Position))
                 {
                     hitSolution = true;
                 }
-                else if (!singlePointSolution)
+                else if (!_singlePointSolution)
                 {
-                    foreach (T p in possibleSolutions)
+                    foreach (T p in _possibleSolutions)
                     {
                         if (nextNode.Position.Equals(p))
                         {
@@ -151,24 +147,22 @@ namespace Heliopolis.Utilities
                 else
                     ProcessNextSearchStep(nextNode);
             }
-            return searchState;
+            return _searchState;
         }
 
         /// <summary>
         /// Returns the directions to follow which describes a successful solution.
         /// </summary>
         /// <returns>A linked list of directions.</returns>
-        public PathfindAnswer finalResult()
+        public PathfindAnswer FinalResult()
         {
-            if (searchState != SearchState.SEARCH_STATE_SUCCEEDED)
+            if (_searchState != SearchState.SearchStateSucceeded)
             {
                 return null;
             }
             else
             {
-                PathfindAnswer returnMe = new PathfindAnswer();
-                returnMe.directions = finalDirections;
-                returnMe.owner = null;
+                PathfindAnswer returnMe = new PathfindAnswer {Directions = _finalDirections, Owner = null};
                 return returnMe;
             }
         }
@@ -179,31 +173,31 @@ namespace Heliopolis.Utilities
         /// This collection will contain a list of nodes to solve, ie the open list.
         /// </summary>
         /// <param name="pushNode">The node to add into the collection.</param>
-        private void pushHeap(Node<T> pushNode)
+        private void PushHeap(Node<T> pushNode)
         {
-            if (openList.Count == 0)
+            if (_openList.Count == 0)
             {
-                openList.AddFirst(pushNode);
-                sortedOpenList.Add(pushNode.Position, pushNode);
+                _openList.AddFirst(pushNode);
+                _sortedOpenList.Add(pushNode.Position, pushNode);
             }
             else
             {
                 // Can we add to the very front?
-                if (openList.Last.Value.F >= pushNode.F)
+                if (_openList.Last.Value.F >= pushNode.F)
                 {
-                    openList.AddLast(pushNode);
-                    sortedOpenList.Add(pushNode.Position, pushNode);
+                    _openList.AddLast(pushNode);
+                    _sortedOpenList.Add(pushNode.Position, pushNode);
                 }
                 else
                 {
                     // Otherwise find the correct point to insert
-                    LinkedListNode<Node<T>> node = openList.First;
+                    LinkedListNode<Node<T>> node = _openList.First;
                     while (node != null)
                     {
                         if (node.Value.F <= pushNode.F)
                         {
-                            openList.AddBefore(node, pushNode);
-                            sortedOpenList.Add(pushNode.Position, pushNode);
+                            _openList.AddBefore(node, pushNode);
+                            _sortedOpenList.Add(pushNode.Position, pushNode);
                             break;
                         }
                         node = node.Next;
@@ -217,19 +211,16 @@ namespace Heliopolis.Utilities
         /// Used when getting the next Node to solve.
         /// </summary>
         /// <returns>Returns the top element.</returns>
-        private Node<T> popHeap()
+        private Node<T> PopHeap()
         {
-            if (openList.Count > 0)
+            if (_openList.Count > 0)
             {
-                Node<T> returnMe = openList.Last.Value;
-                openList.RemoveLast();
-                sortedOpenList.Remove(returnMe.Position);
+                Node<T> returnMe = _openList.Last.Value;
+                _openList.RemoveLast();
+                _sortedOpenList.Remove(returnMe.Position);
                 return returnMe;
             }
-            else
-            {
-                return null;
-            }
+            return null;
         }
 
         /// <summary>
@@ -239,14 +230,14 @@ namespace Heliopolis.Utilities
         /// <param name="nextNode">Next open node in the solution.</param>
         private void FinaliseNodeDetails(Node<T> nextNode)
         {
-            traceManager.WriteLine("FinaliseNodeDetails", "path");
-            goalNode.Parent = nextNode.Parent;
-            goalNode.ComeFrom = nextNode.ComeFrom;
-            if (nextNode != startNode)
+            _traceManager.WriteLine("FinaliseNodeDetails", "path");
+            _goalNode.Parent = nextNode.Parent;
+            _goalNode.ComeFrom = nextNode.ComeFrom;
+            if (nextNode != _startNode)
             {
-                Node<T> nodeChild = goalNode;
-                Node<T> nodeParent = goalNode.Parent;
-                while (nodeChild != startNode)
+                Node<T> nodeChild = _goalNode;
+                Node<T> nodeParent = _goalNode.Parent;
+                while (nodeChild != _startNode)
                 {
                     nodeParent.Child = nodeChild;
                     // Set the direction
@@ -274,13 +265,13 @@ namespace Heliopolis.Utilities
                             nodeParent.GoTo = Direction.Nowhere;
                             break;
                     }
-                    finalDirections.AddFirst(nodeParent.GoTo);
+                    _finalDirections.AddFirst(nodeParent.GoTo);
                     nodeChild = nodeParent;
                     nodeParent = nodeParent.Parent;
                 }
             }
-            traceManager.DisplayContentsOfLinkedList(finalDirections, "path");
-            searchState = SearchState.SEARCH_STATE_SUCCEEDED;
+            _traceManager.DisplayContentsOfLinkedList(_finalDirections, "path");
+            _searchState = SearchState.SearchStateSucceeded;
         }
 
         /// <summary>
@@ -289,12 +280,12 @@ namespace Heliopolis.Utilities
         /// <param name="nextNode">Next open node to solve.</param>
         private void ProcessNextSearchStep(Node<T> nextNode)
         {
-            traceManager.WriteLine("ProcessNextSearchStep", "path");
+            _traceManager.WriteLine("ProcessNextSearchStep", "path");
             T parentPoint = nextNode.Parent.Position;
             T pos = nextNode.Position;
-            List<Node<T>> successors = searchGrid.GetSuccessorsWithDir(pos, parentPoint);
-            traceManager.WriteLine("Successors of " + nextNode.ToString(), "path");
-            traceManager.DisplayContentsOfNodeList(successors, "path");
+            List<Node<T>> successors = _searchGrid.GetSuccessorsWithDir(pos, parentPoint);
+            _traceManager.WriteLine("Successors of " + nextNode.ToString(), "path");
+            _traceManager.DisplayContentsOfNodeList(successors, "path");
             Node<T> openNode = null;
             Node<T> closedNode = null;
             foreach (Node<T> successor in successors)
@@ -303,13 +294,13 @@ namespace Heliopolis.Utilities
                 bool foundClosed = false;
                 // in this case, the "cost" is added to g
                 // but I think I will keep cost even across all squares
-                float newg = nextNode.G + searchGrid.getPathingWeight(successor.Position);
+                float newg = nextNode.G + _searchGrid.GetPathingWeight(successor.Position);
 
                 // check to see if this node exists already on the open list
-                if (sortedOpenList.ContainsKey(successor.Position))
+                if (_sortedOpenList.ContainsKey(successor.Position))
                 {
                     foundOpen = true;
-                    openNode = sortedOpenList[successor.Position];
+                    openNode = _sortedOpenList[successor.Position];
                 }
                 if (foundOpen)
                     if (openNode.G <= newg)
@@ -317,10 +308,10 @@ namespace Heliopolis.Utilities
                         // ignore this successor because another solution is better/at least as good
                         continue;
                     }
-                if (closedList.ContainsKey(successor.Position))
+                if (_closedList.ContainsKey(successor.Position))
                 {
                     foundClosed = true;
-                    closedNode = closedList[successor.Position];
+                    closedNode = _closedList[successor.Position];
                 }
                 if (foundClosed)
                     if (closedNode.G <= newg)
@@ -330,22 +321,22 @@ namespace Heliopolis.Utilities
                     }
                 successor.Parent = nextNode;
                 successor.G = newg;
-                successor.H = GoalDistanceEstimate(goalNode.Position, successor.Position);
+                successor.H = GoalDistanceEstimate(_goalNode.Position, successor.Position);
                 successor.F = successor.G + successor.H;
-                traceManager.WriteLine("Node added to open list - " + successor.ToString(), "path");
+                _traceManager.WriteLine("Node added to open list - " + successor.ToString(), "path");
                 if (foundClosed)
                 {
-                    closedList.Remove(closedNode.Position);
+                    _closedList.Remove(closedNode.Position);
                 }
                 if (foundOpen)
                 {
-                    openList.Remove(openNode);
-                    sortedOpenList.Remove(openNode.Position);
+                    _openList.Remove(openNode);
+                    _sortedOpenList.Remove(openNode.Position);
                 }
-                pushHeap(successor);
+                PushHeap(successor);
             }
             // now that all the successors have been deal with add nextNode onto closed list
-            closedList.Add(nextNode.Position,nextNode);
+            _closedList.Add(nextNode.Position,nextNode);
         }
 
         public abstract float GoalDistanceEstimate(T position, T goal);

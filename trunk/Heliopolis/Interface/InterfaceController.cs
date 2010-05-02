@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Heliopolis.GraphicsEngine;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Heliopolis.Engine;
 
 namespace Heliopolis.Interface
 {
@@ -29,7 +29,7 @@ namespace Heliopolis.Interface
         {
             interfaceModel.MousePoint = new Point(Mouse.GetState().X, Mouse.GetState().Y);
             Point cameraOffset = new Point((int)(interfaceModel.CameraPos.X * -1 * interfaceModel.ZoomLevel), (int)((int)(interfaceModel.CameraPos.Y * -1 * interfaceModel.ZoomLevel)));
-            interfaceModel.MouseXYPoint = Iso2D.ConvertScreenToTile(interfaceModel.MousePoint, (int)(engine.TileSize.X * interfaceModel.ZoomLevel), (int)(engine.TileSize.Y * interfaceModel.ZoomLevel), engine.FirstTileXYPosition(interfaceModel.ZoomLevel), cameraOffset);
+            interfaceModel.MouseXYPoint = Iso2D.ConvertScreenToTile(interfaceModel.MousePoint, (int)(engine.TileSize.X * interfaceModel.ZoomLevel), (int)(engine.TileSize.Y * interfaceModel.ZoomLevel), engine.FirstTileXyPosition(interfaceModel.ZoomLevel), cameraOffset);
 
             int moveSpeed = 5;
             if (Keyboard.GetState().IsKeyDown(Keys.Down))

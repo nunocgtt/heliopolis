@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Diagnostics;
+using Heliopolis.Utilities.PathFinder;
 using Microsoft.Xna.Framework;
 
 namespace Heliopolis.Utilities

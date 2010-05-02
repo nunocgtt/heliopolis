@@ -33,6 +33,10 @@ namespace Heliopolis.World.State
             set { _jobType = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the owning designation.
+        /// </summary>
+        /// <value>The owning designation.</value>
         public Designation OwningDesignation { get; set; }
 
         /// <summary>
@@ -85,6 +89,13 @@ namespace Heliopolis.World.State
 
     public class HarvestJob : Job
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HarvestJob"/> class.
+        /// </summary>
+        /// <param name="owner">The owner.</param>
+        /// <param name="actor">The actor.</param>
+        /// <param name="jobType">Type of the job.</param>
+        /// <param name="parentDesignation">The parent designation.</param>
         public HarvestJob(GameWorld owner, Actor actor, string jobType, HarvestDesignation parentDesignation)
             : base(owner, actor, jobType, parentDesignation)
         {
@@ -120,7 +131,7 @@ namespace Heliopolis.World.State
 
         protected override bool CheckFinishedState()
         {
-            return this.IsFinished;
+            return IsFinished;
         }
     }
 
@@ -144,7 +155,7 @@ namespace Heliopolis.World.State
 
         protected override bool CheckFinishedState()
         {
-            return this.IsFinished;
+            return IsFinished;
         }
     }
 }

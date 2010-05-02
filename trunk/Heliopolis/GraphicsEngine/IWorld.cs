@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
-namespace Heliopolis.Engine
+namespace Heliopolis.GraphicsEngine
 {
     public interface IWorld
     {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Heliopolis.Utilities.PathFinder;
 using Microsoft.Xna.Framework;
 using Heliopolis.Utilities;
 

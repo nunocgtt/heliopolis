@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Heliopolis.Utilities.PathFinder;
 using Microsoft.Xna.Framework;
 using System;
 using Heliopolis.Utilities;

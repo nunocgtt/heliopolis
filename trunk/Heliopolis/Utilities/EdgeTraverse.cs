@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Heliopolis.Utilities.PathFinder;
 using Heliopolis.World.Environment;
 using Microsoft.Xna.Framework;
 using Heliopolis.World;
