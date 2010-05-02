@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Heliopolis.GraphicsEngine;
 using Heliopolis.Utilities.PathFinder;
+using Heliopolis.Utilities.SpatialTreeIndexSystem;
 using Microsoft.Xna.Framework;
 using Heliopolis.Utilities;
 

@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Heliopolis.Utilities;
 using Heliopolis.World.JobSystem;
-using Microsoft.Xna.Framework;
 
 namespace Heliopolis.World.State
 {
@@ -26,9 +22,9 @@ namespace Heliopolis.World.State
         public ActorStateSatisfyDesignation(Actor myActor, Designation myDesignation, GameWorld owner)
             : base(myActor, owner)
         {
-            this._myDesignation = myDesignation;
+            _myDesignation = myDesignation;
             SubStates = new LinkedList<ActorState>();
-            List<ActorState> subStatesFromDesignation = this._myDesignation.GetStateStepsToPerform();
+            List<ActorState> subStatesFromDesignation = _myDesignation.GetStateStepsToPerform();
             foreach (ActorState substate in subStatesFromDesignation)
                 SubStates.AddFirst(substate);
         }

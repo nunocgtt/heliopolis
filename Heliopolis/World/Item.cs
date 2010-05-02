@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Xml;
+using Heliopolis.Utilities.SpatialTreeIndexSystem;
 using Microsoft.Xna.Framework;
 using System;
 using Heliopolis.Utilities;

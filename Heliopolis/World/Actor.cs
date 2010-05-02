@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Heliopolis.Utilities;
 using Heliopolis.Utilities.PathFinder;
+using Heliopolis.Utilities.SpatialTreeIndexSystem;
 using Heliopolis.World.State;
 using Microsoft.Xna.Framework;
 

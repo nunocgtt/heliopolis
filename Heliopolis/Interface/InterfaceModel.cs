@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 
 namespace Heliopolis.Interface
@@ -9,21 +7,22 @@ namespace Heliopolis.Interface
     public class InterfaceModel
     {
         public Point CameraPos;
-        public bool ZoomedIn = false;
+        public bool ZoomedIn;
         public Point ScreenSize;
         public Point MousePoint;
         public SelectionState CurrentSelectionState;
-        public Point MouseXYPoint;
+        public Point MouseXyPoint;
 
-        public Point StartMouseDownPoint;
-        public Point EndMouseDownPoint;
+        private Point _startMouseDownPoint;
+        private Point _endMouseDownPoint;
         public bool MouseDown;
-        public float FPS { get; set; }
-        public List<Point> SelectionTiles { get; set; }
+        public float Fps { get; set; }
+        public List<Point> SelectionTiles { get; private set; }
 
         public InterfaceModel(Point screenSize)
         {
-            this.ScreenSize = screenSize;
+            ZoomedIn = false;
+            ScreenSize = screenSize;
             CameraPos = new Point(0, 0);
             CurrentSelectionState = SelectionState.None;
             MouseDown = false;
@@ -31,19 +30,19 @@ namespace Heliopolis.Interface
 
         public void StartSelection()
         {
-            StartMouseDownPoint = MouseXYPoint;
-            EndMouseDownPoint = MouseXYPoint;
+            _startMouseDownPoint = MouseXyPoint;
+            _endMouseDownPoint = MouseXyPoint;
             MouseDown = true;
         }
 
         public void UpdateSelection()
         {
-            EndMouseDownPoint = MouseXYPoint;
+            _endMouseDownPoint = MouseXyPoint;
         }
 
         public void EndSelection()
         {
-            EndMouseDownPoint = MouseXYPoint;
+            _endMouseDownPoint = MouseXyPoint;
             MouseDown = false;
         }
 
@@ -57,52 +56,52 @@ namespace Heliopolis.Interface
 
         public void UpdateSelectionInfo()
         {
-            SelectionTiles = calculateSeletionTiles();
+            SelectionTiles = CalculateSeletionTiles();
         }
 
-        private List<Point> calculateSeletionTiles()
+        private List<Point> CalculateSeletionTiles()
         {
             List<Point> returnMe = new List<Point>();
-            if (CurrentSelectionState == SelectionState.Single)
+            switch (CurrentSelectionState)
             {
-                returnMe.Add(this.MouseXYPoint);
-            }
-            else if (CurrentSelectionState == SelectionState.Area)
-            {
-                if (this.MouseDown)
-                {
-                    int startX = Math.Min(StartMouseDownPoint.X, EndMouseDownPoint.X);
-                    int endX = Math.Max(StartMouseDownPoint.X, EndMouseDownPoint.X);
-                    int startY = Math.Min(StartMouseDownPoint.Y, EndMouseDownPoint.Y);
-                    int endY = Math.Max(StartMouseDownPoint.Y, EndMouseDownPoint.Y);
-                    for (int i = startX; i <= endX; i++)
-                        for (int j = startY; j <= endY; j++)
-                            returnMe.Add(new Point(i, j));
-                }
-                else
-                    returnMe.Add(this.MouseXYPoint);
-            }
-            else if (CurrentSelectionState == SelectionState.Line)
-            {
-                if (this.MouseDown)
-                {
-                    int startX = Math.Min(StartMouseDownPoint.X, EndMouseDownPoint.X);
-                    int endX = Math.Max(StartMouseDownPoint.X, EndMouseDownPoint.X);
-                    int startY = Math.Min(StartMouseDownPoint.Y, EndMouseDownPoint.Y);
-                    int endY = Math.Max(StartMouseDownPoint.Y, EndMouseDownPoint.Y);
-                    if ((endX - startX) > (endY - startY))
+                case SelectionState.Single:
+                    returnMe.Add(MouseXyPoint);
+                    break;
+                case SelectionState.Area:
+                    if (MouseDown)
                     {
+                        int startX = Math.Min(_startMouseDownPoint.X, _endMouseDownPoint.X);
+                        int endX = Math.Max(_startMouseDownPoint.X, _endMouseDownPoint.X);
+                        int startY = Math.Min(_startMouseDownPoint.Y, _endMouseDownPoint.Y);
+                        int endY = Math.Max(_startMouseDownPoint.Y, _endMouseDownPoint.Y);
                         for (int i = startX; i <= endX; i++)
-                            returnMe.Add(new Point(i, StartMouseDownPoint.Y));
+                            for (int j = startY; j <= endY; j++)
+                                returnMe.Add(new Point(i, j));
                     }
                     else
+                        returnMe.Add(this.MouseXyPoint);
+                    break;
+                case SelectionState.Line:
+                    if (MouseDown)
                     {
-                        for (int j = startY; j <= endY; j++)
-                            returnMe.Add(new Point(StartMouseDownPoint.X, j));
+                        int startX = Math.Min(_startMouseDownPoint.X, _endMouseDownPoint.X);
+                        int endX = Math.Max(_startMouseDownPoint.X, _endMouseDownPoint.X);
+                        int startY = Math.Min(_startMouseDownPoint.Y, _endMouseDownPoint.Y);
+                        int endY = Math.Max(_startMouseDownPoint.Y, _endMouseDownPoint.Y);
+                        if ((endX - startX) > (endY - startY))
+                        {
+                            for (int i = startX; i <= endX; i++)
+                                returnMe.Add(new Point(i, _startMouseDownPoint.Y));
+                        }
+                        else
+                        {
+                            for (int j = startY; j <= endY; j++)
+                                returnMe.Add(new Point(_startMouseDownPoint.X, j));
+                        }
                     }
-                }
-                else
-                    returnMe.Add(this.MouseXYPoint);
+                    else
+                        returnMe.Add(MouseXyPoint);
+                    break;
             }
             return returnMe;
         }
