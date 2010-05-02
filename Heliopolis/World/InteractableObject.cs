@@ -10,17 +10,14 @@ namespace Heliopolis.World
     {
         public EnvironmentTile OwningTile { get; set; }
         public string Texture { get; set; }
-
         public List<string> Actions = new List<string>();
 
-        // Manufacturer InteractableObject
-
-        public InteractableObject(GameWorld _owner, EnvironmentTile _owningTile, string _texture,
+        protected InteractableObject(GameWorld owner, EnvironmentTile owningTile, string texture,
             string action)
-            : base(_owner)
+            : base(owner)
         {
-            this.OwningTile = _owningTile;
-            this.Texture = _texture;
+            OwningTile = owningTile;
+            Texture = texture;
             Actions.Add(action);
         }
 
@@ -35,16 +32,16 @@ namespace Heliopolis.World
         public string ResourceType { get; set; }
         public int ResourceCount { get; set; }
 
-        public HarvestableInteractableObject(GameWorld _owner, EnvironmentTile _owningTile, string _texture,
+        public HarvestableInteractableObject(GameWorld owner, EnvironmentTile owningTile, string texture,
             int resourceCount, string resourceType, string action)
-            : base(_owner, _owningTile, _texture, action)
+            : base(owner, owningTile, texture, action)
         {
-            this.OwningTile = _owningTile;
-            this.TimedEventDisabled = true;
-            this.Texture = _texture;
-            this.ResourceType = resourceType;
-            this.ResourceCount = resourceCount;
-            this.TimedEventDisabled = true;
+            OwningTile = owningTile;
+            TimedEventDisabled = true;
+            Texture = texture;
+            ResourceType = resourceType;
+            ResourceCount = resourceCount;
+            TimedEventDisabled = true;
         }
 
         public override void ExecuteTick(TimeSpan absoluteMilliseconds)
@@ -55,14 +52,14 @@ namespace Heliopolis.World
 
     public class ManufactureInteractableObject : InteractableObject
     {
-        public ManufactureInteractableObject(GameWorld _owner, EnvironmentTile _owningTile, string _texture,
+        public ManufactureInteractableObject(GameWorld owner, EnvironmentTile owningTile, string texture,
             string action)
-            : base(_owner, _owningTile, _texture, action)
+            : base(owner, owningTile, texture, action)
         {
-            this.OwningTile = _owningTile;
-            this.TimedEventDisabled = true;
-            this.Texture = _texture;
-            this.TimedEventDisabled = true;
+            OwningTile = owningTile;
+            TimedEventDisabled = true;
+            Texture = texture;
+            TimedEventDisabled = true;
         }
     }
 }

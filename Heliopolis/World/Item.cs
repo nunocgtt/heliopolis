@@ -3,7 +3,6 @@ using System.Xml;
 using Heliopolis.Utilities.SpatialTreeIndexSystem;
 using Microsoft.Xna.Framework;
 using System;
-using Heliopolis.Utilities;
 
 namespace Heliopolis.World
 {
@@ -35,24 +34,23 @@ namespace Heliopolis.World
     /// </summary>
     /// <remarks>Items can exist on the ground, in a building or on an actor as inventory.</remarks>
     [Serializable]
-    public class Item : GameWorldObject, System.ICloneable, ISpatialIndexMember
+    public class Item : GameWorldObject, ICloneable, ISpatialIndexMember
     {
-        private float weight;
-        private string classification;
-        private string texture;
-        private Point position;
-        private bool isReserved;
-        private ItemStates itemState;
-        private ICanHoldItem holder;
-        private string itemType;
+        private readonly string _classification;
+        private string _texture;
+        private Point _position;
+        private bool _isReserved;
+        private ItemStates _itemState;
+        private ICanHoldItem _holder;
+        private readonly string _itemType;
 
         /// <summary>
         /// The texture for rendering.
         /// </summary>
         public string Texture
         {
-            get { return texture; }
-            set { texture = value; }
+            get { return _texture; }
+            set { _texture = value; }
         }
 
         /// <summary>
@@ -60,12 +58,12 @@ namespace Heliopolis.World
         /// </summary>
         public Point Position
         {
-            get { return position; }
+            get { return _position; }
             set
             {
                 // Might need to change sections now
-                Owner.SpatialTreeIndex.CheckChangeSection(position,value,this, SpatialObjectType.Item, this.itemType);
-                position = value;
+                Owner.SpatialTreeIndex.CheckChangeSection(_position,value,this, SpatialObjectType.Item, this._itemType);
+                _position = value;
             }
         }
 
@@ -74,8 +72,8 @@ namespace Heliopolis.World
         /// </summary>
         public bool IsReserved
         {
-            get { return isReserved; }
-            set { isReserved = value; }
+            get { return _isReserved; }
+            set { _isReserved = value; }
         }
 
         /// <summary>
@@ -83,19 +81,19 @@ namespace Heliopolis.World
         /// </summary>
         public ItemStates ItemState
         {
-            get { return itemState; }
+            get { return _itemState; }
             set {
                 // Item is being picked up
-                if ((value == ItemStates.BeingCarried || value == ItemStates.InBackpack) && (itemState == ItemStates.OnGround || itemState == ItemStates.InStorage))
+                if ((value == ItemStates.BeingCarried || value == ItemStates.InBackpack) && (_itemState == ItemStates.OnGround || _itemState == ItemStates.InStorage))
                 {
-                    Owner.SpatialTreeIndex.RemoveFromSection(this.position, this, SpatialObjectType.Item, itemType);
+                    Owner.SpatialTreeIndex.RemoveFromSection(_position, this, SpatialObjectType.Item, _itemType);
                 }
                 // Item is being put down
-                if ((value == ItemStates.OnGround || value == ItemStates.InStorage) && (itemState == ItemStates.BeingCarried || itemState == ItemStates.InBackpack))
+                if ((value == ItemStates.OnGround || value == ItemStates.InStorage) && (_itemState == ItemStates.BeingCarried || _itemState == ItemStates.InBackpack))
                 {
-                    Owner.SpatialTreeIndex.AddToSection(this.position, this, SpatialObjectType.Item, itemType);
+                    Owner.SpatialTreeIndex.AddToSection(_position, this, SpatialObjectType.Item, _itemType);
                 }
-                itemState = value; 
+                _itemState = value; 
             }
         }
 
@@ -104,8 +102,8 @@ namespace Heliopolis.World
         /// </summary>
         public ICanHoldItem Holder
         {
-            get { return holder; }
-            set { holder = value; }
+            get { return _holder; }
+            set { _holder = value; }
         }
 
         /// <summary>
@@ -113,7 +111,7 @@ namespace Heliopolis.World
         /// </summary>
         public string Classification
         {
-            get { return classification; }
+            get { return _classification; }
         }
 
         /// <summary>
@@ -121,27 +119,26 @@ namespace Heliopolis.World
         /// </summary>
         public string ItemType
         {
-            get { return itemType; }
+            get { return _itemType; }
         }
 
         /// <summary>
         /// Initialises a new instance of the Item class.
         /// </summary>
-        /// <param name="_weight">The weight.</param>
-        /// <param name="_class">The class.</param>
-        /// <param name="_texture">The texture.</param>
-        /// <param name="_itemType">The type.</param>
-        /// <param name="_owner">The owning game world.</param>
-        public Item(float _weight, string _class, string _texture, string _itemType, GameWorld _owner) : base(_owner)
+        /// <param name="weight">The weight.</param>
+        /// <param name="classification">The class.</param>
+        /// <param name="texture">The texture.</param>
+        /// <param name="itemType">The type.</param>
+        /// <param name="owner">The owning game world.</param>
+        public Item(float weight, string classification, string texture, string itemType, GameWorld owner) : base(owner)
         {
-            itemType = _itemType;
-            weight = _weight;
-            classification = _class;
-            texture = _texture;
-            isReserved = false;
-            itemState = ItemStates.OnGround;
-            holder = null;
-            position = new Point(-1,-1);
+            _itemType = itemType;
+            _classification = classification;
+            _texture = texture;
+            _isReserved = false;
+            _itemState = ItemStates.OnGround;
+            _holder = null;
+            _position = new Point(-1,-1);
         }
 
         /// <summary>
