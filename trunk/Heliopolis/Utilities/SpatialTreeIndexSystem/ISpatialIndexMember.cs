@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
-namespace Heliopolis.Utilities
+namespace Heliopolis.Utilities.SpatialTreeIndexSystem
 {
     /// <summary>
     /// To be implemented by objects that need to be rendered.

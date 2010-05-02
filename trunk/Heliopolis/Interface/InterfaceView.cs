@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Heliopolis.GraphicsEngine;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
@@ -11,30 +8,30 @@ namespace Heliopolis.Interface
 {
     public class InterfaceView : IIsometricTileProvider
     {
-        private SpriteFont hudFont;
+        private SpriteFont _hudFont;
 
-        private InterfaceModel interfaceModel;
-        private IsometricEngine engine;
+        private readonly InterfaceModel _interfaceModel;
+        private readonly IsometricEngine _engine;
 
         public InterfaceView(InterfaceModel model, IsometricEngine gameEngine)
         {
-            this.interfaceModel = model;
-            this.engine = gameEngine;
+            _interfaceModel = model;
+            _engine = gameEngine;
         }
 
         public void LoadContent(ContentManager contentManager)
         {
-            hudFont = contentManager.Load<SpriteFont>("Fonts/Hud");
+            _hudFont = contentManager.Load<SpriteFont>("Fonts/Hud");
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            engine.DrawWorld(spriteBatch, interfaceModel.CameraPos, interfaceModel.ZoomLevel, interfaceModel.ScreenSize);
-            spriteBatch.DrawString(hudFont, 
+            _engine.DrawWorld(spriteBatch, _interfaceModel.CameraPos, _interfaceModel.ZoomLevel, _interfaceModel.ScreenSize);
+            spriteBatch.DrawString(_hudFont, 
                 string.Format("X: {0} Y: {1} FPS:{2}", 
-                    interfaceModel.MouseXYPoint.X, 
-                    interfaceModel.MouseXYPoint.Y,
-                    interfaceModel.FPS), 
+                    _interfaceModel.MouseXyPoint.X, 
+                    _interfaceModel.MouseXyPoint.Y,
+                    _interfaceModel.Fps), 
                 new Vector2(0, 0), Color.White);
         }
 
@@ -43,7 +40,7 @@ namespace Heliopolis.Interface
         public List<string> GetTexturesToDraw(Point position)
         {
             List<string> returnMe = new List<string>();
-            if (interfaceModel.SelectionTiles.Contains(position))
+            if (_interfaceModel.SelectionTiles.Contains(position))
             {
                 returnMe.Add("selection1");
             }

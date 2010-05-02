@@ -10,83 +10,82 @@ namespace Heliopolis.Interface
 {
     public class InterfaceController
     {
-        private InterfaceModel interfaceModel;
-        private Game game;
-        private IsometricEngine engine;
-
-        private int frameRate = 0;
-        private int frameCounter = 0;
-        private TimeSpan elapsedTime = TimeSpan.Zero;
+        private const int MoveSpeed = 5;
+        private readonly InterfaceModel _interfaceModel;
+        private readonly Game _game;
+        private readonly IsometricEngine _engine;
+        private int _frameRate;
+        private int _frameCounter;
+        private TimeSpan _elapsedTime = TimeSpan.Zero;
 
         public InterfaceController(InterfaceModel model, Game gameOwner, IsometricEngine engine)
         {
-            this.interfaceModel = model;
-            this.game = gameOwner;
-            this.engine = engine;
+            _interfaceModel = model;
+            _game = gameOwner;
+            _engine = engine;
         }
 
         public void Update(GameTime gameTime)
         {
-            interfaceModel.MousePoint = new Point(Mouse.GetState().X, Mouse.GetState().Y);
-            Point cameraOffset = new Point((int)(interfaceModel.CameraPos.X * -1 * interfaceModel.ZoomLevel), (int)((int)(interfaceModel.CameraPos.Y * -1 * interfaceModel.ZoomLevel)));
-            interfaceModel.MouseXYPoint = Iso2D.ConvertScreenToTile(interfaceModel.MousePoint, (int)(engine.TileSize.X * interfaceModel.ZoomLevel), (int)(engine.TileSize.Y * interfaceModel.ZoomLevel), engine.FirstTileXyPosition(interfaceModel.ZoomLevel), cameraOffset);
+            _interfaceModel.MousePoint = new Point(Mouse.GetState().X, Mouse.GetState().Y);
+            Point cameraOffset = new Point((int)(_interfaceModel.CameraPos.X * -1 * _interfaceModel.ZoomLevel), (int)((int)(_interfaceModel.CameraPos.Y * -1 * _interfaceModel.ZoomLevel)));
+            _interfaceModel.MouseXyPoint = Iso2D.ConvertScreenToTile(_interfaceModel.MousePoint, (int)(_engine.TileSize.X * _interfaceModel.ZoomLevel), (int)(_engine.TileSize.Y * _interfaceModel.ZoomLevel), _engine.FirstTileXyPosition(_interfaceModel.ZoomLevel), cameraOffset);
 
-            int moveSpeed = 5;
             if (Keyboard.GetState().IsKeyDown(Keys.Down))
-                interfaceModel.CameraPos.Y += moveSpeed;
+                _interfaceModel.CameraPos.Y += MoveSpeed;
             if (Keyboard.GetState().IsKeyDown(Keys.Up))
-                interfaceModel.CameraPos.Y -= moveSpeed;
+                _interfaceModel.CameraPos.Y -= MoveSpeed;
             if (Keyboard.GetState().IsKeyDown(Keys.Right))
-                interfaceModel.CameraPos.X += moveSpeed;
+                _interfaceModel.CameraPos.X += MoveSpeed;
             if (Keyboard.GetState().IsKeyDown(Keys.Left))
-                interfaceModel.CameraPos.X -= moveSpeed;
+                _interfaceModel.CameraPos.X -= MoveSpeed;
             if (Keyboard.GetState().IsKeyDown(Keys.Add))
-                interfaceModel.ZoomedIn = true;
+                _interfaceModel.ZoomedIn = true;
             if (Keyboard.GetState().IsKeyDown(Keys.Subtract))
-                interfaceModel.ZoomedIn = false;
+                _interfaceModel.ZoomedIn = false;
             if (Keyboard.GetState().IsKeyDown(Keys.A))
-                interfaceModel.CurrentSelectionState = SelectionState.Area;
+                _interfaceModel.CurrentSelectionState = SelectionState.Area;
             if (Keyboard.GetState().IsKeyDown(Keys.L))
-                interfaceModel.CurrentSelectionState = SelectionState.Line;
+                _interfaceModel.CurrentSelectionState = SelectionState.Line;
             if (Keyboard.GetState().IsKeyDown(Keys.S))
-                interfaceModel.CurrentSelectionState = SelectionState.Single;
+                _interfaceModel.CurrentSelectionState = SelectionState.Single;
             if (Keyboard.GetState().IsKeyDown(Keys.N))
-                interfaceModel.CurrentSelectionState = SelectionState.None;
+                _interfaceModel.CurrentSelectionState = SelectionState.None;
             if (Keyboard.GetState().IsKeyDown(Keys.B))
-                interfaceModel.CurrentSelectionState = SelectionState.PlaceBuilding;
+                _interfaceModel.CurrentSelectionState = SelectionState.PlaceBuilding;
 
-            if (interfaceModel.CameraPos.Y < 0)
-                interfaceModel.CameraPos.Y = 0;
-            if (interfaceModel.CameraPos.X < 0)
-                interfaceModel.CameraPos.X = 0;
+            if (_interfaceModel.CameraPos.Y < 0)
+                _interfaceModel.CameraPos.Y = 0;
+            if (_interfaceModel.CameraPos.X < 0)
+                _interfaceModel.CameraPos.X = 0;
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-                game.Exit();
+                _game.Exit();
 
             if (Mouse.GetState().LeftButton == ButtonState.Pressed)
             {
-                if (!interfaceModel.MouseDown)
-                    interfaceModel.StartSelection();
+                if (!_interfaceModel.MouseDown)
+                    _interfaceModel.StartSelection();
                 else
-                    interfaceModel.UpdateSelection();
+                    _interfaceModel.UpdateSelection();
             }
             else if (Mouse.GetState().LeftButton == ButtonState.Released)
             {
-                if (interfaceModel.MouseDown)
-                    interfaceModel.EndSelection(); 
+                if (_interfaceModel.MouseDown)
+                    _interfaceModel.EndSelection(); 
             }
 
-            elapsedTime += gameTime.ElapsedGameTime;
-            frameCounter++;
+            _elapsedTime += gameTime.ElapsedGameTime;
+            _frameCounter++;
 
-            if (elapsedTime > TimeSpan.FromSeconds(1))
+            if (_elapsedTime > TimeSpan.FromSeconds(1))
             {
-                elapsedTime -= TimeSpan.FromSeconds(1);
-                frameRate = frameCounter;
-                frameCounter = 0;
+                _elapsedTime -= TimeSpan.FromSeconds(1);
+                _frameRate = _frameCounter;
+                _frameCounter = 0;
             }
 
-            interfaceModel.FPS = frameRate;
-            interfaceModel.UpdateSelectionInfo();
+            _interfaceModel.Fps = _frameRate;
+            _interfaceModel.UpdateSelectionInfo();
         }
 
     }

@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Heliopolis.World;
 
-namespace Heliopolis.Utilities
+namespace Heliopolis.Utilities.SpatialTreeIndexSystem
 {
     /// <summary>
     /// Enumerates the various type of objects held in the SpatialTreeIndex.
     /// </summary>
-    public enum SpatialObjectType : int
+    public enum SpatialObjectType
     {
         Item = 0,
         Actor = 1,
@@ -31,19 +30,19 @@ namespace Heliopolis.Utilities
             this.TreeWidth = treeWidth;
         }
 
-        public Point SectionSize { get; set; }
-        public Point WorldSize { get; set; }
+        private Point SectionSize { get; set; }
+        private Point WorldSize { get; set; }
 
         /// <summary>
         /// This number squared will give the number of branches at level
         /// </summary>
-        public int[] TreeWidth { get; set; }
+        public int[] TreeWidth { get; private set; }
         /// <summary>
         /// A grid which provides quick access to an Environment Tile's relevant spatial tree node.
         /// </summary>
         public SpatialTreeNode[,] GridToNodes;
 
-        private Dictionary<int, Dictionary<Point, List<ISpatialIndexMember>>> objectsBySection;
+        private Dictionary<int, Dictionary<Point, List<ISpatialIndexMember>>> _objectsBySection;
         
         public static int PointToIndex(Point convertMe, int xandysize)
         {
@@ -55,34 +54,32 @@ namespace Heliopolis.Utilities
             throw new Exception("Not implemented.");
         }
 
-        private Point positionToSection(Point position)
+        private Point PositionToSection(Point position)
         {
             return new Point((position.X / SectionSize.X), (position.Y / SectionSize.Y));
         }
 
         public void CheckChangeSection(Point oldPosition, Point newPosition, ISpatialIndexMember objectToMove, SpatialObjectType spatialObjectType, string resourceType)
         {
-            if (oldPosition != new Point(-1, -1))
+            if (oldPosition == new Point(-1, -1)) return;
+            Point oldSection = PositionToSection(oldPosition);
+            Point newSection = PositionToSection(newPosition);
+            if (oldSection != newSection)
             {
-                Point oldSection = positionToSection(oldPosition);
-                Point newSection = positionToSection(newPosition);
-                if (oldSection != newSection)
-                {
-                    Dictionary<Point, List<ISpatialIndexMember>> objectTypeBySection = objectsBySection[(int)spatialObjectType];
-                    if (spatialObjectType == SpatialObjectType.Item)
-                        GridToNodes[oldPosition.X, oldPosition.Y].ChangeResourceCount(resourceType, -1);
-                    objectTypeBySection[oldSection].Remove(objectToMove);
-                    objectTypeBySection[newSection].Add(objectToMove);
-                    if (spatialObjectType == SpatialObjectType.Item)
-                        GridToNodes[newPosition.X, newPosition.Y].ChangeResourceCount(resourceType, 1);
-                }
+                Dictionary<Point, List<ISpatialIndexMember>> objectTypeBySection = _objectsBySection[(int)spatialObjectType];
+                if (spatialObjectType == SpatialObjectType.Item)
+                    GridToNodes[oldPosition.X, oldPosition.Y].ChangeResourceCount(resourceType, -1);
+                objectTypeBySection[oldSection].Remove(objectToMove);
+                objectTypeBySection[newSection].Add(objectToMove);
+                if (spatialObjectType == SpatialObjectType.Item)
+                    GridToNodes[newPosition.X, newPosition.Y].ChangeResourceCount(resourceType, 1);
             }
         }
 
         public void AddToSection(Point position, ISpatialIndexMember objectToAdd, SpatialObjectType spatialObjectType, string resourceType)
         {
-            Point sectionToAdd = positionToSection(position);
-            Dictionary<Point, List<ISpatialIndexMember>> objectTypeBySection = objectsBySection[(int)spatialObjectType];
+            Point sectionToAdd = PositionToSection(position);
+            Dictionary<Point, List<ISpatialIndexMember>> objectTypeBySection = _objectsBySection[(int)spatialObjectType];
             objectTypeBySection[sectionToAdd].Add(objectToAdd);
             //Items are tracked in the tree
             if (spatialObjectType == SpatialObjectType.Item)
@@ -91,8 +88,8 @@ namespace Heliopolis.Utilities
 
         public void RemoveFromSection(Point position, ISpatialIndexMember objectToRemove, SpatialObjectType spatialObjectType, string resourceType)
         {
-            Point sectionToRemoveFrom = positionToSection(position);
-            Dictionary<Point, List<ISpatialIndexMember>> objectTypeBySection = objectsBySection[(int)spatialObjectType];
+            Point sectionToRemoveFrom = PositionToSection(position);
+            Dictionary<Point, List<ISpatialIndexMember>> objectTypeBySection = _objectsBySection[(int)spatialObjectType];
             if (spatialObjectType == SpatialObjectType.Item)
                 GridToNodes[position.X, position.Y].ChangeResourceCount(resourceType, -1);
             objectTypeBySection[sectionToRemoveFrom].Remove(objectToRemove);
@@ -100,45 +97,45 @@ namespace Heliopolis.Utilities
 
         public List<ISpatialIndexMember> SectionToRender(Point section, SpatialObjectType spatialObjectType)
         {
-            return objectsBySection[(int)spatialObjectType][section];
+            return _objectsBySection[(int)spatialObjectType][section];
         }
 
         public void Initialise()
         {
-            topNode = new SpatialTreeNode(new Point(0, 0), new Point(WorldSize.X - 1, WorldSize.Y - 1), 0, TreeWidth.Length - 1, null, this);
+            _topNode = new SpatialTreeNode(new Point(0, 0), new Point(WorldSize.X - 1, WorldSize.Y - 1), 0, TreeWidth.Length - 1, null, this);
             GridToNodes = new SpatialTreeNode[WorldSize.X, WorldSize.Y];
-            objectsBySection = new Dictionary<int, Dictionary<Point, List<ISpatialIndexMember>>>();
+            _objectsBySection = new Dictionary<int, Dictionary<Point, List<ISpatialIndexMember>>>();
             foreach (int i in Enum.GetValues(typeof(SpatialObjectType)))
             {
                 Point topLeftSecion = new Point(0, 0);
-                Point bottomRightSection = positionToSection(new Point(WorldSize.X, WorldSize.Y));
+                Point bottomRightSection = PositionToSection(new Point(WorldSize.X, WorldSize.Y));
                 Dictionary<Point, List<ISpatialIndexMember>> addMe = new Dictionary<Point, List<ISpatialIndexMember>>();
-                objectsBySection.Add(i, addMe);
+                _objectsBySection.Add(i, addMe);
                 for (int x = topLeftSecion.X; x <= bottomRightSection.X; x++)
                     for (int y = topLeftSecion.Y; y <= bottomRightSection.Y; y++)
                     {
                         addMe.Add(new Point(x, y), new List<ISpatialIndexMember>());
                     }
             }
-            topNode.Construct();
+            _topNode.Construct();
         }
 
-        private SpatialTreeNode topNode;
+        private SpatialTreeNode _topNode;
 
         public SpatialTreeNode TopNode
         {
-            get { return topNode; }
-            set { topNode = value; }
+            get { return _topNode; }
+            set { _topNode = value; }
         }
 
 
         public ISpatialIndexMember FindClosestObject(Point searcherPoint, string objectType)
         {
-            if (topNode.ResourceCount.ContainsKey(objectType))
+            if (_topNode.ResourceCount.ContainsKey(objectType))
             {
-                if (topNode.ResourceCount[objectType] > 0)
+                if (_topNode.ResourceCount[objectType] > 0)
                 {
-                    return searchTree(searcherPoint, objectType);
+                    return SearchTree(searcherPoint, objectType);
                 }
                 else
                     throw new ItemNotFound("No item available");
@@ -147,13 +144,13 @@ namespace Heliopolis.Utilities
                 throw new ItemNotFound("No item available");
         }
 
-        private ISpatialIndexMember searchTree(Point searcherPoint, string itemType)
+        private ISpatialIndexMember SearchTree(Point searcherPoint, string itemType)
         {
             List<SpatialTreeNode> startNodeList = new List<SpatialTreeNode>();
-            startNodeList.Add(topNode);
+            startNodeList.Add(_topNode);
 
-            int level = topNode.Level;
-            int maxLevel = topNode.MaxLevel;
+            int level = _topNode.Level;
+            int maxLevel = _topNode.MaxLevel;
 
             while (level < maxLevel)
             {
@@ -198,7 +195,7 @@ namespace Heliopolis.Utilities
             }
             // Now we have startNodeList filled with all the relevant leaf nodes containing the required item, so pick one and grab the item from it.
             // Atm it just picks the first in the list, needs to be improved.
-            return objectsBySection[(int)SpatialObjectType.Item][positionToSection(startNodeList[0].TopLeft)][0];
+            return _objectsBySection[(int)SpatialObjectType.Item][PositionToSection(startNodeList[0].TopLeft)][0];
         }
 
         private static void FindMinMaxDistance(Point searcherPoint, SpatialTreeNode spatialTreeNode, out int minDistance, out int maxDistance)
