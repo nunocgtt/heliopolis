@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
+using Heliopolis.Utilities.PathFinder;
 using Heliopolis.World.Environment;
 using Microsoft.Xna.Framework;
 using Heliopolis.Utilities;
@@ -30,38 +31,36 @@ namespace Heliopolis.World
     /// Represents a building in the game world.
     /// </summary>
     [Serializable]
-    public class Building : GameWorldObject, System.ICloneable, ICanHoldItem, ICanAccess
+    public class Building : GameWorldObject, ICloneable, ICanHoldItem, ICanAccess
     {
-        private BuildingTile[,] buildingTiles;
-        private List<string> requiredMaterials;
-        private List<int> requiredMaterialAmount;
-        private List<Item> constructionItems;
-        private Point size;
-        private string buildingType;
-        private Point position;
-        private BuildingStates buildingState;
-        private Point mainAccessPoint;
-        private bool usesMainAccessPoint;
-        private Dictionary<Point, BuildingTileContains> itemsHeld;
+        private BuildingTile[,] _buildingTiles;
+        private readonly List<string> _requiredMaterials;
+        private readonly List<int> _requiredMaterialAmount;
+        private List<Item> _constructionItems;
+        private Point _size;
+        private Point _position;
+        private BuildingStates _buildingState;
+        private Point _mainAccessPoint;
+        private bool _usesMainAccessPoint;
+        private Dictionary<Point, BuildingTileContains> _itemsHeld;
 
         /// <summary>
         /// Initialises a new instance of the Building class.
         /// </summary>
         /// <param name="name">The name of the building.</param>
-        /// <param name="_size">The size in tiles of the building.</param>
-        /// <param name="_buildingTiles">A 2D array containing all the building tiles.</param>
-        /// <param name="_requiredMaterials">The materials required for building.</param>
-        /// <param name="_requiredMaterialAmounts">The quantities of the materials.</param>
-        /// <param name="_owner">The owning game world.</param>
-        public Building(string name, Point _size, BuildingTile[,] _buildingTiles, List<string> _requiredMaterials, List<int> _requiredMaterialAmounts, GameWorld _owner) : base (_owner)
+        /// <param name="size">The size in tiles of the building.</param>
+        /// <param name="buildingTiles">A 2D array containing all the building tiles.</param>
+        /// <param name="requiredMaterials">The materials required for building.</param>
+        /// <param name="requiredMaterialAmounts">The quantities of the materials.</param>
+        /// <param name="owner">The owning game world.</param>
+        public Building(string name, Point size, BuildingTile[,] buildingTiles, List<string> requiredMaterials, List<int> requiredMaterialAmounts, GameWorld owner) : base (owner)
         {
-            buildingType = name;
-            size = _size;
-            buildingTiles = _buildingTiles;
-            requiredMaterials = _requiredMaterials;
-            requiredMaterialAmount = _requiredMaterialAmounts;
-            constructionItems = new List<Item>();
-            buildingState = BuildingStates.None;
+            _size = size;
+            _buildingTiles = buildingTiles;
+            _requiredMaterials = requiredMaterials;
+            _requiredMaterialAmount = requiredMaterialAmounts;
+            _constructionItems = new List<Item>();
+            _buildingState = BuildingStates.None;
         }
 
         /// <summary>
@@ -69,7 +68,7 @@ namespace Heliopolis.World
         /// </summary>
         public Point Size
         {
-            get { return size; }
+            get { return _size; }
         }
 
         /// <summary>
@@ -77,8 +76,8 @@ namespace Heliopolis.World
         /// </summary>
         public BuildingTile[,] BuildingTiles
         {
-            get { return buildingTiles; }
-            set { buildingTiles = value; }
+            get { return _buildingTiles; }
+            set { _buildingTiles = value; }
         }
 
         /// <summary>
@@ -86,7 +85,7 @@ namespace Heliopolis.World
         /// </summary>
         public List<string> RequiredMaterials
         {
-            get { return requiredMaterials; }
+            get { return _requiredMaterials; }
         }
 
         /// <summary>
@@ -94,7 +93,7 @@ namespace Heliopolis.World
         /// </summary>
         public List<int> RequiredMaterialAmount
         {
-            get { return requiredMaterialAmount; }
+            get { return _requiredMaterialAmount; }
         }
 
         /// <summary>
@@ -102,8 +101,8 @@ namespace Heliopolis.World
         /// </summary>
         public Point Position
         {
-            get { return position; }
-            set { position = value; }
+            get { return _position; }
+            set { _position = value; }
         }
 
         /// <summary>
@@ -111,8 +110,8 @@ namespace Heliopolis.World
         /// </summary>
         public BuildingStates BuildingState
         {
-            get { return buildingState; }
-            set { buildingState = value; }
+            get { return _buildingState; }
+            set { _buildingState = value; }
         }
 
         /// <summary>
@@ -120,8 +119,8 @@ namespace Heliopolis.World
         /// </summary>
         public Point MainAccessPoint
         {
-            get { return mainAccessPoint; }
-            set { mainAccessPoint = value; }
+            get { return _mainAccessPoint; }
+            set { _mainAccessPoint = value; }
         }
 
         /// <summary>
@@ -129,8 +128,8 @@ namespace Heliopolis.World
         /// </summary>
         public bool UsesMainAccessPoint
         {
-            get { return usesMainAccessPoint; }
-            set { usesMainAccessPoint = value; }
+            get { return _usesMainAccessPoint; }
+            set { _usesMainAccessPoint = value; }
         }
 
         /// <summary>
@@ -138,8 +137,8 @@ namespace Heliopolis.World
         /// </summary>
         public Dictionary<Point, BuildingTileContains> ItemsHeld
         {
-            get { return itemsHeld; }
-            set { itemsHeld = value; }
+            get { return _itemsHeld; }
+            set { _itemsHeld = value; }
         }
 
         #region ICloneable Members
@@ -151,13 +150,13 @@ namespace Heliopolis.World
         public object Clone()
         {
             Building returnMe = (Building) MemberwiseClone();
-            returnMe.constructionItems = new List<Item>();
-            returnMe.itemsHeld = new Dictionary<Point, BuildingTileContains>();
-            itemsHeld = new Dictionary<Point, BuildingTileContains>();
-            foreach (BuildingTile tile in buildingTiles)
+            returnMe._constructionItems = new List<Item>();
+            returnMe._itemsHeld = new Dictionary<Point, BuildingTileContains>();
+            _itemsHeld = new Dictionary<Point, BuildingTileContains>();
+            foreach (BuildingTile tile in _buildingTiles)
             {
                 if (tile.ItemSpace != 0)
-                    itemsHeld.Add(tile.Position, new BuildingTileContains(tile.ItemSpace));
+                    _itemsHeld.Add(tile.Position, new BuildingTileContains(tile.ItemSpace));
             }
             return returnMe;
         }
@@ -169,10 +168,10 @@ namespace Heliopolis.World
         /// </summary>
         public void StartBuilding()
         {
-            buildingState = BuildingStates.UnderConstruction;
-            foreach (BuildingTile buildingTile in buildingTiles)
+            _buildingState = BuildingStates.UnderConstruction;
+            foreach (BuildingTile buildingTile in _buildingTiles)
             {
-                EnvironmentTile targetTile = Owner.Environment[position.X + buildingTile.Position.X, position.Y + buildingTile.Position.Y];
+                EnvironmentTile targetTile = Owner.Environment[_position.X + buildingTile.Position.X, _position.Y + buildingTile.Position.Y];
                 targetTile.CanAccess = false;
             }
         }
@@ -182,10 +181,10 @@ namespace Heliopolis.World
         /// </summary>
         public void CompleteBuilding()
         {
-            buildingState = BuildingStates.Ready;
-            foreach (BuildingTile buildingTile in buildingTiles)
+            _buildingState = BuildingStates.Ready;
+            foreach (BuildingTile buildingTile in _buildingTiles)
             {
-                EnvironmentTile targetTile = Owner.Environment[position.X + buildingTile.Position.X, position.Y + buildingTile.Position.Y];
+                EnvironmentTile targetTile = Owner.Environment[_position.X + buildingTile.Position.X, _position.Y + buildingTile.Position.Y];
                 targetTile.CanAccess = buildingTile.CanAccess;
             }
         }
@@ -196,9 +195,9 @@ namespace Heliopolis.World
         /// <param name="itemType"></param>
         /// <param name="reserveSpace"></param>
         /// <returns></returns>
-        public bool canHold(string itemType, bool reserveSpace)
+        public bool CanHold(string itemType, bool reserveSpace)
         {
-            foreach (BuildingTileContains container in itemsHeld.Values)
+            foreach (BuildingTileContains container in _itemsHeld.Values)
             {
                 if (container.CanHold(itemType))
                 {
@@ -216,9 +215,9 @@ namespace Heliopolis.World
         /// <param name="itemType"></param>
         /// <param name="reserveItem"></param>
         /// <returns></returns>
-        public bool hasItem(string itemType, bool reserveItem)
+        public bool HasItem(string itemType, bool reserveItem)
         {
-            foreach (BuildingTileContains container in itemsHeld.Values)
+            foreach (BuildingTileContains container in _itemsHeld.Values)
             {
                 if (container.HasItem(itemType))
                 {
@@ -238,15 +237,15 @@ namespace Heliopolis.World
         /// <param name="item">The item to place.</param>
         public void PickupItem(Item item)
         {
-            if (buildingState == BuildingStates.UnderConstruction)
+            if (_buildingState == BuildingStates.UnderConstruction)
             {
-                constructionItems.Add(item);
+                _constructionItems.Add(item);
                 item.Holder = this;
                 item.ItemState = ItemStates.BeingCarried;
             }
-            else if(buildingState == BuildingStates.Ready)
+            else if(_buildingState == BuildingStates.Ready)
             {
-                foreach (BuildingTileContains container in itemsHeld.Values)
+                foreach (BuildingTileContains container in _itemsHeld.Values)
                 {
                     if (container.CanHold(item.ItemType))
                     {
@@ -262,12 +261,12 @@ namespace Heliopolis.World
         /// Give an item to another ICanHoldItem.
         /// </summary>
         /// <param name="itemHolder">The ICanHoldItem to give the object to.</param>
-        /// <param name="itemType">The item to give.</param>
+        /// <param name="item">The item to give.</param>
         public void PlaceItem(ICanHoldItem itemHolder, Item item)
         {
-            if (buildingState == BuildingStates.Ready)
+            if (_buildingState == BuildingStates.Ready)
             {
-                foreach (BuildingTileContains container in itemsHeld.Values)
+                foreach (BuildingTileContains container in _itemsHeld.Values)
                 {
                     //if (container.HasItem(itemType))
                     //{
@@ -294,31 +293,31 @@ namespace Heliopolis.World
         /// <summary>
         /// The points of access that actors can get to, for constrution of this building.
         /// </summary>
-        /// <param name="areaID">The area that the accessing actor is in.</param>
+        /// <param name="areaId">The area that the accessing actor is in.</param>
         /// <returns>A List of Point where the actor can go to access this building.</returns>
-        public List<Point> ConstructionPoints(int areaID)
+        public List<Point> ConstructionPoints(int areaId)
         {
             List<Point> returnMe = new List<Point>();
-            for (int i = 0; i < size.X; i++)
+            for (int i = 0; i < _size.X; i++)
             {
-                Point yPosAbove = new Point(position.X + i,position.Y - 1);
+                Point yPosAbove = new Point(_position.X + i,_position.Y - 1);
                 if (yPosAbove.Y >= 0)
-                    if (Owner.Environment[yPosAbove].CanAccess && Owner.Environment[yPosAbove].AreaID == areaID)
+                    if (Owner.Environment[yPosAbove].CanAccess && Owner.Environment[yPosAbove].AreaID == areaId)
                         returnMe.Add(yPosAbove);
-                Point yPosBelow = new Point(position.X + i, position.Y + size.Y);
+                Point yPosBelow = new Point(_position.X + i, _position.Y + _size.Y);
                 if (yPosBelow.Y <= Owner.Environment.WorldSize.Y)
-                    if (Owner.Environment[yPosBelow].CanAccess && Owner.Environment[yPosBelow].AreaID == areaID)
+                    if (Owner.Environment[yPosBelow].CanAccess && Owner.Environment[yPosBelow].AreaID == areaId)
                         returnMe.Add(yPosBelow);
             }
-            for (int i = 0; i < size.Y; i++)
+            for (int i = 0; i < _size.Y; i++)
             {
-                Point xPosLeft = new Point(position.X - 1, position.Y + i);
+                Point xPosLeft = new Point(_position.X - 1, _position.Y + i);
                 if (xPosLeft.X >= 0)
-                    if (Owner.Environment[xPosLeft].CanAccess && Owner.Environment[xPosLeft].AreaID == areaID)
+                    if (Owner.Environment[xPosLeft].CanAccess && Owner.Environment[xPosLeft].AreaID == areaId)
                         returnMe.Add(xPosLeft);
-                Point xPosRight = new Point(position.X + size.X-1, position.Y + i);
+                Point xPosRight = new Point(_position.X + _size.X-1, _position.Y + i);
                 if (xPosRight.X <= Owner.Environment.WorldSize.X)
-                    if (Owner.Environment[xPosRight].CanAccess && Owner.Environment[xPosRight].AreaID == areaID)
+                    if (Owner.Environment[xPosRight].CanAccess && Owner.Environment[xPosRight].AreaID == areaId)
                         returnMe.Add(xPosRight);
             }
             return returnMe;
@@ -327,14 +326,14 @@ namespace Heliopolis.World
         /// <summary>
         /// Checks to see if this building can be access from a certain area.
         /// </summary>
-        /// <param name="areaID">The ID of the area of the object wanting access to this building.</param>
+        /// <param name="areaId">The ID of the area of the object wanting access to this building.</param>
         /// <param name="accessReason">The reason why this building needs access.</param>
         /// <returns>Returns true if the building can be accessed.</returns>
-        public bool AccessableFromAreaID(int areaID, AccessReason accessReason)
+        public bool AccessableFromAreaID(int areaId, AccessReason accessReason)
         {
             if (accessReason == AccessReason.Construction)
             {
-                List<Point> accessPoints = ConstructionPoints(areaID);
+                List<Point> accessPoints = ConstructionPoints(areaId);
                 return (accessPoints.Count > 0);
             }
             return false;
@@ -343,20 +342,20 @@ namespace Heliopolis.World
         /// <summary>
         /// Gets all the points that provide access from an area.
         /// </summary>
-        /// <param name="areaID">The area ID of the object wanting to access this building.</param>
+        /// <param name="areaId">The area ID of the object wanting to access this building.</param>
         /// <param name="accessReason">The reason this building needs access.</param>
         /// <returns>A MovementDestination object that the accessing object can use to path to this building.</returns>
-        public MovementDestination<Point> GetAccessablePointsByAreaID(int areaID, AccessReason accessReason)
+        public MovementDestination<Point> GetAccessablePointsByAreaID(int areaId, AccessReason accessReason)
         {
             // TODO: Change the position to the middle of the building if its bigger than 2x2
-            if (accessReason == AccessReason.Construction)
+            switch (accessReason)
             {
-                return new MovementDestination<Point>(ConstructionPoints(areaID));
-            }
-            else if (accessReason == AccessReason.PlaceItem)
-            {
-                if (buildingState == BuildingStates.UnderConstruction)
-                    return new MovementDestination<Point>(ConstructionPoints(areaID));
+                case AccessReason.Construction:
+                    return new MovementDestination<Point>(ConstructionPoints(areaId));
+                case AccessReason.PlaceItem:
+                    if (_buildingState == BuildingStates.UnderConstruction)
+                        return new MovementDestination<Point>(ConstructionPoints(areaId));
+                    break;
             }
             return null;
         }

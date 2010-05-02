@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace Heliopolis.Utilities
+namespace Heliopolis.Utilities.PathFinder
 {
     /// <summary>
     /// Information returned from a successful path search.
     /// </summary>
     public class PathfindAnswer
     {
-        public LinkedList<Direction> directions;
-        public object owner;
+        public LinkedList<Direction> Directions;
+        public object Owner;
     }
 }

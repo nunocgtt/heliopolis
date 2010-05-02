@@ -1,82 +1,77 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 
-namespace Heliopolis.Engine
+namespace Heliopolis.GraphicsEngine
 {
     public class IsometricEngine
     {
         public Point TileSize { get; set; }
         public Point TileCenter { get; set; }
-        private int worldPixelWidth;
-        private int worldHeightWidth;
+        private int _worldPixelWidth;
+        private int _worldHeightWidth;
 
-        private TextureManager textureManager;
+        private TextureManager _textureManager;
 
-        private List<IIsometricTileProvider> tileProviders = new List<IIsometricTileProvider>();
+        private readonly List<IIsometricTileProvider> _tileProviders = new List<IIsometricTileProvider>();
 
         public void LoadContent(ContentManager contentManager)
         {
             TileSize = new Point(32, 16);
             TileCenter = new Point(16, 8);
-            textureManager = new TextureManager(contentManager);
-        }
-
-        public IsometricEngine()
-        {
+            _textureManager = new TextureManager(contentManager);
         }
 
         public void Initialize(IWorld enviroment)
         {
-            worldPixelWidth = TileSize.X * (enviroment.WorldSize.X + enviroment.WorldSize.Y) / 2;
-            worldHeightWidth = enviroment.WorldSize.X;
+            _worldPixelWidth = TileSize.X * (enviroment.WorldSize.X + enviroment.WorldSize.Y) / 2;
+            _worldHeightWidth = enviroment.WorldSize.X;
         }
 
         public void AddTileProvider(IIsometricTileProvider provider)
         {
-            tileProviders.Add(provider);
+            _tileProviders.Add(provider);
         }
 
         public void DrawWorld(SpriteBatch spriteBatch, Point cameraPosition, float zoomLevel, Point screenSize)
         {
-            int edgeCount = worldHeightWidth + worldHeightWidth;
+            int edgeCount = _worldHeightWidth + _worldHeightWidth;
             int startingLine;
             int finishingLine;
-            startAndFinishLine(out startingLine, out finishingLine, cameraPosition, zoomLevel, screenSize);
+            StartAndFinishLine(out startingLine, out finishingLine, cameraPosition, zoomLevel, screenSize);
             for (int drawTileLayer = startingLine; drawTileLayer < Math.Min((edgeCount - 1), finishingLine); drawTileLayer++)
             {
-                int drawlen = 0;
-                bool bottomHalfDrawing = drawTileLayer >= worldHeightWidth;
+                int drawlen;
+                bool bottomHalfDrawing = drawTileLayer >= _worldHeightWidth;
                 if (bottomHalfDrawing)
-                    drawlen = worldHeightWidth - (drawTileLayer - (worldHeightWidth - 1));
+                    drawlen = _worldHeightWidth - (drawTileLayer - (_worldHeightWidth - 1));
                 else
                     drawlen = drawTileLayer + 1;
                 int startTile;
                 int lastTile;
-                getFirstAndLastTileToDraw(drawlen, out startTile, out lastTile, cameraPosition, zoomLevel, screenSize);
+                GetFirstAndLastTileToDraw(drawlen, out startTile, out lastTile, cameraPosition, zoomLevel, screenSize);
                 for (int j = startTile; j < lastTile; j++)
                 {
-                    Point tileToDraw = getTileXYLocation(drawTileLayer, bottomHalfDrawing, j);
-                    drawLayer(drawTileLayer, drawlen, j, tileToDraw, cameraPosition, spriteBatch, zoomLevel);
+                    Point tileToDraw = GetTileXyLocation(drawTileLayer, bottomHalfDrawing, j);
+                    DrawLayer(drawTileLayer, drawlen, j, tileToDraw, cameraPosition, spriteBatch, zoomLevel);
                 }
             }
         }
 
-        private Point getTileXYLocation(int tileLayer, bool bottomHalfDrawing, int tileNumberInLayer)
+        private Point GetTileXyLocation(int tileLayer, bool bottomHalfDrawing, int tileNumberInLayer)
         {
             Point tileToDraw;
             if (bottomHalfDrawing)
-                tileToDraw = new Point(tileNumberInLayer + (tileLayer - (worldHeightWidth - 1)), (worldHeightWidth - 1) - tileNumberInLayer);
+                tileToDraw = new Point(tileNumberInLayer + (tileLayer - (_worldHeightWidth - 1)), (_worldHeightWidth - 1) - tileNumberInLayer);
             else
                 tileToDraw = new Point(tileNumberInLayer, tileLayer - tileNumberInLayer);
             return tileToDraw;
         }
 
-        private void startAndFinishLine(out int startingLine, out int finishingLine, Point cameraPosition, float zoomLevel, Point screenSize)
+        private void StartAndFinishLine(out int startingLine, out int finishingLine, Point cameraPosition, float zoomLevel, Point screenSize)
         {
             startingLine = cameraPosition.Y / (TileSize.Y / 2) - 1;
             if (startingLine < 0)
@@ -84,61 +79,62 @@ namespace Heliopolis.Engine
             finishingLine = startingLine + ((int)(screenSize.Y / zoomLevel) / (TileSize.Y / 2)) + 2;
         }
 
-        private void getFirstAndLastTileToDraw(int drawlen, out int startTile, out int lastTile, Point cameraPosition, float zoomLevel, Point screenSize)
+        private void GetFirstAndLastTileToDraw(int drawlen, out int startTile, out int lastTile, Point cameraPosition, float zoomLevel, Point screenSize)
         {
-            int firstXPosition = firstXPos(drawlen) - cameraPosition.X;
+            int firstXPosition = FirstXPos(drawlen) - cameraPosition.X;
             startTile = (firstXPosition * -1) / TileSize.X;
             lastTile = startTile + ((int)(screenSize.X / zoomLevel) / TileSize.X) + 1;
             lastTile = Math.Min(drawlen, lastTile);
             startTile = Math.Max(0, startTile);
         }
 
-        private void drawLayer(int drawTileLayer, int drawlen, int j, Point tileToDraw, Point cameraPosition, SpriteBatch spriteBatch, float zoomLevel)
+        private void DrawLayer(int drawTileLayer, int drawlen, int j, Point tileToDraw, Point cameraPosition, SpriteBatch spriteBatch, float zoomLevel)
         {
-            int firstXPosition = firstXPos(drawlen);
+            int firstXPosition = FirstXPos(drawlen);
             Point drawTilePos = new Point(firstXPosition + (j * TileSize.X), drawTileLayer * TileSize.Y / 2);
             drawTilePos.X = drawTilePos.X - cameraPosition.X;
             drawTilePos.Y = drawTilePos.Y - cameraPosition.Y;
 
-            List<IsometricTexture> texturesToDraw = new List<IsometricTexture>();
-            foreach (IIsometricTileProvider provider in tileProviders)
-            {
-                foreach (string drawTextureName in provider.GetTexturesToDraw(tileToDraw))
-                    texturesToDraw.Add(textureManager.Textures[drawTextureName]);
-            }
+            List<IsometricTexture> texturesToDraw =
+                (from provider in _tileProviders
+                 from drawTextureName in provider.GetTexturesToDraw(tileToDraw)
+                 select _textureManager.Textures[drawTextureName]).ToList();
 
             foreach (IsometricTexture drawTexture in texturesToDraw.OrderBy(p => p.ZLevel))
             {
                 Point offset = new Point(TileCenter.X - drawTexture.CenterPoint.X, TileCenter.Y - drawTexture.CenterPoint.Y);
                 Rectangle floorScreenRectangle = new Rectangle(drawTilePos.X + offset.X, drawTilePos.Y + offset.Y, drawTexture.Size.X, drawTexture.Size.Y);
-                Rectangle finalDrawRect = zoom(zoomLevel, floorScreenRectangle);
+                Rectangle finalDrawRect = Zoom(zoomLevel, floorScreenRectangle);
                 Rectangle textureRect = new Rectangle();
                 textureRect.X = drawTexture.TexturePointOrigin.X;
                 textureRect.Y = drawTexture.TexturePointOrigin.Y;
                 textureRect.Width = drawTexture.Size.X;
                 textureRect.Height = drawTexture.Size.Y;
-                spriteBatch.Draw(textureManager.TextureSheets[drawTexture.TextureSheet], finalDrawRect, textureRect, Color.White);
+                spriteBatch.Draw(_textureManager.TextureSheets[drawTexture.TextureSheet], finalDrawRect, textureRect, Color.White);
             }
         }
 
-        private static Rectangle zoom(double zoomLevel, Rectangle passMe)
+        private static Rectangle Zoom(double zoomLevel, Rectangle passMe)
         {
-            Rectangle returnMe = new Rectangle();
-            returnMe.Width = (int)Math.Truncate(passMe.Width * zoomLevel);
-            returnMe.Height = (int)Math.Truncate(passMe.Height * zoomLevel);
-            returnMe.X = (int)Math.Truncate(passMe.X * zoomLevel);
-            returnMe.Y = (int)Math.Truncate(passMe.Y * zoomLevel);
+            Rectangle returnMe =
+                new Rectangle
+                    {
+                        Width = (int) Math.Truncate(passMe.Width*zoomLevel),
+                        Height = (int) Math.Truncate(passMe.Height*zoomLevel),
+                        X = (int) Math.Truncate(passMe.X*zoomLevel),
+                        Y = (int) Math.Truncate(passMe.Y*zoomLevel)
+                    };
             return returnMe;
         }
 
-        private int firstXPos(int drawlen)
+        private int FirstXPos(int drawlen)
         {
-            return (worldPixelWidth / 2) - (drawlen * (TileSize.X / 2));
+            return (_worldPixelWidth / 2) - (drawlen * (TileSize.X / 2));
         }
 
-        public Point FirstTileXYPosition(float zoomLevel)
+        public Point FirstTileXyPosition(float zoomLevel)
         {
-            return new Point((int)(firstXPos(1) * zoomLevel), 0);
+            return new Point((int)(FirstXPos(1) * zoomLevel), 0);
         }
     }
 }

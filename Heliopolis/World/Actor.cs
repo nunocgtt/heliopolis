@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using Heliopolis.Utilities;
+using Heliopolis.Utilities.PathFinder;
 using Heliopolis.World.State;
 using Microsoft.Xna.Framework;
 
@@ -224,10 +225,10 @@ namespace Heliopolis.World
                         throw new Exception("Can not move to an unaccessable position.");
                 }
                 pathFinder.NewSearch(newrequest);
-                if (pathFinder.SearchStep(999) == SearchState.SEARCH_STATE_SUCCEEDED)
+                if (pathFinder.SearchStep(999) == SearchState.SearchStateSucceeded)
                 {
-                    PathfindAnswer theAnswer = pathFinder.finalResult();
-                    Directions = theAnswer.directions;
+                    PathfindAnswer theAnswer = pathFinder.FinalResult();
+                    Directions = theAnswer.Directions;
                 }
                 else
                     throw new Exception("Unable to path to that position.");

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Heliopolis.World.Environment;
 using Microsoft.Xna.Framework;
 
@@ -165,16 +166,14 @@ namespace Heliopolis.World.JobSystem
         /// <param name="searcherAreaId">The area ID of the searcher.</param>
         /// <param name="jobType">The job type required.</param>
         /// <param name="searcherPosition">The position of the searcher.</param>
+        /// <param name="designationToTake">The designation to take.</param>
         /// <returns>Returns null if one doesnt exist, otherwise returns a Designation to perform.</returns>
         public bool CheckAvailableDesignation(int searcherAreaId, string jobType, Point searcherPosition, out Designation designationToTake)
         {
-            foreach (Designation d in _designations[jobType])
+            foreach (Designation d in _designations[jobType].Where(d => d.CanBeTakenFromArea(searcherAreaId)))
             {
-                if (d.CanBeTakenFromArea(searcherAreaId))
-                {
-                    designationToTake = d;
-                    return true;
-                }
+                designationToTake = d;
+                return true;
             }
             designationToTake = null;
             return false;

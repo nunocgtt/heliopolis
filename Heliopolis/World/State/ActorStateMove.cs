@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Heliopolis.Utilities;
+using Heliopolis.Utilities.PathFinder;
 using Microsoft.Xna.Framework;
 
 namespace Heliopolis.World.State

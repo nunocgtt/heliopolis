@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace Heliopolis.Utilities
+namespace Heliopolis.Utilities.PathFinder
 {
     /// <summary>
     /// Interface for searching nodes.
@@ -15,7 +12,7 @@ namespace Heliopolis.Utilities
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        float getPathingWeight(T point);
+        float GetPathingWeight(T point);
         /// <summary>
         /// Returns a list of Node accessable from a paricular point.
         /// </summary>

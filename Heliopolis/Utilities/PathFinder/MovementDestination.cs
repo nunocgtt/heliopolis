@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Microsoft.Xna.Framework;
 
-namespace Heliopolis.Utilities
+namespace Heliopolis.Utilities.PathFinder
 {
     public enum MovementDestinationType
     {
@@ -16,42 +13,42 @@ namespace Heliopolis.Utilities
     [Serializable]
     public class MovementDestination<T>
     {
-        private T pointToMoveTo;
-        private List<T> pointsAcceptable = null;
-        private MovementDestinationType movementDestinationType;
+        private T _pointToMoveTo;
+        private List<T> _pointsAcceptable;
+        private readonly MovementDestinationType _movementDestinationType;
 
-        public MovementDestination(List<T> _pointsAcceptable)
+        public MovementDestination(List<T> pointsAcceptable)
         {
-            PointsAcceptable = _pointsAcceptable;
-            movementDestinationType = MovementDestinationType.MultiPoint;
+            PointsAcceptable = pointsAcceptable;
+            _movementDestinationType = MovementDestinationType.MultiPoint;
         }
 
-        public MovementDestination(T _pointToMoveTo)
+        public MovementDestination(T pointToMoveTo)
         {
-            PointToMoveTo = _pointToMoveTo;
-            movementDestinationType = MovementDestinationType.SinglePoint;
+            PointToMoveTo = pointToMoveTo;
+            _movementDestinationType = MovementDestinationType.SinglePoint;
         }
 
         public MovementDestination()
         {
-            movementDestinationType = MovementDestinationType.UnacessablePoint;
+            _movementDestinationType = MovementDestinationType.UnacessablePoint;
         }
 
         public T PointToMoveTo
         {
-            get { return pointToMoveTo; }
-            set { pointToMoveTo = value; }
+            get { return _pointToMoveTo; }
+            set { _pointToMoveTo = value; }
         }
 
         public List<T> PointsAcceptable
         {
-            get { return pointsAcceptable; }
-            set { pointsAcceptable = value; }
+            get { return _pointsAcceptable; }
+            set { _pointsAcceptable = value; }
         }
 
         public MovementDestinationType MovementDestinationType
         {
-            get { return movementDestinationType; }
+            get { return _movementDestinationType; }
         }
     }
 }

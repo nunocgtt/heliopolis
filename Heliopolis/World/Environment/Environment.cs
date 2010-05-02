@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Heliopolis.GraphicsEngine;
+using Heliopolis.Utilities.PathFinder;
 using Microsoft.Xna.Framework;
 using Heliopolis.Utilities;
-using Heliopolis.Engine;
 
 namespace Heliopolis.World.Environment
 {
@@ -154,7 +155,7 @@ namespace Heliopolis.World.Environment
         /// </summary>
         /// <param name="point">The position of the tile.</param>
         /// <returns>A float representing the weight.</returns>
-        public float getPathingWeight(Point point)
+        public float GetPathingWeight(Point point)
         {
             // At the moment all the grid tiles have the same pathing weight
             return 1f;
@@ -308,10 +309,10 @@ namespace Heliopolis.World.Environment
                 FillRequest<Point> newRequest = new FillRequest<Point>(startTile.Position);
                 Global.FillFinder.NewSearch(newRequest);
                 SearchState returnState = Global.FillFinder.SearchStep(_worldSize.X * _worldSize.Y);
-                if (returnState == SearchState.SEARCH_STATE_SUCCEEDED)
+                if (returnState == SearchState.SearchStateSucceeded)
                 {
-                    FillfindAnswer<Point> theAnswer = Global.FillFinder.finalResult();
-                    foreach (Point p in theAnswer.pointsFilled)
+                    FillfindAnswer<Point> theAnswer = Global.FillFinder.FinalResult();
+                    foreach (Point p in theAnswer.PointsFilled)
                     {
                         _gameWorld[p.X, p.Y].AreaID = nextGroupId;
                         _areaDictionary[nextGroupId].MemberCount++;

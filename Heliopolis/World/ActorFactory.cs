@@ -25,13 +25,13 @@ namespace Heliopolis.World
             foreach (XmlNode node in actorNodes)
             {
                 XmlNode texture = node.SelectSingleNode("Texture");
-                XmlNode movementSpeed = node.SelectSingleNode("MovementSpeed");
+                //XmlNode movementSpeed = node.SelectSingleNode("MovementSpeed");
                 XmlNode hitpoints = node.SelectSingleNode("Hitpoints");
                 XmlNodeList propertyNodes = node.SelectNodes("Property");
                 XmlNodeList jobNodes = node.SelectNodes("Job");
                 Dictionary<string, int> property = new Dictionary<string, int>();
                 List<string> jobs = new List<string>();
-                List<int> magnitude = new List<int>();
+                //List<int> magnitude = new List<int>();
                 if (propertyNodes != null)
                     foreach (XmlNode n in propertyNodes)
                     {

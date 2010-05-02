@@ -1,3 +1,4 @@
+using Heliopolis.Utilities.PathFinder;
 using Microsoft.Xna.Framework;
 using Heliopolis.Utilities;
 

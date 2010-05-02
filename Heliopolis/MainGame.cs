@@ -1,17 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Heliopolis.GraphicsEngine;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-using Microsoft.Xna.Framework.Net;
-using Microsoft.Xna.Framework.Storage;
 using Heliopolis.Interface;
-using Heliopolis.Engine;
 using Heliopolis.World;
 
 namespace Heliopolis
@@ -27,30 +17,31 @@ namespace Heliopolis
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class MainGame : Microsoft.Xna.Framework.Game
+    public class MainGame : Game
     {
-        private const int TargetFrameRate = 60;
-        private Point screenSize;
+        private readonly Point _screenSize;
 
-        private GraphicsDeviceManager graphics;
-        private SpriteBatch spriteBatch;
+        private readonly GraphicsDeviceManager _graphics;
+        private SpriteBatch _spriteBatch;
 
-        private IsometricEngine isometricEngine = new IsometricEngine();
+        private readonly IsometricEngine _isometricEngine = new IsometricEngine();
 
-        private InterfaceModel interfaceModel;
-        private InterfaceController interfaceController;
-        private InterfaceView interfaceView;
+        private readonly InterfaceModel _interfaceModel;
+        private readonly InterfaceController _interfaceController;
+        private readonly InterfaceView _interfaceView;
 
         public MainGame()
         {
-            screenSize = new Point(1280, 720);
-            graphics = new GraphicsDeviceManager(this);
-            graphics.PreferredBackBufferWidth = screenSize.X;
-            graphics.PreferredBackBufferHeight = screenSize.Y;
+            _screenSize = new Point(1280, 720);
+            _graphics = new GraphicsDeviceManager(this)
+                            {
+                                PreferredBackBufferWidth = _screenSize.X,
+                                PreferredBackBufferHeight = _screenSize.Y
+                            };
             Content.RootDirectory = "Content";
-            interfaceModel = new InterfaceModel(screenSize);
-            interfaceController = new InterfaceController(interfaceModel, this, isometricEngine);
-            interfaceView = new InterfaceView(interfaceModel, isometricEngine);
+            _interfaceModel = new InterfaceModel(_screenSize);
+            _interfaceController = new InterfaceController(_interfaceModel, this, _isometricEngine);
+            _interfaceView = new InterfaceView(_interfaceModel, _isometricEngine);
         }
 
         /// <summary>
@@ -62,10 +53,10 @@ namespace Heliopolis
         protected override void Initialize()
         {
             base.Initialize();
-            isometricEngine.Initialize(GameWorld.Instance.Environment);
-            isometricEngine.AddTileProvider(interfaceView);
-            isometricEngine.AddTileProvider(GameWorld.Instance.Environment);
-            this.IsMouseVisible = true;
+            _isometricEngine.Initialize(GameWorld.Instance.Environment);
+            _isometricEngine.AddTileProvider(_interfaceView);
+            _isometricEngine.AddTileProvider(GameWorld.Instance.Environment);
+            IsMouseVisible = true;
             GameWorld.Instance.LoadTestWorld();
         }
 
@@ -75,9 +66,9 @@ namespace Heliopolis
         /// </summary>
         protected override void LoadContent()
         {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            isometricEngine.LoadContent(Content);
-            interfaceView.LoadContent(Content);
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            _isometricEngine.LoadContent(Content);
+            _interfaceView.LoadContent(Content);
         }
 
         /// <summary>
@@ -95,7 +86,7 @@ namespace Heliopolis
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            interfaceController.Update(gameTime);
+            _interfaceController.Update(gameTime);
             base.Update(gameTime);
         }
 
@@ -107,11 +98,11 @@ namespace Heliopolis
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin();
+            _spriteBatch.Begin();
 
-            interfaceView.Draw(spriteBatch);
+            _interfaceView.Draw(_spriteBatch);
 
-            spriteBatch.End();
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }
