@@ -3,6 +3,7 @@ using System.Linq;
 using Heliopolis.Utilities.PathFinder;
 using Heliopolis.Utilities.SpatialTreeIndexSystem;
 using Heliopolis.World.BuildingManagement;
+using Heliopolis.World.InteractableObjects;
 using Heliopolis.World.ItemManagement;
 using Microsoft.Xna.Framework;
 using System;
@@ -21,9 +22,9 @@ namespace Heliopolis.World.Environment
         private bool _canAccess;
         private List<EnvironmentTile> _adjacentTiles;
         private List<Item> _itemsOnGround = new List<Item>();
-        private readonly List<IRequiresAccess> _requiringAccess = new List<IRequiresAccess>();
+        private readonly List<IRequiresAccessListener> _requiringAccess = new List<IRequiresAccessListener>();
 
-        public List<IRequiresAccess> RequiringAccess
+        public List<IRequiresAccessListener> RequiringAccess
         {
             get
             {
@@ -115,7 +116,7 @@ namespace Heliopolis.World.Environment
             set
             {
                 Owner.Environment.ManageAccessStateChange(this);
-                foreach (IRequiresAccess listener in _requiringAccess)
+                foreach (IRequiresAccessListener listener in _requiringAccess)
                 {
                     listener.AccessChanged(value, this.Position);
                 }

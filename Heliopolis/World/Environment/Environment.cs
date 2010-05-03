@@ -4,6 +4,7 @@ using System.Linq;
 using Heliopolis.GraphicsEngine;
 using Heliopolis.Utilities.PathFinder;
 using Heliopolis.Utilities.SpatialTreeIndexSystem;
+using Heliopolis.World.InteractableObjects;
 using Microsoft.Xna.Framework;
 using Heliopolis.Utilities;
 
@@ -12,10 +13,10 @@ namespace Heliopolis.World.Environment
     /// <summary>
     /// Represents a game environment.
     /// </summary>
-    /// <remarks>This class is like an EnvironmentTile manager. It contains all the tiles in the game world
+    /// <remarks>This class is an <c>EnvironmentTile</c> manager. It contains all the tiles in the game world
     /// but manages a lot of metadata for tiles. The reason why there is so much metadata is because this game
     /// environment has to be searched and interrogated using efficient algorithms.
-    /// The PathFinder class will use the Environment to perform its search.</remarks>
+    /// The <c>PathFinder</c> class will use the Environment to perform its search on.</remarks>
     [Serializable]
     public class Environment : GameWorldObject, ISearchAble<Point>, IIsometricTileProvider, IWorld
     {
@@ -30,7 +31,7 @@ namespace Heliopolis.World.Environment
         private const int MaxPathNodes = 1000;
 
         /// <summary>
-        /// The tile at position (X,Y)
+        /// The <c>EnvironmentTile</c> at position (X,Y)
         /// </summary>
         /// <param name="x">The X position.</param>
         /// <param name="y">The Y position.</param>
@@ -41,7 +42,7 @@ namespace Heliopolis.World.Environment
         }
 
         /// <summary>
-        /// The tile at a particular Point.
+        /// The <c>EnvironmentTile</c> at a particular Point.
         /// </summary>
         /// <param name="pos">The position of the tile.</param>
         /// <returns>The tile.</returns>

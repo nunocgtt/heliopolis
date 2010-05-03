@@ -76,38 +76,6 @@ namespace Heliopolis.World.JobSystem
                 _designationsPending[completedDesignation.JobType].Remove(completedDesignation);
         }
 
-        // Move these elsewhere, maybe into static designation methods
-        /// <summary>
-        /// Add a new harvesting designation.
-        /// </summary>
-        /// <param name="targetPos">The position of the tile to harvest.</param>
-        /// <param name="jobType">The type of harvesting.</param>
-        /// <returns>Returns true if the designation was created.</returns>
-        public bool AddMiningDesignation(Point targetPos, string jobType)
-        {
-            EnvironmentTile targetTile = Owner.Environment[targetPos];
-            if (targetTile.CanAccess)
-                return false;
-            else
-            {
-                AddSimpleDesignation(targetTile, jobType);
-                return true;
-            }
-        }
-
-        // Move these elsewhere, maybe into static designation methods
-        /// <summary>
-        /// Adds in a simple designation.
-        /// </summary>
-        /// <param name="targetTile">The position of the job to perform at.</param>
-        /// <param name="jobType">The job to perform.</param>
-        public void AddSimpleDesignation(EnvironmentTile targetTile, string jobType)
-        {
-            //EnvironmentalJobParameters jobParameters = new EnvironmentalJobParameters(targetTile);
-            //Designation newDesignation = new Designation(owner, jobParameters, DesignationTypes.Simple);
-            //AddDesignation(jobType, newDesignation);
-        }
-
         /// <summary>
         /// Check to see if construction is possible.
         /// </summary>
