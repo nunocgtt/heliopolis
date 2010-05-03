@@ -19,7 +19,7 @@ namespace Heliopolis.World.JobSystem
     /// then are able to take up designations and complete them at their leasure.
     /// Designations can have prerequisites. These need to be completed before it can be picked up.</remarks>
     [Serializable]
-    public abstract class Designation : GameWorldObject, IRequiresAccess
+    public abstract class Designation : GameWorldObject, IRequiresAccessListener
     {
         /// <summary>
         /// Initialises a new instance of the Designation class.
@@ -32,6 +32,17 @@ namespace Heliopolis.World.JobSystem
             IsComplete = false;
             Owner = owner;
             JobType = "";
+        }
+
+        protected Designation(GameWorld owner, ICanAccess canAccess, bool repeatable)
+            : base(owner)
+        {
+            IsRepetable = repeatable;
+            _isTaken = false;
+            IsComplete = false;
+            Owner = owner;
+            JobType = "";
+            AccessPoints = canAccess.GetAllAccessPoints().Select(p => owner.Environment[p]).ToList();
         }
 
         public string JobType { get; set; }
@@ -53,6 +64,7 @@ namespace Heliopolis.World.JobSystem
         public bool IsComplete { get; set; }
         public Designation PostRequisite { get; set; }
         public Actor TakenBy { get; set; }
+        public bool IsRepetable { get; set; }
 
         private bool _isAvailableForTakingOldValue = false;
         private List<EnvironmentTile> _accessPoints = new List<EnvironmentTile>();
@@ -90,15 +102,6 @@ namespace Heliopolis.World.JobSystem
             return _accessiblePoints.Any(tile => tile.AreaID == areaId);
         }
 
-        public MovementDestination<Point> GetAccessablePointsByAreaID(int areaId)
-        {
-            MovementDestination<Point> returnMe = new MovementDestination<Point>();
-            foreach (EnvironmentTile tile in _accessiblePoints)
-                if (tile.AreaID == areaId)
-                    returnMe.PointsAcceptable.Add(tile.Position);
-            return returnMe;
-        }
-
         public bool CanAccess
         {
             get
@@ -107,15 +110,15 @@ namespace Heliopolis.World.JobSystem
             }
         }
 
-        protected List<Designation> prerequisites = new List<Designation>();
+        private List<Designation> _prerequisites = new List<Designation>();
 
         /// <summary>
         /// A list of designations that are prerequisites.
         /// </summary>
         public List<Designation> Prerequisites
         {
-            get { return prerequisites; }
-            set { prerequisites = value; }
+            get { return _prerequisites; }
+            set { _prerequisites = value; }
         }
 
         /// <summary>
@@ -147,13 +150,13 @@ namespace Heliopolis.World.JobSystem
         {
             get
             {
-                return prerequisites.Count > 0;
+                return _prerequisites.Count > 0;
             }
         }
 
         protected void AddPrerequisite(Designation preReq)
         {
-            prerequisites.Add(preReq);
+            _prerequisites.Add(preReq);
             preReq.PostRequisite = this;
         }
 
@@ -163,7 +166,7 @@ namespace Heliopolis.World.JobSystem
         /// <param name="preReq">The prerequisite Designation to remove.</param>
         public void RemovePrerequisite(Designation preReq)
         {
-            prerequisites.Remove(preReq);
+            _prerequisites.Remove(preReq);
             UpdateIsAvailableForTaking();
         }
 
@@ -172,6 +175,18 @@ namespace Heliopolis.World.JobSystem
         /// </summary>
         public void CompleteDesignation()
         {
+            bool complete = true;
+            // If the designation is repeatable, and needs repeating, then gogogogo
+            if (IsRepetable)
+            {
+                if (Repeat())
+                {
+                    complete = false;
+                    UnassignDesignation();
+                    // This will put this designation back into the available queue.
+                }
+            }
+            if (!complete) return;
             IsComplete = true;
             if (PostRequisite != null)
                 PostRequisite.RemovePrerequisite(this);
@@ -214,31 +229,7 @@ namespace Heliopolis.World.JobSystem
         #endregion
 
         public abstract List<ActorState> GetStateStepsToPerform();
-    }
-
-    /// <summary>
-    /// Designation to harvest a resource node. TODO: Ensure this can be repeated by re-creating it after it's done.
-    /// </summary>
-    public class HarvestDesignation : Designation
-    {
-        public HarvestDesignation(GameWorld owner, EnvironmentTile targetTile, string jobtype)
-            : base(owner)
-        {
-            this.JobType = jobtype;
-            List<EnvironmentTile> access = new List<EnvironmentTile>();
-            foreach (EnvironmentTile tile in targetTile.AdjacentTiles)
-                access.Add(tile);
-            this.AccessPoints = access;
-        }
-
-        public override List<ActorState> GetStateStepsToPerform()
-        {
-            List<ActorState> subStates = new List<ActorState>();
-            MovementDestination<Point> movementDestination = this.GetAccessablePointsByAreaID(TakenBy.AreaID);
-            subStates.Add(new ActorStateMove(TakenBy, movementDestination, Owner));
-            subStates.Add(new HarvestJob(Owner, TakenBy, JobType, this));
-            return subStates;
-        }
+        public abstract bool Repeat();
     }
 
     /// <summary>
@@ -265,6 +256,11 @@ namespace Heliopolis.World.JobSystem
             // move to that stash
             return subStates;
         }
+
+        public override bool Repeat()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class CollectItemDesignation : Designation
@@ -283,6 +279,11 @@ namespace Heliopolis.World.JobSystem
         {
             List<ActorState> subStates = new List<ActorState> {new ActorStateMove(TakenBy, ItemToStash.Position, Owner)};
             return subStates;
+        }
+
+        public override bool Repeat()
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -309,6 +310,11 @@ namespace Heliopolis.World.JobSystem
             // take item to buiding
             // place item in building
             return subStates;
+        }
+
+        public override bool Repeat()
+        {
+            throw new NotImplementedException();
         }
     }
 

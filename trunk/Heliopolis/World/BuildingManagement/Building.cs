@@ -244,73 +244,31 @@ namespace Heliopolis.World.BuildingManagement
         #endregion
 
         /// <summary>
-        /// The points of access that actors can get to, for constrution of this building.
+        /// Gets all the points that provide access from an area.
         /// </summary>
-        /// <param name="areaId">The area that the accessing actor is in.</param>
-        /// <returns>A List of Point where the actor can go to access this building.</returns>
-        public List<Point> ConstructionPoints(int areaId)
+        /// <returns>A MovementDestination object that the accessing object can use to path to this building.</returns>
+        public IEnumerable<Point> GetAllAccessPoints()
         {
             List<Point> returnMe = new List<Point>();
             for (int i = 0; i < Size.X; i++)
             {
-                Point yPosAbove = new Point(_position.X + i,_position.Y - 1);
+                Point yPosAbove = new Point(_position.X + i, _position.Y - 1);
                 if (yPosAbove.Y >= 0)
-                    if (Owner.Environment[yPosAbove].CanAccess && Owner.Environment[yPosAbove].AreaID == areaId)
-                        returnMe.Add(yPosAbove);
+                    returnMe.Add(yPosAbove);
                 Point yPosBelow = new Point(_position.X + i, _position.Y + Size.Y);
                 if (yPosBelow.Y <= Owner.Environment.WorldSize.Y)
-                    if (Owner.Environment[yPosBelow].CanAccess && Owner.Environment[yPosBelow].AreaID == areaId)
-                        returnMe.Add(yPosBelow);
+                    returnMe.Add(yPosBelow);
             }
             for (int i = 0; i < Size.Y; i++)
             {
                 Point xPosLeft = new Point(_position.X - 1, _position.Y + i);
                 if (xPosLeft.X >= 0)
-                    if (Owner.Environment[xPosLeft].CanAccess && Owner.Environment[xPosLeft].AreaID == areaId)
-                        returnMe.Add(xPosLeft);
-                Point xPosRight = new Point(_position.X + Size.X-1, _position.Y + i);
+                    returnMe.Add(xPosLeft);
+                Point xPosRight = new Point(_position.X + Size.X - 1, _position.Y + i);
                 if (xPosRight.X <= Owner.Environment.WorldSize.X)
-                    if (Owner.Environment[xPosRight].CanAccess && Owner.Environment[xPosRight].AreaID == areaId)
-                        returnMe.Add(xPosRight);
+                    returnMe.Add(xPosRight);
             }
             return returnMe;
-        }
-
-        /// <summary>
-        /// Checks to see if this building can be access from a certain area.
-        /// </summary>
-        /// <param name="areaId">The ID of the area of the object wanting access to this building.</param>
-        /// <param name="accessReason">The reason why this building needs access.</param>
-        /// <returns>Returns true if the building can be accessed.</returns>
-        public bool AccessableFromAreaId(int areaId, AccessReason accessReason)
-        {
-            if (accessReason == AccessReason.Construction)
-            {
-                List<Point> accessPoints = ConstructionPoints(areaId);
-                return (accessPoints.Count > 0);
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Gets all the points that provide access from an area.
-        /// </summary>
-        /// <param name="areaId">The area ID of the object wanting to access this building.</param>
-        /// <param name="accessReason">The reason this building needs access.</param>
-        /// <returns>A MovementDestination object that the accessing object can use to path to this building.</returns>
-        public MovementDestination<Point> GetAccessablePointsByAreaId(int areaId, AccessReason accessReason)
-        {
-            // TODO: Change the position to the middle of the building if its bigger than 2x2
-            switch (accessReason)
-            {
-                case AccessReason.Construction:
-                    return new MovementDestination<Point>(ConstructionPoints(areaId));
-                case AccessReason.PlaceItem:
-                    if (_buildingState == BuildingStates.UnderConstruction)
-                        return new MovementDestination<Point>(ConstructionPoints(areaId));
-                    break;
-            }
-            return null;
         }
     }
 }
