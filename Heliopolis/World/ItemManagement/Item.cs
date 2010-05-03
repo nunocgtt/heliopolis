@@ -14,11 +14,17 @@ namespace Heliopolis.World.ItemManagement
         private readonly string _classification;
         private readonly string _itemType;
         private readonly float _weight; 
-        private string _texture;
+        private readonly string _texture;
         private Point _position;
         private bool _isReserved;
         private ItemStates _itemState;
         private ICanHoldItem _holder;
+
+        private readonly int _storageSize;
+        public int StorageSize
+        {
+            get { return _storageSize; }
+        }
 
         /// <summary>
         /// Gets the weight.
@@ -35,7 +41,6 @@ namespace Heliopolis.World.ItemManagement
         public string Texture
         {
             get { return _texture; }
-            set { _texture = value; }
         }
 
         /// <summary>
@@ -58,7 +63,36 @@ namespace Heliopolis.World.ItemManagement
         public bool IsReserved
         {
             get { return _isReserved; }
-            set { _isReserved = value; }
+            set
+            {
+                _isReserved = value;
+                UpdateSpatialIndexMembership();
+            }
+        }
+
+        private bool _isMemberOfSpatialIndex;
+
+        private bool IsMemberOfSpatialIndex
+        {
+            get { return _isMemberOfSpatialIndex; }
+            set
+            {
+                if (_isMemberOfSpatialIndex && !value)
+                {
+                    Owner.SpatialTreeIndex.RemoveFromSection(_position, this, SpatialObjectType.Item, _itemType);
+                }
+                else if (!_isMemberOfSpatialIndex && value)
+                {
+                    Owner.SpatialTreeIndex.AddToSection(_position, this, SpatialObjectType.Item, _itemType);
+                }
+                _isMemberOfSpatialIndex = value;
+            }
+        }
+
+        private void UpdateSpatialIndexMembership()
+        {
+            IsMemberOfSpatialIndex = (_itemState == ItemStates.OnGround || _itemState == ItemStates.InStorage) &&
+                                     !IsReserved;
         }
 
         /// <summary>
@@ -68,17 +102,8 @@ namespace Heliopolis.World.ItemManagement
         {
             get { return _itemState; }
             set {
-                // Item is being picked up
-                if ((value == ItemStates.BeingCarried || value == ItemStates.InBackpack) && (_itemState == ItemStates.OnGround || _itemState == ItemStates.InStorage))
-                {
-                    Owner.SpatialTreeIndex.RemoveFromSection(_position, this, SpatialObjectType.Item, _itemType);
-                }
-                // Item is being put down
-                if ((value == ItemStates.OnGround || value == ItemStates.InStorage) && (_itemState == ItemStates.BeingCarried || _itemState == ItemStates.InBackpack))
-                {
-                    Owner.SpatialTreeIndex.AddToSection(_position, this, SpatialObjectType.Item, _itemType);
-                }
                 _itemState = value; 
+                UpdateSpatialIndexMembership();
             }
         }
 
@@ -121,10 +146,12 @@ namespace Heliopolis.World.ItemManagement
             _classification = classification;
             _texture = texture;
             _isReserved = false;
-            _itemState = ItemStates.OnGround;
+            _isMemberOfSpatialIndex = false;
+            _itemState = ItemStates.Nowhere;
             _holder = null;
             _weight = weight;
             _position = new Point(-1,-1);
+            _storageSize = 1;
         }
 
         /// <summary>

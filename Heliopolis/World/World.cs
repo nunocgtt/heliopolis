@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Heliopolis.Utilities.SpatialTreeIndexSystem;
+using Heliopolis.World.BuildingManagement;
 using Heliopolis.World.Environment;
 using Heliopolis.World.ItemManagement;
 using Heliopolis.World.JobSystem;

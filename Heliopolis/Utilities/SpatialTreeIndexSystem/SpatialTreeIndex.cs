@@ -12,7 +12,7 @@ namespace Heliopolis.Utilities.SpatialTreeIndexSystem
     {
         Item = 0,
         Actor = 1,
-        Building = 2,
+        Storage = 2,
         EnvironmentTile = 3
     }
 
@@ -25,9 +25,9 @@ namespace Heliopolis.Utilities.SpatialTreeIndexSystem
     {
         public SpatialTreeIndex(Point sectionSize, Point worldSize, int [] treeWidth)
         {
-            this.SectionSize = sectionSize;
-            this.WorldSize = worldSize;
-            this.TreeWidth = treeWidth;
+            SectionSize = sectionSize;
+            WorldSize = worldSize;
+            TreeWidth = treeWidth;
         }
 
         private Point SectionSize { get; set; }

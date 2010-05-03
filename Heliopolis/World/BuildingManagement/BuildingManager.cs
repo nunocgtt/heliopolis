@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace Heliopolis.World
+namespace Heliopolis.World.BuildingManagement
 {
 
     /// <summary>

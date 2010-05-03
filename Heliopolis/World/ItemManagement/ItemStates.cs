@@ -20,6 +20,14 @@
         /// <summary>
         /// The item in an actor's storage/backpack.
         /// </summary>
-        InBackpack
+        InBackpack,
+        /// <summary>
+        /// Currently in use as a construction material for a building.
+        /// </summary>
+        ConstructionMaterial,
+        /// <summary>
+        /// The item doesn't exist in the gameworld
+        /// </summary>
+        Nowhere
     }
 }

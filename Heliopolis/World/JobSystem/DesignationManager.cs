@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Heliopolis.World.BuildingManagement;
 using Heliopolis.World.Environment;
 using Microsoft.Xna.Framework;
 
