@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Heliopolis.Utilities.PathFinder;
 using Heliopolis.Utilities.SpatialTreeIndexSystem;
+using Heliopolis.World.BuildingManagement;
 using Heliopolis.World.ItemManagement;
 using Microsoft.Xna.Framework;
 using System;
@@ -141,6 +142,8 @@ namespace Heliopolis.World.Environment
             get { return _position; }
             set { _position = value; }
         }
+
+        public BuildingTile BuildingTile { get; set; }
 
         public InteractableObject InteractableObject { get; set; }
 

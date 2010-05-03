@@ -375,7 +375,11 @@ namespace Heliopolis.World.Environment
 
         public List<string> GetTexturesToDraw(Point position)
         {
-            List<string> textures = new List<string> {this[position].Texture};
+            List<string> textures = new List<string>();
+            if (this[position].BuildingTile == null)
+                textures.Add(this[position].Texture);
+            else
+                textures.Add(this[position].BuildingTile.Texture);
             if (this[position].InteractableObject != null)
             {
                 textures.Add(this[position].InteractableObject.Texture);

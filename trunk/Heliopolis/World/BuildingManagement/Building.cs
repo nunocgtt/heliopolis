@@ -6,27 +6,8 @@ using Heliopolis.World.Environment;
 using Heliopolis.World.ItemManagement;
 using Microsoft.Xna.Framework;
 
-namespace Heliopolis.World
+namespace Heliopolis.World.BuildingManagement
 {
-    /// <summary>
-    /// The different states a building can be in.
-    /// </summary>
-    public enum BuildingStates
-    {
-        /// <summary>
-        /// Currently getting constructed.
-        /// </summary>
-        UnderConstruction,
-        /// <summary>
-        /// Ready and constructed.
-        /// </summary>
-        Ready,
-        /// <summary>
-        /// In no state at the moment.
-        /// </summary>
-        None
-    }
-
     /// <summary>
     /// Represents a building in the game world.
     /// </summary>
@@ -35,7 +16,6 @@ namespace Heliopolis.World
     {
         private BuildingTile[,] _buildingTiles;
         private readonly List<string> _requiredMaterials;
-        private readonly List<int> _requiredMaterialAmount;
         private List<Item> _constructionItems;
         private Point _position;
         private BuildingStates _buildingState;
@@ -49,14 +29,12 @@ namespace Heliopolis.World
         /// <param name="size">The size in tiles of the building.</param>
         /// <param name="buildingTiles">A 2D array containing all the building tiles.</param>
         /// <param name="requiredMaterials">The materials required for building.</param>
-        /// <param name="requiredMaterialAmounts">The quantities of the materials.</param>
         /// <param name="owner">The owning game world.</param>
-        public Building(Point size, BuildingTile[,] buildingTiles, List<string> requiredMaterials, List<int> requiredMaterialAmounts, GameWorld owner) : base (owner)
+        public Building(Point size, BuildingTile[,] buildingTiles, List<string> requiredMaterials, GameWorld owner) : base (owner)
         {
             Size = size;
             _buildingTiles = buildingTiles;
             _requiredMaterials = requiredMaterials;
-            _requiredMaterialAmount = requiredMaterialAmounts;
             _constructionItems = new List<Item>();
             _buildingState = BuildingStates.None;
         }
@@ -81,14 +59,6 @@ namespace Heliopolis.World
         public List<string> RequiredMaterials
         {
             get { return _requiredMaterials; }
-        }
-
-        /// <summary>
-        /// The required material quantites.
-        /// </summary>
-        public List<int> RequiredMaterialAmount
-        {
-            get { return _requiredMaterialAmount; }
         }
 
         /// <summary>
@@ -181,6 +151,7 @@ namespace Heliopolis.World
             {
                 EnvironmentTile targetTile = Owner.Environment[_position.X + buildingTile.Position.X, _position.Y + buildingTile.Position.Y];
                 targetTile.CanAccess = buildingTile.CanAccess;
+                targetTile.BuildingTile = buildingTile;
             }
         }
 
@@ -194,8 +165,8 @@ namespace Heliopolis.World
         {
             foreach (BuildingTileContains container in _itemsHeld.Values.Where(container => container.CanHold(itemType)))
             {
-                container.itemType = itemType;
-                container.spaceReserved++;
+                container.ItemType = itemType;
+                container.SpaceReserved++;
                 return true;
             }
             return false;
@@ -212,7 +183,7 @@ namespace Heliopolis.World
             foreach (BuildingTileContains container in _itemsHeld.Values.Where(container => container.HasItem(itemType)))
             {
                 if (reserveItem)
-                    container.itemsReserved++;
+                    container.ItemsReserved++;
                 return true;
             }
             return false;
@@ -230,8 +201,7 @@ namespace Heliopolis.World
             {
                 case BuildingStates.UnderConstruction:
                     _constructionItems.Add(item);
-                    item.Holder = this;
-                    item.ItemState = ItemStates.BeingCarried;
+                    return ItemStates.ConstructionMaterial;
                     break;
                 case BuildingStates.Ready:
                     foreach (BuildingTileContains container in _itemsHeld.Values)
@@ -239,13 +209,14 @@ namespace Heliopolis.World
                         if (container.CanHold(item.ItemType))
                         {
                             container.AddItem(item);
-                            item.Holder = this;
-                            item.ItemState = ItemStates.BeingCarried;
+                            return ItemStates.InStorage;
                         }
                     }
+                    throw new NotSupportedException();
                     break;
+                default:
+                    throw new NotSupportedException();
             }
-            return ItemStates.InStorage;
         }
 
         /// <summary>

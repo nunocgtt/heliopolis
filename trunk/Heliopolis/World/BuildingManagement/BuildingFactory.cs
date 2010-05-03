@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using Microsoft.Xna.Framework;
 
-namespace Heliopolis.World
+namespace Heliopolis.World.BuildingManagement
 {
     /// <summary>
     /// Handles creation of the Building class, from a set of templates defined in an XML file.
@@ -12,14 +11,14 @@ namespace Heliopolis.World
     public class BuildingFactory
     {
         [NonSerialized]
-        private static Dictionary<string, Building> buildingTemplates = null;
+        private static Dictionary<string, Building> _buildingTemplates = null;
 
         /// <summary>
         /// All the building templates.
         /// </summary>
         public static Dictionary<string, Building> BuildingTemplates
         {
-            get { return buildingTemplates; }
+            get { return _buildingTemplates; }
         }
 
         /// <summary>
@@ -29,7 +28,7 @@ namespace Heliopolis.World
         /// <param name="owner">The owning game world.</param>
         public static void LoadTemplatesFromXml(XmlDocument xmlDoc, GameWorld owner)
         {
-            buildingTemplates = new Dictionary<string, Building>();
+            _buildingTemplates = new Dictionary<string, Building>();
             XmlNodeList itemNodes = xmlDoc.GetElementsByTagName("Building");
             foreach (XmlNode node in itemNodes)
             {
@@ -43,46 +42,48 @@ namespace Heliopolis.World
                 int y = 0;
                 bool usesMainAccesPoint = false;
                 Point mainAccesPoint = new Point(0, 0);
-                foreach (XmlNode n in tileNodes)
-                {
-                    XmlNode noAccess = n.SelectSingleNode("noaccess");
-                    XmlNode mainAccessPointNode = n.SelectSingleNode("mainaccesspoint");
-                    XmlNode carryNode = n.SelectSingleNode("holds");
-                    XmlNode textureNode = n.SelectSingleNode("Texture");
-                    BuildingTile addTile = new BuildingTile();
-                    addTile.Texture = textureNode.InnerText;
-                    if (noAccess != null)
-                        addTile.CanAccess = false;
-                    else
-                        addTile.CanAccess = true;
-                    if (mainAccessPointNode != null)
+                if (tileNodes != null)
+                    foreach (XmlNode n in tileNodes)
                     {
-                        usesMainAccesPoint = true;
-                        mainAccesPoint = new Point(x, y);
+                        XmlNode noAccess = n.SelectSingleNode("noaccess");
+                        XmlNode mainAccessPointNode = n.SelectSingleNode("mainaccesspoint");
+                        XmlNode carryNode = n.SelectSingleNode("holds");
+                        XmlNode textureNode = n.SelectSingleNode("Texture");
+                        BuildingTile addTile = new BuildingTile();
+                        addTile.Texture = textureNode.InnerText;
+                        if (noAccess != null)
+                            addTile.CanAccess = false;
+                        else
+                            addTile.CanAccess = true;
+                        if (mainAccessPointNode != null)
+                        {
+                            usesMainAccesPoint = true;
+                            mainAccesPoint = new Point(x, y);
+                        }
+                        if (carryNode != null)
+                        {
+                            addTile.ItemSpace = Int32.Parse(carryNode.InnerText);
+                        }
+                        else
+                            addTile.ItemSpace = 0;
+                        addTile.Position = new Point(x, y);
+                        buildingTile[x, y] = addTile;
+                        x++;
+                        if (x >= buildingSize.X)
+                        {
+                            x = 0;
+                            y++;
+                        }
                     }
-                    if (carryNode != null)
-                    {
-                        addTile.ItemSpace = Int32.Parse(carryNode.InnerText);
-                    }
-                    else
-                        addTile.ItemSpace = 0;
-                    addTile.Position = new Point(x, y);
-                    buildingTile[x, y] = addTile;
-                    x++;
-                    if (x >= buildingSize.X)
-                    {
-                        x = 0;
-                        y++;
-                    }
-                }
                 List<string> requiredMaterials = new List<string>();
                 List<int> requiredMaterialAmount = new List<int>();
-                foreach (XmlNode n in resources)
-                {
-                    requiredMaterials.Add(n.Attributes["name"].Value);
-                    requiredMaterialAmount.Add(Int32.Parse(n.Attributes["quantity"].Value));
-                }
-                Building addBuilding = new Building(buildingSize, buildingTile, requiredMaterials, requiredMaterialAmount, owner);
+                if (resources != null)
+                    foreach (XmlNode n in resources)
+                    {
+                        requiredMaterials.Add(n.Attributes["name"].Value);
+                        requiredMaterialAmount.Add(Int32.Parse(n.Attributes["quantity"].Value));
+                    }
+                Building addBuilding = new Building(buildingSize, buildingTile, requiredMaterials, owner);
                 addBuilding.MainAccessPoint = mainAccesPoint;
                 addBuilding.UsesMainAccessPoint = usesMainAccesPoint;
                 AddTemplate(node.Attributes["name"].Value, addBuilding);
@@ -105,7 +106,7 @@ namespace Heliopolis.World
 
         private static void AddTemplate(string name, Building addBuilding)
         {
-            buildingTemplates.Add(name, addBuilding);
+            _buildingTemplates.Add(name, addBuilding);
         }
     }
 }
