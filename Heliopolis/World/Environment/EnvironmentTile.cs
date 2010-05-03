@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Heliopolis.Utilities.PathFinder;
 using Heliopolis.Utilities.SpatialTreeIndexSystem;
+using Heliopolis.World.ItemManagement;
 using Microsoft.Xna.Framework;
 using System;
-using Heliopolis.Utilities;
 
 namespace Heliopolis.World.Environment
 {
@@ -12,7 +12,7 @@ namespace Heliopolis.World.Environment
     /// Represents a single tile in the game environment.
     /// </summary>
     [Serializable]
-    public class EnvironmentTile : GameWorldObject, System.ICloneable, ISpatialIndexMember
+    public class EnvironmentTile : GameWorldObject, ICloneable, ISpatialIndexMember, ICanHoldItem
     {
         private int _areaId;
         private string _texture;
@@ -122,6 +122,17 @@ namespace Heliopolis.World.Environment
             }
         }
 
+        public ItemStates PickupItem(Item item)
+        {
+            ItemsOnGround.Add(item);
+            return ItemStates.OnGround;
+        }
+
+        public void PutdownItem(Item itemToPlace)
+        {
+            ItemsOnGround.Remove(itemToPlace);
+        }
+
         /// <summary>
         /// The game world position of this tile.
         /// </summary>
@@ -133,6 +144,12 @@ namespace Heliopolis.World.Environment
 
         public InteractableObject InteractableObject { get; set; }
 
+        public List<Item> ItemsOnGround
+        {
+            get { return _itemsOnGround; }
+            set { _itemsOnGround = value; }
+        }
+
         /// <summary>
         /// Initialises a new instance of the EnvironmentTile class.
         /// </summary>
@@ -141,8 +158,8 @@ namespace Heliopolis.World.Environment
         /// <param name="owner">The game world owner.</param>
         public EnvironmentTile(string texture, bool canAccess, GameWorld owner) : base(owner)
         {
-            this._texture = texture;
-            this._canAccess = canAccess;
+            _texture = texture;
+            _canAccess = canAccess;
             _areaId = 0;
         }
 

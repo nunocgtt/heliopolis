@@ -1,4 +1,5 @@
 using System;
+using Heliopolis.World.ItemManagement;
 using Heliopolis.World.JobSystem;
 
 namespace Heliopolis.World.State
@@ -150,7 +151,7 @@ namespace Heliopolis.World.State
 
         public override void Tick()
         {
-            ActorPlacingItem.PlaceItem(PutItemPlace, TargetItem);
+            ActorPlacingItem.PutdownItem(TargetItem);
         }
 
         protected override bool CheckFinishedState()

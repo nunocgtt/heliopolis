@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Heliopolis.Utilities.SpatialTreeIndexSystem;
 using Heliopolis.World.Environment;
+using Heliopolis.World.ItemManagement;
 using Heliopolis.World.JobSystem;
 using Microsoft.Xna.Framework;
 using System.Xml;

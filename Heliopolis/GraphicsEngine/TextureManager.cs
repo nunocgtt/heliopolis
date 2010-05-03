@@ -16,11 +16,12 @@ namespace Heliopolis.GraphicsEngine
             TextureSheetNames.Add("floors", "Sprites/floors");
             TextureSheetNames.Add("trees", "Sprites/trees");
             TextureSheetNames.Add("dwarves", "Sprites/dwarves");
+            TextureSheetNames.Add("items", "Sprites/items");
 
             foreach (KeyValuePair<string, string> kvp in TextureSheetNames)
                 TextureSheets.Add(kvp.Key, contentManager.Load<Texture2D>(kvp.Value));
 
-            // todo: load from XML file...?
+            // todo: load from XML file
 
             Textures.Add("grass", new IsometricTexture()
             {
@@ -66,6 +67,16 @@ namespace Heliopolis.GraphicsEngine
                 CenterPoint = new Point(16, 8),
                 TexturePointOrigin = new Point(15 * 32, 1 * 20),
                 TextureSheet = "floors"
+            });
+
+            Textures.Add("wood", new IsometricTexture()
+            {
+                Size = new Point(32, 32),
+                TextureName = "wood",
+                ZLevel = 6,
+                CenterPoint = new Point(16, 24),
+                TexturePointOrigin = new Point(0 * 32, 0 * 32),
+                TextureSheet = "items"
             });
         }
     }

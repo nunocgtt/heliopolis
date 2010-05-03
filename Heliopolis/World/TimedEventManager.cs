@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Heliopolis.World
 {
@@ -66,7 +65,7 @@ namespace Heliopolis.World
             }
         }
 
-        public void StartTimedEventor(TimedEventor timedEventor, TimeSpan firstActionTime)
+        private void StartTimedEventor(TimedEventor timedEventor, TimeSpan firstActionTime)
         {
             while (_eventorsByTime.ContainsKey(timedEventor.NextAbsoluteActionTime))
             {

@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using Microsoft.Xna.Framework;
 
-namespace Heliopolis.World
+namespace Heliopolis.World.ItemManagement
 {
 
     /// <summary>
     /// Handles creation of the Item class, from a set of templates defined in an XML file.
     /// </summary>
-    public class ItemFactory
+    public static class ItemFactory
     {
         [NonSerialized]
         private static Dictionary<string, Item> _itemTemplates = null;
