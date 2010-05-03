@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Heliopolis.World.ItemManagement;
 using Microsoft.Xna.Framework;
 
 namespace Heliopolis.World

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Xml;
+using System.Linq;
 using Heliopolis.Utilities.PathFinder;
 using Heliopolis.World.Environment;
+using Heliopolis.World.ItemManagement;
 using Microsoft.Xna.Framework;
-using Heliopolis.Utilities;
 
 namespace Heliopolis.World
 {
@@ -37,7 +37,6 @@ namespace Heliopolis.World
         private readonly List<string> _requiredMaterials;
         private readonly List<int> _requiredMaterialAmount;
         private List<Item> _constructionItems;
-        private Point _size;
         private Point _position;
         private BuildingStates _buildingState;
         private Point _mainAccessPoint;
@@ -47,15 +46,14 @@ namespace Heliopolis.World
         /// <summary>
         /// Initialises a new instance of the Building class.
         /// </summary>
-        /// <param name="name">The name of the building.</param>
         /// <param name="size">The size in tiles of the building.</param>
         /// <param name="buildingTiles">A 2D array containing all the building tiles.</param>
         /// <param name="requiredMaterials">The materials required for building.</param>
         /// <param name="requiredMaterialAmounts">The quantities of the materials.</param>
         /// <param name="owner">The owning game world.</param>
-        public Building(string name, Point size, BuildingTile[,] buildingTiles, List<string> requiredMaterials, List<int> requiredMaterialAmounts, GameWorld owner) : base (owner)
+        public Building(Point size, BuildingTile[,] buildingTiles, List<string> requiredMaterials, List<int> requiredMaterialAmounts, GameWorld owner) : base (owner)
         {
-            _size = size;
+            Size = size;
             _buildingTiles = buildingTiles;
             _requiredMaterials = requiredMaterials;
             _requiredMaterialAmount = requiredMaterialAmounts;
@@ -66,10 +64,7 @@ namespace Heliopolis.World
         /// <summary>
         /// The size of the building.
         /// </summary>
-        public Point Size
-        {
-            get { return _size; }
-        }
+        public Point Size { get; private set; }
 
         /// <summary>
         /// The actual tiles that make up this building.
@@ -197,14 +192,11 @@ namespace Heliopolis.World
         /// <returns></returns>
         public bool CanHold(string itemType, bool reserveSpace)
         {
-            foreach (BuildingTileContains container in _itemsHeld.Values)
+            foreach (BuildingTileContains container in _itemsHeld.Values.Where(container => container.CanHold(itemType)))
             {
-                if (container.CanHold(itemType))
-                {
-                    container.itemType = itemType;
-                    container.spaceReserved++;
-                    return true;
-                }
+                container.itemType = itemType;
+                container.spaceReserved++;
+                return true;
             }
             return false;
         }
@@ -217,14 +209,11 @@ namespace Heliopolis.World
         /// <returns></returns>
         public bool HasItem(string itemType, bool reserveItem)
         {
-            foreach (BuildingTileContains container in _itemsHeld.Values)
+            foreach (BuildingTileContains container in _itemsHeld.Values.Where(container => container.HasItem(itemType)))
             {
-                if (container.HasItem(itemType))
-                {
-                    if (reserveItem)
-                        container.itemsReserved++;
-                    return true;
-                }
+                if (reserveItem)
+                    container.itemsReserved++;
+                return true;
             }
             return false;
         }
@@ -235,34 +224,35 @@ namespace Heliopolis.World
         /// Place an item into this building.
         /// </summary>
         /// <param name="item">The item to place.</param>
-        public void PickupItem(Item item)
+        public ItemStates PickupItem(Item item)
         {
-            if (_buildingState == BuildingStates.UnderConstruction)
+            switch (_buildingState)
             {
-                _constructionItems.Add(item);
-                item.Holder = this;
-                item.ItemState = ItemStates.BeingCarried;
-            }
-            else if(_buildingState == BuildingStates.Ready)
-            {
-                foreach (BuildingTileContains container in _itemsHeld.Values)
-                {
-                    if (container.CanHold(item.ItemType))
+                case BuildingStates.UnderConstruction:
+                    _constructionItems.Add(item);
+                    item.Holder = this;
+                    item.ItemState = ItemStates.BeingCarried;
+                    break;
+                case BuildingStates.Ready:
+                    foreach (BuildingTileContains container in _itemsHeld.Values)
                     {
-                        container.AddItem(item);
-                        item.Holder = this;
-                        item.ItemState = ItemStates.BeingCarried;
+                        if (container.CanHold(item.ItemType))
+                        {
+                            container.AddItem(item);
+                            item.Holder = this;
+                            item.ItemState = ItemStates.BeingCarried;
+                        }
                     }
-                }
+                    break;
             }
+            return ItemStates.InStorage;
         }
 
         /// <summary>
         /// Give an item to another ICanHoldItem.
         /// </summary>
-        /// <param name="itemHolder">The ICanHoldItem to give the object to.</param>
         /// <param name="item">The item to give.</param>
-        public void PlaceItem(ICanHoldItem itemHolder, Item item)
+        public void PutdownItem(Item item)
         {
             if (_buildingState == BuildingStates.Ready)
             {
@@ -280,14 +270,6 @@ namespace Heliopolis.World
             }
         }
 
-        /// <summary>
-        /// Put an item on the ground.
-        /// </summary>
-        public void PlaceItemOnGround(Item itemToDrop)
-        {
-            throw new Exception("A building can not place an item on the ground.");
-        }
-
         #endregion
 
         /// <summary>
@@ -298,24 +280,24 @@ namespace Heliopolis.World
         public List<Point> ConstructionPoints(int areaId)
         {
             List<Point> returnMe = new List<Point>();
-            for (int i = 0; i < _size.X; i++)
+            for (int i = 0; i < Size.X; i++)
             {
                 Point yPosAbove = new Point(_position.X + i,_position.Y - 1);
                 if (yPosAbove.Y >= 0)
                     if (Owner.Environment[yPosAbove].CanAccess && Owner.Environment[yPosAbove].AreaID == areaId)
                         returnMe.Add(yPosAbove);
-                Point yPosBelow = new Point(_position.X + i, _position.Y + _size.Y);
+                Point yPosBelow = new Point(_position.X + i, _position.Y + Size.Y);
                 if (yPosBelow.Y <= Owner.Environment.WorldSize.Y)
                     if (Owner.Environment[yPosBelow].CanAccess && Owner.Environment[yPosBelow].AreaID == areaId)
                         returnMe.Add(yPosBelow);
             }
-            for (int i = 0; i < _size.Y; i++)
+            for (int i = 0; i < Size.Y; i++)
             {
                 Point xPosLeft = new Point(_position.X - 1, _position.Y + i);
                 if (xPosLeft.X >= 0)
                     if (Owner.Environment[xPosLeft].CanAccess && Owner.Environment[xPosLeft].AreaID == areaId)
                         returnMe.Add(xPosLeft);
-                Point xPosRight = new Point(_position.X + _size.X-1, _position.Y + i);
+                Point xPosRight = new Point(_position.X + Size.X-1, _position.Y + i);
                 if (xPosRight.X <= Owner.Environment.WorldSize.X)
                     if (Owner.Environment[xPosRight].CanAccess && Owner.Environment[xPosRight].AreaID == areaId)
                         returnMe.Add(xPosRight);
@@ -329,7 +311,7 @@ namespace Heliopolis.World
         /// <param name="areaId">The ID of the area of the object wanting access to this building.</param>
         /// <param name="accessReason">The reason why this building needs access.</param>
         /// <returns>Returns true if the building can be accessed.</returns>
-        public bool AccessableFromAreaID(int areaId, AccessReason accessReason)
+        public bool AccessableFromAreaId(int areaId, AccessReason accessReason)
         {
             if (accessReason == AccessReason.Construction)
             {
@@ -345,7 +327,7 @@ namespace Heliopolis.World
         /// <param name="areaId">The area ID of the object wanting to access this building.</param>
         /// <param name="accessReason">The reason this building needs access.</param>
         /// <returns>A MovementDestination object that the accessing object can use to path to this building.</returns>
-        public MovementDestination<Point> GetAccessablePointsByAreaID(int areaId, AccessReason accessReason)
+        public MovementDestination<Point> GetAccessablePointsByAreaId(int areaId, AccessReason accessReason)
         {
             // TODO: Change the position to the middle of the building if its bigger than 2x2
             switch (accessReason)

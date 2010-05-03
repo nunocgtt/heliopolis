@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Heliopolis.Utilities.SpatialTreeIndexSystem;
 using Microsoft.Xna.Framework;
-using Heliopolis.Utilities;
 
-namespace Heliopolis.World
+namespace Heliopolis.World.ItemManagement
 {
 
     /// <summary>
@@ -46,6 +44,19 @@ namespace Heliopolis.World
         {
             //TODO: Incorporate the searcher Area ID
             return (Item)Owner.SpatialTreeIndex.FindClosestObject(searcherPosition, itemType);
+        }
+
+        public static void PlaceItem(ICanHoldItem source, ICanHoldItem target, Item item, ItemStates newItemState)
+        {
+            source.PutdownItem(item);
+            item.Holder = target;
+            item.ItemState = target.PickupItem(item);
+        }
+
+        public static void OnItemCreate(ICanHoldItem target, Item item)
+        {
+            item.ItemState = target.PickupItem(item);
+            item.Holder = target;
         }
 
         /// <summary>

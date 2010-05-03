@@ -115,6 +115,8 @@
     <Compile Include="World\ActorFactory.cs" />
     <Compile Include="World\ActorManager.cs" />
     <Compile Include="World\Environment\IRequiresAccess.cs" />
+    <Compile Include="World\ItemManagement\ICanHoldItem.cs" />
+    <Compile Include="World\ItemManagement\ItemStates.cs" />
     <Compile Include="World\JobSystem\JobFactory.cs" />
     <Compile Include="World\State\ActorState.cs" />
     <Compile Include="World\Area.cs" />
@@ -131,9 +133,9 @@
     <Compile Include="World\GameWorldObject.cs" />
     <Compile Include="World\Global.cs" />
     <Compile Include="World\Interfaces.cs" />
-    <Compile Include="World\Item.cs" />
-    <Compile Include="World\ItemFactory.cs" />
-    <Compile Include="World\ItemManager.cs" />
+    <Compile Include="World\ItemManagement\Item.cs" />
+    <Compile Include="World\ItemManagement\ItemFactory.cs" />
+    <Compile Include="World\ItemManagement\ItemManager.cs" />
     <Compile Include="World\InteractableObject.cs" />
     <Compile Include="World\State\ActorStateStashItem.cs" />
     <Compile Include="World\State\Job.cs" />

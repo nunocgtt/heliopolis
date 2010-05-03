@@ -82,7 +82,7 @@ namespace Heliopolis.World
                     requiredMaterials.Add(n.Attributes["name"].Value);
                     requiredMaterialAmount.Add(Int32.Parse(n.Attributes["quantity"].Value));
                 }
-                Building addBuilding = new Building(node.Attributes["name"].Value, buildingSize, buildingTile, requiredMaterials, requiredMaterialAmount, owner);
+                Building addBuilding = new Building(buildingSize, buildingTile, requiredMaterials, requiredMaterialAmount, owner);
                 addBuilding.MainAccessPoint = mainAccesPoint;
                 addBuilding.UsesMainAccessPoint = usesMainAccesPoint;
                 AddTemplate(node.Attributes["name"].Value, addBuilding);

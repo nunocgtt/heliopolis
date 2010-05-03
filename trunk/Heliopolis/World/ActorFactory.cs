@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
+using Heliopolis.World.ItemManagement;
 using Microsoft.Xna.Framework;
 
 namespace Heliopolis.World
@@ -70,6 +71,8 @@ namespace Heliopolis.World
             returnMe.ActionTimes.Add("pickupitem", TimeSpan.FromMilliseconds(100));
             returnMe.ActionTimes.Add("placeitem", TimeSpan.FromMilliseconds(100));
             returnMe.ActionTimes.Add("construction", TimeSpan.FromMilliseconds(100));
+            returnMe.InHand = new List<Item>();
+            returnMe.Inventory = new List<Item>();
             returnMe.Start();
             return returnMe;
         }

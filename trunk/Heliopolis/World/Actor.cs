@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Heliopolis.Utilities;
 using Heliopolis.Utilities.PathFinder;
 using Heliopolis.Utilities.SpatialTreeIndexSystem;
+using Heliopolis.World.ItemManagement;
 using Heliopolis.World.State;
 using Microsoft.Xna.Framework;
 
@@ -35,6 +36,13 @@ namespace Heliopolis.World
         private ActorState _state;
         private Dictionary<string, TimeSpan> _actionTimes;
         private string _actorType;
+
+        private List<Item> _inHand;
+        public List<Item> InHand
+        {
+            get { return _inHand; }
+            set { _inHand = value; }
+        }
 
         /// <summary>
         ///   The current section/area ID of this actor.
@@ -168,38 +176,33 @@ namespace Heliopolis.World
             _state.OnEnter();
         }
 
+        public void StoreItemInHand()
+        {
+            Item toStore = InHand[0];
+            InHand.Remove(toStore);
+            Inventory.Add(toStore);
+            toStore.ItemState = ItemStates.InBackpack;
+        }
+
         #region ICanHoldItem Members
 
         /// <summary>
         ///   Pick up an item and place into this actors inventory.
         /// </summary>
         /// <param name = "item">The item to pick up.</param>
-        public void PickupItem(Item item)
+        public ItemStates PickupItem(Item item)
         {
-            _inventory.Add(item);
-            item.ItemState = ItemStates.BeingCarried;
-            item.Holder = this;
+            InHand.Add(item);
+            return ItemStates.BeingCarried;
         }
 
         /// <summary>
         ///   Place a certain item type on to another ICanHoldItem. **NOT IMPLEMENTED**
         /// </summary>
-        /// <param name = "itemHolder">The ICanHoldItem to give the item to.</param>
         /// <param name = "item">The item to place.</param>
-        public void PlaceItem(ICanHoldItem itemHolder, Item item)
+        public void PutdownItem(Item item)
         {
-            itemHolder.PickupItem(item);
-            _inventory.Remove(item);
-        }
-
-        /// <summary>
-        ///   Put an item on the ground at this actors current position.
-        /// </summary>
-        public void PlaceItemOnGround(Item item)
-        {
-            item.ItemState = ItemStates.OnGround;
-            item.Position = _position;
-            _inventory.Remove(item);
+            InHand.Remove(item);
         }
 
         #endregion
@@ -310,6 +313,7 @@ namespace Heliopolis.World
             returnMe.Inventory = new List<Item>();
             returnMe.ActionTimes = new Dictionary<string, TimeSpan>();
             returnMe.State = new ActorStateIdle(returnMe, Owner);
+            returnMe.InHand = new List<Item>();
             return returnMe;
         }
     }

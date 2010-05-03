@@ -1,34 +1,9 @@
-using System.Collections.Generic;
-using System.Xml;
 using Heliopolis.Utilities.SpatialTreeIndexSystem;
 using Microsoft.Xna.Framework;
 using System;
 
-namespace Heliopolis.World
+namespace Heliopolis.World.ItemManagement
 {
-    /// <summary>
-    /// The varios states an Item can exist in.
-    /// </summary>
-    public enum ItemStates
-    {
-        /// <summary>
-        /// The item is on the ground.
-        /// </summary>
-        OnGround,
-        /// <summary>
-        /// The item is being carried by an actor.
-        /// </summary>
-        BeingCarried,
-        /// <summary>
-        /// The item is in a building.
-        /// </summary>
-        InStorage,
-        /// <summary>
-        /// The item in an actor's storage/backpack.
-        /// </summary>
-        InBackpack
-    }
-
     /// <summary>
     /// Represents an item in the game world.
     /// </summary>
@@ -37,12 +12,22 @@ namespace Heliopolis.World
     public class Item : GameWorldObject, ICloneable, ISpatialIndexMember
     {
         private readonly string _classification;
+        private readonly string _itemType;
+        private readonly float _weight; 
         private string _texture;
         private Point _position;
         private bool _isReserved;
         private ItemStates _itemState;
         private ICanHoldItem _holder;
-        private readonly string _itemType;
+
+        /// <summary>
+        /// Gets the weight.
+        /// </summary>
+        /// <value>The weight.</value>
+        public float Weight
+        {
+            get { return _weight; }
+        }
 
         /// <summary>
         /// The texture for rendering.
@@ -62,7 +47,7 @@ namespace Heliopolis.World
             set
             {
                 // Might need to change sections now
-                Owner.SpatialTreeIndex.CheckChangeSection(_position,value,this, SpatialObjectType.Item, this._itemType);
+                Owner.SpatialTreeIndex.CheckChangeSection(_position,value,this, SpatialObjectType.Item, _itemType);
                 _position = value;
             }
         }
@@ -138,6 +123,7 @@ namespace Heliopolis.World
             _isReserved = false;
             _itemState = ItemStates.OnGround;
             _holder = null;
+            _weight = weight;
             _position = new Point(-1,-1);
         }
 
@@ -150,6 +136,4 @@ namespace Heliopolis.World
             return MemberwiseClone();
         }
     }
-
-
 }
