@@ -65,7 +65,10 @@ namespace Heliopolis.World.State
         /// <summary>
         /// A method to be set up by inheriting states to check if the state has finished.
         /// </summary>
-        protected abstract bool CheckFinishedState();
+        protected virtual bool CheckFinishedState()
+        {
+            return true;
+        }
 
         private bool _firstSubstateEntered = false;
 

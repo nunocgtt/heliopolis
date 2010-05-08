@@ -14,7 +14,7 @@ namespace Heliopolis.World.Environment
     /// Represents a single tile in the game environment.
     /// </summary>
     [Serializable]
-    public class EnvironmentTile : GameWorldObject, ICloneable, ISpatialIndexMember, ICanHoldItem
+    public class EnvironmentTile : GameWorldObject, ICloneable, ISpatialIndexMember, ICanHoldItem, ICanAccess
     {
         private int _areaId;
         private string _texture;
@@ -124,6 +124,14 @@ namespace Heliopolis.World.Environment
             }
         }
 
+        public bool CanBeBuiltOn
+        {
+            get
+            {
+                return ItemsOnGround.Count == 0 && InteractableObject == null && BuildingTile == null && ActorsOnTile.Count == 0;
+            }
+        }
+
         public ItemStates PickupItem(Item item)
         {
             ItemsOnGround.Add(item);
@@ -171,7 +179,7 @@ namespace Heliopolis.World.Environment
         /// Returns a list of all the tiles that provide access to this tile.
         /// </summary>
         /// <returns>A list of Point.</returns>
-        public List<Point> GetAccessPoints()
+        public List<Point> GetAdjacentAccessPoints()
         {
             return (from tile in _adjacentTiles 
                     where tile != null 
@@ -187,5 +195,14 @@ namespace Heliopolis.World.Environment
         {
             return MemberwiseClone();
         }
+
+        #region ICanAccess Members
+
+        public IEnumerable<Point> GetAllAccessPoints()
+        {
+            return new List<Point> {Position};
+        }
+
+        #endregion
     }
 }

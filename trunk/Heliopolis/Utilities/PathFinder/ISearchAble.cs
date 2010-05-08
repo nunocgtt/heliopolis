@@ -13,13 +13,9 @@ namespace Heliopolis.Utilities.PathFinder
         /// <param name="point"></param>
         /// <returns></returns>
         float GetPathingWeight(T point);
-        /// <summary>
-        /// Returns a list of Node accessable from a paricular point.
-        /// </summary>
-        /// <param name="point">The point to access from.</param>
-        /// <param name="parentPoint">The point that this point has already been access from. If there is no parent, pass in null.</param>
-        /// <returns>A list of Node</returns>
-        List<Node<T>> GetSuccessorsWithDir(T point, T parentPoint);
+
+        List<Node<T>> GetSuccessorsWithDirection(T point);
+        List<Node<T>> GetSuccessorsWithDirectionMinusParent(T point, T parentPoint);
         /// <summary>
         /// Returns a list of nodes accessable from a paricular point. Use in fill algorithms.
         /// </summary>

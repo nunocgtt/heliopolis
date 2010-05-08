@@ -51,6 +51,12 @@ namespace Heliopolis.World.ItemManagement
             return returnMe;
         }
 
+        public static Item GetNewItem(string templateName)
+        {
+            Item returnMe = (Item)_itemTemplates[templateName].Clone();
+            return returnMe;
+        }
+
         private static void AddTemplate(string name, Item addItem)
         {
             _itemTemplates.Add(name, addItem);

@@ -19,9 +19,7 @@ namespace Heliopolis.Utilities.PathFinder
         SearchStateNotInitialised,
         SearchStateSearching,
         SearchStateSucceeded,
-        SearchStateFailed,
-        SearchStateOutOfMemory,
-        SearchStateInvalid
+        SearchStateFailed
     };
 
     /// <summary>
@@ -48,12 +46,6 @@ namespace Heliopolis.Utilities.PathFinder
             CreateAll();
         }
 
-        protected PathFinder(int maxNodes, ISearchAble<T> gameGrid, Point maxsize)
-        {
-            CreateAll();
-            Initialise(maxNodes, gameGrid, maxsize);
-        }
-
         private void CreateAll()
         {
             _searchState = SearchState.SearchStateNotInitialised;
@@ -64,12 +56,6 @@ namespace Heliopolis.Utilities.PathFinder
             _finalDirections = new LinkedList<Direction>();
         }
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="maxNodes">Maximum number of nodes searched before the search fails.</param>
-        /// <param name="gameGrid">Contents of the game environment.</param>
-        /// <param name="maxsize">X/Y size of the game environment.</param>
         public void Initialise(int maxNodes, ISearchAble<T> gameGrid, Point maxsize)
         {
             _searchGrid = gameGrid;
@@ -83,15 +69,9 @@ namespace Heliopolis.Utilities.PathFinder
         /// <param name="request">Contains all the necessary information to perform the search by.</param>
         public void NewSearch(PathfindRequest<T> request)
         {
-            if (_sortedOpenList.Count > 0)
-                _sortedOpenList.Clear();
-            if (_openList.Count > 0)
-                _openList.Clear();
-            if (_closedList.Count > 0)
-                _closedList.Clear();
-            if (_finalDirections.Count > 0)
-                _finalDirections = new LinkedList<Direction>();
+            ClearCollections();
             _startNode = new Node<T>(request.start);
+            _startNode.IsRootNode = true;
             _singlePointSolution = request.SinglePointSolution;
             if (_singlePointSolution)
                 _goalNode = new Node<T>(request.end);
@@ -105,6 +85,18 @@ namespace Heliopolis.Utilities.PathFinder
             _searchState = SearchState.SearchStateSearching;
             _traceManager.WriteLine("New Request - " + request, "path");
             _possibleSolutions = request.possibleSolutions;
+        }
+
+        private void ClearCollections()
+        {
+            if (_sortedOpenList.Count > 0)
+                _sortedOpenList.Clear();
+            if (_openList.Count > 0)
+                _openList.Clear();
+            if (_closedList.Count > 0)
+                _closedList.Clear();
+            if (_finalDirections.Count > 0)
+                _finalDirections = new LinkedList<Direction>();
         }
 
         /// <summary>
@@ -134,9 +126,9 @@ namespace Heliopolis.Utilities.PathFinder
                 }
                 else if (!_singlePointSolution)
                 {
-                    foreach (T p in _possibleSolutions)
+                    foreach (T point in _possibleSolutions)
                     {
-                        if (nextNode.Position.Equals(p))
+                        if (nextNode.Position.Equals(point))
                         {
                             hitSolution = true;
                         }
@@ -160,11 +152,8 @@ namespace Heliopolis.Utilities.PathFinder
             {
                 return null;
             }
-            else
-            {
-                PathfindAnswer returnMe = new PathfindAnswer {Directions = _finalDirections, Owner = null};
-                return returnMe;
-            }
+            PathfindAnswer returnMe = new PathfindAnswer {Directions = _finalDirections, Owner = null};
+            return returnMe;
         }
         
         /// <summary>
@@ -239,7 +228,6 @@ namespace Heliopolis.Utilities.PathFinder
                 Node<T> nodeParent = _goalNode.Parent;
                 while (nodeChild != _startNode)
                 {
-                    nodeParent.Child = nodeChild;
                     // Set the direction
                     switch (nodeChild.ComeFrom)
                     {
@@ -283,8 +271,10 @@ namespace Heliopolis.Utilities.PathFinder
             _traceManager.WriteLine("ProcessNextSearchStep", "path");
             T parentPoint = nextNode.Parent.Position;
             T pos = nextNode.Position;
-            List<Node<T>> successors = _searchGrid.GetSuccessorsWithDir(pos, parentPoint);
-            _traceManager.WriteLine("Successors of " + nextNode.ToString(), "path");
+            List<Node<T>> successors = nextNode.IsRootNode ? 
+                _searchGrid.GetSuccessorsWithDirection(pos) :
+                _searchGrid.GetSuccessorsWithDirectionMinusParent(pos, parentPoint);
+            _traceManager.WriteLine("Successors of " + nextNode, "path");
             _traceManager.DisplayContentsOfNodeList(successors, "path");
             Node<T> openNode = null;
             Node<T> closedNode = null;

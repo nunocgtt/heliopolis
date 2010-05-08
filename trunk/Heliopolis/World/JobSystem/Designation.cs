@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Heliopolis.Utilities.PathFinder;
-using Heliopolis.World.BuildingManagement;
 using Heliopolis.World.Environment;
 using Heliopolis.World.ItemManagement;
 using Microsoft.Xna.Framework;
@@ -232,37 +231,6 @@ namespace Heliopolis.World.JobSystem
         public abstract bool Repeat();
     }
 
-    /// <summary>
-    /// For when an item is dropped on the ground, it will eventually need to be put somewhere nicer.
-    /// </summary>
-    public class StashItemFromGroundDesignation : Designation
-    {
-        public Item ItemToStash { get; set; }
-
-        public StashItemFromGroundDesignation(GameWorld owner, Item itemToStash, string jobtype)
-            : base(owner)
-        {
-            this.ItemToStash = itemToStash;
-            this.JobType = "MoveItem";
-            this.AccessPoints = new List<EnvironmentTile>() { Owner.Environment[ItemToStash.Position] };
-        }
-
-        public override List<ActorState> GetStateStepsToPerform()
-        {
-            List<ActorState> subStates = new List<ActorState>();
-            subStates.Add(new ActorStateMove(TakenBy, ItemToStash.Position, Owner));
-            // pick up item
-            // find a stash to take it to
-            // move to that stash
-            return subStates;
-        }
-
-        public override bool Repeat()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
     public class CollectItemDesignation : Designation
     {
         public Item ItemToStash { get; set; }
@@ -278,37 +246,6 @@ namespace Heliopolis.World.JobSystem
         public override List<ActorState> GetStateStepsToPerform()
         {
             List<ActorState> subStates = new List<ActorState> {new ActorStateMove(TakenBy, ItemToStash.Position, Owner)};
-            return subStates;
-        }
-
-        public override bool Repeat()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    /// <summary>
-    /// For when construction requires items, this will collect the items for it.
-    /// </summary>
-    public class CollectItemForConstrutionDesignation : Designation
-    {
-        public Item ItemToStash { get; set; }
-
-        public CollectItemForConstrutionDesignation(GameWorld _owner, string itemType, Building targetBuilding)
-            : base(_owner)
-        {
-            this.JobType = "MoveItem";
-            // TODO: Find an item first!!!
-            //this.AccessPoints = new List<EnvironmentTile>() { owner.Environment[ItemToStash.Position] };
-        }
-
-        public override List<ActorState> GetStateStepsToPerform()
-        {
-            List<ActorState> subStates = new List<ActorState>();
-            subStates.Add(new ActorStateMove(TakenBy, ItemToStash.Position, Owner));
-            // Pick up item
-            // take item to buiding
-            // place item in building
             return subStates;
         }
 
@@ -341,9 +278,6 @@ namespace Heliopolis.World.JobSystem
     //        }
     //    }
     //}
-
-
-
     //    case DesignationTypes.Construction:
     //        BuildingJobParameters buildingJobParameters = (BuildingJobParameters)myDesignation.JobParameters;
     //        AddSubState(new ActorStateMove(myActor, buildingJobParameters.GetJobAcccessPosition(myActor.AreaID), owner));
