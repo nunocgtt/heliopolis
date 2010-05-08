@@ -122,8 +122,10 @@
     <Compile Include="World\InteractableObjects\ManufactureInteractableObject.cs" />
     <Compile Include="World\ItemManagement\ICanHoldItem.cs" />
     <Compile Include="World\ItemManagement\ItemStates.cs" />
+    <Compile Include="World\JobSystem\CollectItemForConstrutionDesignation.cs" />
     <Compile Include="World\JobSystem\HarvestDesignation.cs" />
     <Compile Include="World\JobSystem\JobFactory.cs" />
+    <Compile Include="World\JobSystem\StashItemFromGroundDesignation.cs" />
     <Compile Include="World\State\ActorState.cs" />
     <Compile Include="World\Area.cs" />
     <Compile Include="World\BuildingManagement\Building.cs" />
@@ -143,7 +145,8 @@
     <Compile Include="World\ItemManagement\ItemManager.cs" />
     <Compile Include="World\InteractableObjects\InteractableObject.cs" />
     <Compile Include="World\State\ActorStateMoveToICanAccess.cs" />
-    <Compile Include="World\State\ActorStateStashItem.cs" />
+    <Compile Include="World\State\ActorStatePickupItem.cs" />
+    <Compile Include="World\State\ActorStateStashCurrentItem.cs" />
     <Compile Include="World\State\Job.cs" />
     <Compile Include="World\State\ActorStateIdle.cs" />
     <Compile Include="World\State\ActorStateMove.cs" />

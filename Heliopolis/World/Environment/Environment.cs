@@ -93,16 +93,34 @@ namespace Heliopolis.World.Environment
 
         public List<Point> GetSuccessors(Point point)
         {
-            return _gameWorld[point.X, point.Y].GetAccessPoints();
+            return _gameWorld[point.X, point.Y].GetAdjacentAccessPoints();
         }
 
-        public List<Node<Point>> GetSuccessorsWithDir(Point point, Point parentPoint)
+        public List<Node<Point>> GetSuccessorsWithDirectionMinusParent(Point point, Point parentPoint)
         {
-            bool hasParent = (parentPoint == null);
-            List<Node<Point>> returnList = new List<Node<Point>>();
+            List<Node<Point>> returnList = GetAdjacentDirections(point);
+            EnvironmentTile parentTile = _gameWorld[parentPoint.X, parentPoint.Y];
+            foreach (Node<Point> n in returnList)
+            {
+                if (n.Position == parentTile.Position)
+                {
+                    returnList.Remove(n);
+                    break;
+                }
+            }
+            return returnList;
+        }
 
+        public List<Node<Point>> GetSuccessorsWithDirection(Point point)
+        {
+            return GetAdjacentDirections(point);
+        }
+
+        private List<Node<Point>> GetAdjacentDirections(Point point)
+        {
+            List<Node<Point>> returnList = new List<Node<Point>>();
             EnvironmentTile currentTile = _gameWorld[point.X, point.Y];
-            EnvironmentTile parentTile = hasParent ? _gameWorld[parentPoint.X, parentPoint.Y] : null;
+            
 
             if (currentTile.WestTile != null)
             {
@@ -137,18 +155,7 @@ namespace Heliopolis.World.Environment
                     returnList.Add(newNode);
                 }
             }
-            // Remove the parent if we have one
-            if (hasParent)
-            {
-                foreach (Node<Point> n in returnList)
-                {
-                    if (n.Position == parentTile.Position)
-                    {
-                        returnList.Remove(n);
-                        break;
-                    }
-                }
-            }
+
             return returnList;
         }
 
@@ -337,7 +344,7 @@ namespace Heliopolis.World.Environment
                 _areaDictionary[-1].Members.Remove(theTile);
                 _areaDictionary[-1].MemberCount--;
                 // Here we need to check if two areas have merged
-                List<Point> accessPoints = theTile.GetAccessPoints();
+                List<Point> accessPoints = theTile.GetAdjacentAccessPoints();
                 foreach (Point point in accessPoints)
                 {
                     foreach (Point pointTwo in accessPoints)

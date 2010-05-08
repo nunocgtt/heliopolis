@@ -12,8 +12,6 @@ namespace Heliopolis.World.ItemManagement
     [Serializable]
     public class ItemManager : GameWorldObject
     {
-        private Dictionary<Point, List<Item>> _items = new Dictionary<Point, List<Item>>();
-
         /// <summary>
         /// Initialises a new instance of the ItemManager class.
         /// </summary>
@@ -33,6 +31,13 @@ namespace Heliopolis.World.ItemManagement
             Owner.SpatialTreeIndex.AddToSection(position, toAdd, SpatialObjectType.Item, itemType);
         }
 
+        public void SpawnItem(string itemType, ICanHoldItem holder)
+        {
+            Item toAdd = ItemFactory.GetNewItem(itemType);
+            toAdd.Holder = holder;
+            toAdd.ItemState = holder.PickupItem(toAdd);
+        }
+
         /// <summary>
         /// Find an item in an area.
         /// </summary>
@@ -46,7 +51,7 @@ namespace Heliopolis.World.ItemManagement
             return (Item)Owner.SpatialTreeIndex.FindClosestObject(searcherPosition, itemType);
         }
 
-        public static void PlaceItem(ICanHoldItem source, ICanHoldItem target, Item item, ItemStates newItemState)
+        public static void PlaceItem(ICanHoldItem source, ICanHoldItem target, Item item)
         {
             source.PutdownItem(item);
             item.Holder = target;

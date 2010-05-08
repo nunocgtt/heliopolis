@@ -5,8 +5,11 @@
     /// </summary>
     public class Node<T>
     {
+        /// <summary>
+        /// If this node is the first in a solution set.
+        /// </summary>
+        public bool IsRootNode { get; set; }
         public Node<T> Parent;
-        public Node<T> Child;
 
         /// <summary>
         /// Cost of this node + it's predecessors.
@@ -21,7 +24,7 @@
         /// </summary>
         public float F;
 
-        public T Position;
+        public readonly T Position;
 
         public Direction ComeFrom;
         public Direction GoTo;
@@ -33,9 +36,9 @@
             H = 0;
             F = 0;
             Parent = null;
-            Child = null;
             ComeFrom = Direction.Nowhere;
             GoTo = Direction.Nowhere;
+            IsRootNode = false;
         }
         public Node(T set, Direction comeFrom)
         {
@@ -44,9 +47,9 @@
             H = 0;
             F = 0;
             Parent = null;
-            Child = null;
             ComeFrom = comeFrom;
             GoTo = Direction.Nowhere;
+            IsRootNode = false;
         }
 
         public override string ToString()

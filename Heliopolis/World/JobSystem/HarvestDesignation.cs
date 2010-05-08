@@ -25,7 +25,7 @@ namespace Heliopolis.World.JobSystem
 
         public override List<ActorState> GetStateStepsToPerform()
         {
-            List<ActorState> subStates =
+            var subStates =
                 new List<ActorState>
                     {
                         new ActorStateMoveToICanAccess(TakenBy, _targetToHarvest, Owner),

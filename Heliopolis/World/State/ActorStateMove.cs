@@ -30,19 +30,6 @@ namespace Heliopolis.World.State
         }
 
         /// <summary>
-        /// Initialises a new instance of the ActorStateMove class, with a MovementDestination destination.
-        /// </summary>
-        /// <param name="myActor">The actor who this state belongs to.</param>
-        /// <param name="movementDestination">A MovementDestination instance containing destination information.</param>
-        /// <param name="owner">The owning game world.</param>
-        public ActorStateMove(Actor myActor, MovementDestination<Point> movementDestination, GameWorld owner)
-            : base(myActor, owner)
-        {
-            ActionType = "movement";
-            this._movementDestination = movementDestination;
-        }
-
-        /// <summary>
         /// Set the actor's destination when this state is entered.
         /// </summary>
         public override void OnEnter()
