@@ -218,7 +218,7 @@ namespace Heliopolis.World.Environment
         private EnvironmentTile SpawnTile(string type, Point position)
         {
             _gameWorld[position.X, position.Y] = EnvironmentTileFactory.GetNewTile(type, position);
-            Owner.SpatialTreeIndex.AddToSection(position, _gameWorld[position.X, position.Y], SpatialObjectType.EnvironmentTile, "");
+            //Owner.SpatialTreeIndex.AddToSection(position, _gameWorld[position.X, position.Y], SpatialObjectType.EnvironmentTile, "");
             return _gameWorld[position.X, position.Y];
         }
 

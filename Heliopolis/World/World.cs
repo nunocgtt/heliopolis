@@ -130,8 +130,8 @@ namespace Heliopolis.World
             _itemManager = new ItemManager(this);
             _actorManager = new ActorManager(this);
             _environment = new Environment.Environment(_worldSize, this);
-            _spatialTreeIndex = new SpatialTreeIndex(this.SectionSize, this.WorldSize, new int[] { 3, 3, 3, 3 });
-            this.TimedEventManager = new TimedEventManager(this);
+            _spatialTreeIndex = new SpatialTreeIndex(WorldSize, new [] { 3, 3, 3, 3 }, new [] { 3, 3, 3, 3 });
+            TimedEventManager = new TimedEventManager(this);
             LoadGameDescription();
         }
 
