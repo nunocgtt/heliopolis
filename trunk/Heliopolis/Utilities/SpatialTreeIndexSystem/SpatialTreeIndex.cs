@@ -101,7 +101,7 @@ namespace Heliopolis.Utilities.SpatialTreeIndexSystem
                 List<SpatialTreeNode> searchList = new List<SpatialTreeNode>();
                 foreach (SpatialTreeNode startSpatialTreeNode in startNodeList)
                 {
-                    foreach (SpatialTreeNode spatialTreeNode in startSpatialTreeNode.Children.Values)
+                    foreach (SpatialTreeNode spatialTreeNode in startSpatialTreeNode.Children)
                     {
                         if (spatialTreeNode.ResourceCount.ContainsKey(itemType))
                             if (spatialTreeNode.ResourceCount[itemType] > 0)
