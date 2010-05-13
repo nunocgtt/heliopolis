@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Heliopolis.World.Environment;
+using Heliopolis.GraphicsEngine;
 
-namespace Heliopolis.World
+namespace Heliopolis.World.Environment
 {
     /// <summary>
     /// Contains information about an areas.
