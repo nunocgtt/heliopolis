@@ -11,8 +11,8 @@ namespace Heliopolis.Utilities.SpatialTreeIndexSystem
     {
         private SpatialTreeNode _parent;
         private SpatialTreeIndex _spatialTreeIndex;
-        public readonly SortedDictionary<SpatialObjectKey, int> ResourceCount = new SortedDictionary<SpatialObjectKey, int>();
-        public SortedDictionary<Point, SpatialTreeNode> Children { get; private set; }
+        public readonly Dictionary<SpatialObjectKey, int> ResourceCount = new Dictionary<SpatialObjectKey, int>();
+        public List<SpatialTreeNode> Children { get; private set; }
         public Point TopLeft { get; private set; }
         public Point BottomRight { get; private set; }
         public int Level { get; private set; }
@@ -24,6 +24,8 @@ namespace Heliopolis.Utilities.SpatialTreeIndexSystem
         {
             get
             {
+                if (Children == null)
+                    return true;
                 return Children.Count == 0;
             } 
         }
@@ -54,7 +56,7 @@ namespace Heliopolis.Utilities.SpatialTreeIndexSystem
         {
             if (IsLeafNode)
             {
-                if (SpatialIndexMembers[resourceName] == null)
+                if (!SpatialIndexMembers.ContainsKey(resourceName))
                 {
                     SpatialIndexMembers[resourceName] = new List<ISpatialIndexMember>();
                 }
@@ -103,7 +105,7 @@ namespace Heliopolis.Utilities.SpatialTreeIndexSystem
             int newHeight = (int)Math.Ceiling(((BottomRight.Y - TopLeft.Y) + 1) / (double)treeHeight);
             if (Level < MaxLevel)
             {
-                Children = new SortedDictionary<Point, SpatialTreeNode>();
+                Children = new List<SpatialTreeNode>();
                 for (int i = 0; i < treeWidth; i++)
                 {
                     for (int j = 0; j < treeHeight; j++)
@@ -112,7 +114,7 @@ namespace Heliopolis.Utilities.SpatialTreeIndexSystem
                         Point newBottomRight = new Point(Math.Min(newTopLeft.X + subWidth - 1, _spatialTreeIndex.WorldSize.X)
                             , Math.Min(newTopLeft.Y + newHeight - 1,_spatialTreeIndex.WorldSize.Y));
                         SpatialTreeNode addNode = new SpatialTreeNode(newTopLeft, newBottomRight, Level + 1, MaxLevel, this, _spatialTreeIndex);
-                        Children.Add(new Point(i, j), addNode);
+                        Children.Add(addNode);
                         addNode.Construct();
                     }
                 }

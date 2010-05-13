@@ -250,8 +250,14 @@ namespace Heliopolis.World
         private void ChangePosition(Point newPosition)
         {
             if (Position != new Point(-1, -1))
+            {
                 Owner.Environment[Position].ActorsOnTile.Remove(this);
-            Owner.SpatialTreeIndex.CheckChangeSection(_position, newPosition, this, new SpatialObjectKey() { ObjectType = SpatialObjectType.Actor, ObjectSubtype = ActorType });
+                Owner.SpatialTreeIndex.CheckChangeSection(_position, newPosition, this, new SpatialObjectKey() { ObjectType = SpatialObjectType.Actor, ObjectSubtype = ActorType });
+            }
+            else
+            {
+                Owner.SpatialTreeIndex.AddToSection(newPosition, this, new SpatialObjectKey() { ObjectType = SpatialObjectType.Actor, ObjectSubtype = ActorType });
+            }
             _position = newPosition;
             Owner.Environment[Position].ActorsOnTile.Add(this);
         }
