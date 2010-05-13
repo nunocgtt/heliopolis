@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Heliopolis.GraphicsEngine;
 using Heliopolis.Utilities.PathFinder;
-using Heliopolis.Utilities.SpatialTreeIndexSystem;
 using Heliopolis.World.InteractableObjects;
 using Microsoft.Xna.Framework;
 using Heliopolis.Utilities;
@@ -24,7 +23,7 @@ namespace Heliopolis.World.Environment
         // i want to multithread the pathing routine and this will require locking/unlocking
         private EnvironmentTile[,] _gameWorld;
         private Point _worldSize;
-        private Dictionary<int, Area> _areaDictionary;
+        private AreaDictionary _areaDictionary;
         [NonSerialized]
         private EdgeTraverse _edgeTraversal;
         // Constants
@@ -49,15 +48,6 @@ namespace Heliopolis.World.Environment
         public EnvironmentTile this[Point pos]
         {
             get { return _gameWorld[pos.X, pos.Y]; }
-        }
-
-        /// <summary>
-        /// All the tiles per area.
-        /// </summary>
-        public Dictionary<int, Area> AreaDictionary
-        {
-            get { return _areaDictionary; }
-            set { _areaDictionary = value; }
         }
 
         /// <summary>
@@ -177,9 +167,9 @@ namespace Heliopolis.World.Environment
         /// <param name="owner">The owning game world.</param>
         public Environment(Point worldSize, GameWorld owner) : base(owner)
         {
-            this._worldSize = worldSize;
-            _gameWorld = new EnvironmentTile[this._worldSize.X, this._worldSize.Y];
-            _areaDictionary = new Dictionary<int, Area>();
+            _worldSize = worldSize;
+            _gameWorld = new EnvironmentTile[_worldSize.X, _worldSize.Y];
+            _areaDictionary = new AreaDictionary(this);
         }
 
         public void InitialiseEnvironment()
@@ -218,7 +208,6 @@ namespace Heliopolis.World.Environment
         private EnvironmentTile SpawnTile(string type, Point position)
         {
             _gameWorld[position.X, position.Y] = EnvironmentTileFactory.GetNewTile(type, position);
-            //Owner.SpatialTreeIndex.AddToSection(position, _gameWorld[position.X, position.Y], SpatialObjectType.EnvironmentTile, "");
             return _gameWorld[position.X, position.Y];
         }
 
@@ -256,8 +245,8 @@ namespace Heliopolis.World.Environment
         {
             SetTileLinks();
             _edgeTraversal.buildEdgeData();
-            BuildInitialWallGroup();
-            BuildInitialGroups();
+            _areaDictionary.BuildInitialWallGroup();
+            _areaDictionary.BuildInitialGroups();
         }
 
         /// <summary>
@@ -280,58 +269,6 @@ namespace Heliopolis.World.Environment
         }
 
         /// <summary>
-        /// Puts all the unacessable tiles into the group of ID -1.
-        /// </summary>
-        public void BuildInitialWallGroup()
-        {
-            if (!_areaDictionary.ContainsKey(-1))
-            {
-                _areaDictionary.Add(-1, new Area(-1));
-            }
-            for (int i = 0; i < _worldSize.X; i++)
-            {
-                for (int j = 0; j < _worldSize.Y; j++)
-                {
-                    if (!this[i,j].CanAccess)
-                    {
-                        _areaDictionary[-1].MemberCount++;
-                        _areaDictionary[-1].Members.Add(this[i, j]);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Builds all the areas.
-        /// </summary>
-        public void BuildInitialGroups()
-        {
-            int nextGroupId = 0;
-            EnvironmentTile startTile;
-            while ((startTile = FindUngroupedTile()) != null)
-            {
-                nextGroupId++;
-                if (!_areaDictionary.ContainsKey(nextGroupId))
-                {
-                    _areaDictionary.Add(nextGroupId, new Area(nextGroupId));
-                }
-                FillRequest<Point> newRequest = new FillRequest<Point>(startTile.Position);
-                Global.FillFinder.NewSearch(newRequest);
-                SearchState returnState = Global.FillFinder.SearchStep(_worldSize.X * _worldSize.Y);
-                if (returnState == SearchState.SearchStateSucceeded)
-                {
-                    FillfindAnswer<Point> theAnswer = Global.FillFinder.FinalResult();
-                    foreach (Point p in theAnswer.PointsFilled)
-                    {
-                        _gameWorld[p.X, p.Y].AreaID = nextGroupId;
-                        _areaDictionary[nextGroupId].MemberCount++;
-                        _areaDictionary[nextGroupId].Members.Add(_gameWorld[p.X, p.Y]);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         /// If a tile access flag has changed, this could preclude the joining or separation
         /// of areas. This method will handle that logic of joining/separating.
         /// </summary>
@@ -339,51 +276,14 @@ namespace Heliopolis.World.Environment
         public void ManageAccessStateChange(EnvironmentTile theTile)
         {
             _edgeTraversal.CanAccessChanged(theTile);
-            if (theTile.CanAccess)
-            {
-                _areaDictionary[-1].Members.Remove(theTile);
-                _areaDictionary[-1].MemberCount--;
-                // Here we need to check if two areas have merged
-                List<Point> accessPoints = theTile.GetAdjacentAccessPoints();
-                foreach (Point point in accessPoints)
-                {
-                    foreach (Point pointTwo in accessPoints)
-                    {
-                        if (point != pointTwo)
-                        {
-                            EnvironmentTile firstTile = this[point];
-                            EnvironmentTile secondTile = this[pointTwo];
-                            if (firstTile.AreaID != secondTile.AreaID)
-                            {
-                                // Merge requried
-                                Area mergeOne = _areaDictionary[firstTile.AreaID];
-                                Area mergeTwo = _areaDictionary[secondTile.AreaID];
-                                theTile.AreaID = Area.MergeTwoAreas(mergeOne, mergeTwo);
-                            }                                
-                        }
-                    }
-                }
-                if (theTile.AreaID == -1)
-                {
-                    theTile.AreaID = this[accessPoints[0]].AreaID;
-                }
-            }
-            else
-            {
-                // now here we need to use the edge state to determine splitting up an area
-                _areaDictionary[theTile.AreaID].Members.Remove(theTile);
-                _areaDictionary[theTile.AreaID].MemberCount--;
-                theTile.AreaID = -1;
-            }
-            _areaDictionary[theTile.AreaID].Members.Add(theTile);
-            _areaDictionary[theTile.AreaID].MemberCount++;
+            _areaDictionary.ManageAccessStateChange(theTile);
         }
 
         #region IIsometricTileProvider Members
 
         public List<string> GetTexturesToDraw(Point position)
         {
-            List<string> textures = new List<string>();
+            var textures = new List<string>();
             if (this[position].BuildingTile == null)
                 textures.Add(this[position].Texture);
             else
