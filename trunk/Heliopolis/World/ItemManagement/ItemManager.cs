@@ -20,17 +20,6 @@ namespace Heliopolis.World.ItemManagement
         {
         }
 
-        /// <summary>
-        /// Creates an item on the ground.
-        /// </summary>
-        /// <param name="itemType">The item type to spawn.</param>
-        /// <param name="position">The position of the item.</param>
-        public void SpawnItem(string itemType, Point position)
-        {
-            Item toAdd = ItemFactory.GetNewItem(itemType, position);
-            Owner.SpatialTreeIndex.AddToSection(position, toAdd, SpatialObjectType.Item, itemType);
-        }
-
         public void SpawnItem(string itemType, ICanHoldItem holder)
         {
             Item toAdd = ItemFactory.GetNewItem(itemType);
@@ -48,7 +37,8 @@ namespace Heliopolis.World.ItemManagement
         public Item GetClosestItem(int searcherAreaId, string itemType, Point searcherPosition)
         {
             //TODO: Incorporate the searcher Area ID
-            return (Item)Owner.SpatialTreeIndex.FindClosestObject(searcherPosition, itemType);
+            SpatialObjectKey spatialObjectKey = new SpatialObjectKey(){ ObjectType = SpatialObjectType.Item, ObjectSubtype = itemType};
+            return (Item)Owner.SpatialTreeIndex.FindClosestObject(searcherPosition, spatialObjectKey);
         }
 
         public static void PlaceItem(ICanHoldItem source, ICanHoldItem target, Item item)
@@ -72,8 +62,9 @@ namespace Heliopolis.World.ItemManagement
         /// <returns>Returns true if at least one item exists.</returns>
         public bool ValidItemExists(int searcherAreaId, string itemType)
         {
-            if (this.Owner.SpatialTreeIndex.TopNode.ResourceCount.ContainsKey(itemType))
-                if (this.Owner.SpatialTreeIndex.TopNode.ResourceCount[itemType] > 0)
+            var spatialObjectKey = new SpatialObjectKey() { ObjectType = SpatialObjectType.Item, ObjectSubtype  = itemType};
+            if (Owner.SpatialTreeIndex.TopNode.ResourceCount.ContainsKey(spatialObjectKey))
+                if (Owner.SpatialTreeIndex.TopNode.ResourceCount[spatialObjectKey] > 0)
                     return true;
             return false;
         }

@@ -107,6 +107,8 @@
     <Compile Include="Utilities\PathFinder\PathfindRequest.cs" />
     <Compile Include="Utilities\Serialization.cs" />
     <Compile Include="Utilities\SpatialTreeIndexSystem\ISpatialIndexMember.cs" />
+    <Compile Include="Utilities\SpatialTreeIndexSystem\SpatialObjectKey.cs" />
+    <Compile Include="Utilities\SpatialTreeIndexSystem\SpatialObjectType.cs" />
     <Compile Include="Utilities\SpatialTreeIndexSystem\SpatialTreeIndex.cs" />
     <Compile Include="Utilities\SpatialTreeIndexSystem\SpatialTreeNode.cs" />
     <Compile Include="Utilities\StateRecorder.cs" />

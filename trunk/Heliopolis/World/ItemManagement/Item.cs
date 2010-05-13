@@ -52,7 +52,7 @@ namespace Heliopolis.World.ItemManagement
             set
             {
                 // Might need to change sections now
-                Owner.SpatialTreeIndex.CheckChangeSection(_position,value,this, SpatialObjectType.Item, _itemType);
+                Owner.SpatialTreeIndex.CheckChangeSection(_position, value, this, new SpatialObjectKey() { ObjectType = SpatialObjectType.Item, ObjectSubtype = _itemType });
                 _position = value;
             }
         }
@@ -79,11 +79,11 @@ namespace Heliopolis.World.ItemManagement
             {
                 if (_isMemberOfSpatialIndex && !value)
                 {
-                    Owner.SpatialTreeIndex.RemoveFromSection(_position, this, SpatialObjectType.Item, _itemType);
+                    Owner.SpatialTreeIndex.RemoveFromSection(_position, this,  new SpatialObjectKey() { ObjectType = SpatialObjectType.Item, ObjectSubtype = _itemType});
                 }
                 else if (!_isMemberOfSpatialIndex && value)
                 {
-                    Owner.SpatialTreeIndex.AddToSection(_position, this, SpatialObjectType.Item, _itemType);
+                    Owner.SpatialTreeIndex.AddToSection(_position, this, new SpatialObjectKey() { ObjectType = SpatialObjectType.Item, ObjectSubtype = _itemType });
                 }
                 _isMemberOfSpatialIndex = value;
             }

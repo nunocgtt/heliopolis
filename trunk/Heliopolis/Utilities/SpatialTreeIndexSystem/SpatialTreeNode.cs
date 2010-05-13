@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Heliopolis.World;
 using Microsoft.Xna.Framework;
 
 namespace Heliopolis.Utilities.SpatialTreeIndexSystem
@@ -7,17 +9,38 @@ namespace Heliopolis.Utilities.SpatialTreeIndexSystem
     [Serializable]
     public class SpatialTreeNode
     {
-        private readonly SpatialTreeNode _parent;
-        private readonly SpatialTreeIndex _spatialTreeIndex;
-        public readonly SortedDictionary<string, int> ResourceCount = new SortedDictionary<string, int>();
-        public SortedDictionary<int, SpatialTreeNode> Children { get; private set; }
+        private SpatialTreeNode _parent;
+        private SpatialTreeIndex _spatialTreeIndex;
+        public readonly SortedDictionary<SpatialObjectKey, int> ResourceCount = new SortedDictionary<SpatialObjectKey, int>();
+        public SortedDictionary<Point, SpatialTreeNode> Children { get; private set; }
         public Point TopLeft { get; private set; }
         public Point BottomRight { get; private set; }
         public int Level { get; private set; }
         public int MaxLevel { get; private set; }
 
-        public SpatialTreeNode(Point topLeft, Point bottomRight, int level, int maxLevel, SpatialTreeNode parent, SpatialTreeIndex spatialTreeIndex)
+        public Dictionary<SpatialObjectKey, List<ISpatialIndexMember>> SpatialIndexMembers { get; set; }
+
+        public bool IsLeafNode
         {
+            get
+            {
+                return Children.Count == 0;
+            } 
+        }
+
+        private SpatialTreeNode(Point topLeft, Point bottomRight, int level, int maxLevel, SpatialTreeNode parent, SpatialTreeIndex spatialTreeIndex)
+        {
+            Init(topLeft, bottomRight, level, maxLevel, parent, spatialTreeIndex);
+        }
+
+        public SpatialTreeNode(Point topLeft, Point bottomRight, int level, int maxLevel, SpatialTreeIndex spatialTreeIndex)
+        {
+            Init(topLeft, bottomRight, level, maxLevel, null, spatialTreeIndex);
+        }
+
+        private void Init(Point topLeft, Point bottomRight, int level, int maxLevel, SpatialTreeNode parent, SpatialTreeIndex spatialTreeIndex)
+        {
+            SpatialIndexMembers = new Dictionary<SpatialObjectKey, List<ISpatialIndexMember>>();
             TopLeft = topLeft;
             BottomRight = bottomRight;
             Level = level;
@@ -26,7 +49,42 @@ namespace Heliopolis.Utilities.SpatialTreeIndexSystem
             _spatialTreeIndex = spatialTreeIndex;
         }
 
-        public void ChangeResourceCount(string resourceName, int difference)
+
+        public void AddSpatialMemeber(SpatialObjectKey resourceName, ISpatialIndexMember member)
+        {
+            if (IsLeafNode)
+            {
+                if (SpatialIndexMembers[resourceName] == null)
+                {
+                    SpatialIndexMembers[resourceName] = new List<ISpatialIndexMember>();
+                }
+                SpatialIndexMembers[resourceName].Add(member);
+                ChangeResourceCount(resourceName, 1);
+            }
+        }
+
+        public ISpatialIndexMember GetResource(SpatialObjectKey resourceName)
+        {
+            if (IsLeafNode && SpatialIndexMembers[resourceName] != null)
+            {
+                return SpatialIndexMembers[resourceName].First();
+            }
+            throw new ItemNotFound("Item not found.");
+        }
+
+        public void RemoveSpatialMemeber(SpatialObjectKey resourceName, ISpatialIndexMember member)
+        {
+            if (IsLeafNode && SpatialIndexMembers[resourceName] != null)
+            {
+                if (SpatialIndexMembers[resourceName].Contains(member))
+                {
+                    SpatialIndexMembers[resourceName].Remove(member);
+                    ChangeResourceCount(resourceName, -1);
+                }
+            }
+        }
+
+        private void ChangeResourceCount(SpatialObjectKey resourceName, int difference)
         {
             if (!ResourceCount.ContainsKey(resourceName))
             {
@@ -40,32 +98,33 @@ namespace Heliopolis.Utilities.SpatialTreeIndexSystem
         public void Construct()
         {
             int treeWidth = _spatialTreeIndex.TreeWidth[Level];
-            int newWidth = ((BottomRight.X - TopLeft.X) + 1) / treeWidth;
-            int newHeight = ((BottomRight.Y - TopLeft.Y) + 1) / treeWidth;
+            int treeHeight = _spatialTreeIndex.TreeHeight[Level];
+            int subWidth = (int)Math.Ceiling(((BottomRight.X - TopLeft.X) + 1) / (double)treeWidth);
+            int newHeight = (int)Math.Ceiling(((BottomRight.Y - TopLeft.Y) + 1) / (double)treeHeight);
             if (Level < MaxLevel)
             {
-                Children = new SortedDictionary<int, SpatialTreeNode>();
+                Children = new SortedDictionary<Point, SpatialTreeNode>();
                 for (int i = 0; i < treeWidth; i++)
                 {
-                    for (int j = 0; j < treeWidth; j++)
+                    for (int j = 0; j < treeHeight; j++)
                     {
-                        Point newTopLeft = new Point(TopLeft.X + (newWidth * i), TopLeft.Y + (newHeight * j));
-                        Point newBottomRight = new Point(newTopLeft.X + newWidth - 1, newTopLeft.Y + newHeight - 1);
+                        Point newTopLeft = new Point(TopLeft.X + (subWidth * i), TopLeft.Y + (newHeight * j));
+                        Point newBottomRight = new Point(Math.Min(newTopLeft.X + subWidth - 1, _spatialTreeIndex.WorldSize.X)
+                            , Math.Min(newTopLeft.Y + newHeight - 1,_spatialTreeIndex.WorldSize.Y));
                         SpatialTreeNode addNode = new SpatialTreeNode(newTopLeft, newBottomRight, Level + 1, MaxLevel, this, _spatialTreeIndex);
-                        Children.Add(SpatialTreeIndex.PointToIndex(new Point(i, j), treeWidth), addNode);
+                        Children.Add(new Point(i, j), addNode);
                         addNode.Construct();
                     }
                 }
             }
-            else
+            if (IsLeafNode)
             {
-                Children = null;
                 for (int i = TopLeft.X; i <= BottomRight.X; i++)
                 {
                     for (int j = TopLeft.Y; j <= BottomRight.Y; j++)
                     {
                         // Link this particular tile into this leaf node.
-                        _spatialTreeIndex.GridToNodes[i, j] = this;
+                        _spatialTreeIndex.GridToLeafNodes[i, j] = this;
                     }
                 }
             }

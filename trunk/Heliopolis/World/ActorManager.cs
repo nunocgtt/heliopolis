@@ -32,7 +32,7 @@ namespace Heliopolis.World
         public void SpawnActor(string actorType, Point position)
         {
             Actor toAdd = ActorFactory.GetNewActor(actorType, position);
-            Owner.SpatialTreeIndex.AddToSection(position, toAdd, SpatialObjectType.Actor, "");
+            Owner.SpatialTreeIndex.AddToSection(position, toAdd, new SpatialObjectKey() { ObjectType = SpatialObjectType.Actor, ObjectSubtype = actorType});
             LiveActors.Add(toAdd);
         }
     }

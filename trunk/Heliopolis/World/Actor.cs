@@ -251,7 +251,7 @@ namespace Heliopolis.World
         {
             if (Position != new Point(-1, -1))
                 Owner.Environment[Position].ActorsOnTile.Remove(this);
-            Owner.SpatialTreeIndex.CheckChangeSection(_position, newPosition, this, SpatialObjectType.Actor, "");
+            Owner.SpatialTreeIndex.CheckChangeSection(_position, newPosition, this, new SpatialObjectKey() { ObjectType = SpatialObjectType.Actor, ObjectSubtype = ActorType });
             _position = newPosition;
             Owner.Environment[Position].ActorsOnTile.Add(this);
         }
