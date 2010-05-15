@@ -97,7 +97,7 @@
     <Property name="sleep" magnitude="1"/>
     <Property name="food"  magnitude="1"/>
     <Job>mining</Job>
-    <Job>woodcutting</Job>
+    <Job>woodchopping</Job>
     <Job>transporting</Job>
     <Job>carpentry</Job>
     <Job>smith</Job>

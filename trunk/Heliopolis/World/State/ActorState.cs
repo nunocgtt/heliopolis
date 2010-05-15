@@ -47,137 +47,32 @@ namespace Heliopolis.World.State
     public abstract class ActorState : GameWorldObject
     {
         /// <summary>
-        /// Delegate type for a method to run across substates
-        /// </summary>
-        protected delegate void RunOnSubStates();
-        /// <summary>
         /// The actor that this state belongs to.
         /// </summary>
-        protected Actor MyActor;
-        /// <summary>
-        /// A list of substates, to be processed in order (FIFO).
-        /// </summary>
-        protected  LinkedList<ActorState> SubStates = null;
+        protected readonly Actor MyActor;
         /// <summary>
         /// The action type.
         /// </summary>
-        protected string ActionType;
-        /// <summary>
-        /// A method to be set up by inheriting states to check if the state has finished.
-        /// </summary>
-        protected virtual bool CheckFinishedState()
-        {
-            return true;
-        }
+        public string ActionType;
 
-        private bool _firstSubstateEntered = false;
+        public bool Entered;
+        public bool Finished;
+        public bool RequiresTime;
 
-        /// <summary>
-        /// Initialises a new instance of the ActorState class.
-        /// </summary>
-        /// <param name="myActor">The actor who this state belongs to.</param>
-        /// <param name="owner">The owning game world.</param>
-        protected ActorState(Actor myActor, GameWorld owner) : base(owner)
+        protected ActorState(Actor myActor, GameWorld owner, bool requiresTime) : base(owner)
         {
             MyActor = myActor;
+            RequiresTime = requiresTime;
         }
+
+        public abstract void OnEnter();
+
+        public abstract void OnFinish();
 
         /// <summary>
-        /// Returns true if this state has finished its tasks.
+        /// Ticks this instance.
         /// </summary>
-        public bool StateFinished { get; private set; }
-
-        /// <summary>
-        /// The current action type of this state. Returns a substate's action type if it is active.
-        /// </summary>
-        public string CurrentActionType
-        {
-            get
-            {
-                if (SubStates != null)
-                {
-                    if (SubStates.Count > 0)
-                    {
-                        return SubStates.First.Value.CurrentActionType;
-                    }
-                }
-                return ActionType;
-            }
-        }
-
-        /// <summary>
-        /// Adds a substate into this state.
-        /// </summary>
-        /// <param name="addState">An ActorState to add.</param>
-        protected void AddSubState(ActorState addState)
-        {
-            if (SubStates == null)
-                SubStates = new LinkedList<ActorState>();
-            SubStates.AddLast(addState);
-        }
-
-        /// <summary>
-        /// Run a method on the first substate. This will also remove a substate
-        /// from the list if it has finished.
-        /// </summary>
-        /// <param name="runOnSubStates">The method to run.</param>
-        private void ExecuteAcrossSubStates(RunOnSubStates runOnSubStates)
-        {
-            runOnSubStates();
-            if (SubStates.Count <= 0) return;
-            while (SubStates.First.Value.StateFinished)
-            {
-                SubStates.RemoveFirst();
-                if (SubStates.Count > 0)
-                {
-                    SubStates.First.Value.OnEnter();
-                }
-                else
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Executes OnEnter events.
-        /// </summary>
-        public virtual void OnEnter()
-        {
-            if (SubStates != null)
-            {
-                if (SubStates.Count > 0)
-                {
-                    ExecuteAcrossSubStates(SubStates.First.Value.OnEnter);
-                }
-            }
-            CheckStateDone();
-        }
-
-        /// <summary>
-        /// Peforms the state action.
-        /// </summary>
-        public virtual void Tick()
-        {
-            if (SubStates != null)
-            {
-                if (SubStates.Count > 0)
-                {
-                    if (!_firstSubstateEntered)
-                    {
-                        ExecuteAcrossSubStates(SubStates.First.Value.OnEnter);
-                        _firstSubstateEntered = true;
-                    }
-                    ExecuteAcrossSubStates(SubStates.First.Value.Tick);
-                }
-            }
-            CheckStateDone();
-        }
-
-        private void CheckStateDone()
-        {
-            if (CheckFinishedState())
-            {
-                StateFinished = true;
-            }
-        }
+        /// <returns>Return true if this tick takes no time in the game world.</returns>
+        public abstract void Tick();
     }
 }

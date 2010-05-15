@@ -36,6 +36,7 @@ namespace Heliopolis.World.JobSystem
         protected Designation(GameWorld owner, ICanAccess canAccess, bool repeatable)
             : base(owner)
         {
+            _isReady = false;
             IsRepetable = repeatable;
             _isTaken = false;
             IsComplete = false;
@@ -56,6 +57,17 @@ namespace Heliopolis.World.JobSystem
             set
             {
                 _isTaken = value;
+                UpdateIsAvailableForTaking();
+            }
+        }
+
+        private bool _isReady;
+        public bool IsReady
+        {
+            get { return _isReady; }
+            set
+            {
+                _isReady = value;
                 UpdateIsAvailableForTaking();
             }
         }
@@ -196,7 +208,7 @@ namespace Heliopolis.World.JobSystem
         {
             get
             {
-                return CanAccess && !HasPrerequisites && !IsTaken;
+                return CanAccess && !HasPrerequisites && !IsTaken && IsReady;
             }
         }
 

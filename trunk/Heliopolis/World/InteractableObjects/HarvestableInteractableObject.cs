@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Heliopolis.World.Environment;
 using Microsoft.Xna.Framework;
+using Heliopolis.World.ItemManagement;
 
 namespace Heliopolis.World.InteractableObjects
 {
@@ -28,11 +29,17 @@ namespace Heliopolis.World.InteractableObjects
             // do nothing atm
         }
 
+        public void Harvest(out Item itemHarvested)
+        {
+            itemHarvested = ItemFactory.GetNewItem(ResourceType);
+            ResourceCount--;
+        }
+
         #region ICanAccess Members
 
         public IEnumerable<Point> GetAllAccessPoints()
         {
-            return OwningTile.AdjacentTiles.Select(environmentTile => environmentTile.Position).ToList();
+            return OwningTile.GetAdjacentAccessPoints();
         }
 
         #endregion

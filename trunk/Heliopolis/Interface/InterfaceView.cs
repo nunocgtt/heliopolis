@@ -28,10 +28,11 @@ namespace Heliopolis.Interface
         {
             _engine.DrawWorld(spriteBatch, _interfaceModel.CameraPos, _interfaceModel.ZoomLevel, _interfaceModel.ScreenSize);
             spriteBatch.DrawString(_hudFont, 
-                string.Format("X: {0} Y: {1} FPS:{2}", 
+                string.Format("X: {0} Y: {1} FPS:{2} {3}", 
                     _interfaceModel.MouseXyPoint.X, 
                     _interfaceModel.MouseXyPoint.Y,
-                    _interfaceModel.Fps), 
+                    _interfaceModel.Fps,
+                    _interfaceModel.GameIsPaused ? "Paused" : "" ), 
                 new Vector2(0, 0), Color.White);
         }
 

@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using Heliopolis.World.BuildingManagement;
 
 namespace Heliopolis.World.State
 {
     /// <summary>
-    /// Represents an actor idle state where the actor looks for designations to complete.
+    /// Actor needs to stash an item in its hand.
     /// </summary>
     [Serializable]
     public class ActorStateStashCurrentItem : ActorState
@@ -18,25 +19,36 @@ namespace Heliopolis.World.State
         /// <param name="myActor">The actor who this state belongs to.</param>
         /// <param name="owner">The owning game world.</param>
         public ActorStateStashCurrentItem(Actor myActor, GameWorld owner)
-            : base(myActor, owner)
+            : base(myActor, owner, false)
         {
-            ActionType = "idle";
-            SubStates.AddLast(new ActorStateMove(myActor, new Point(0,0), owner));
-            //subStates.AddLast(new ActorStateStashItem
+            ActionType = "movement";
         }
 
         /// <summary>
-        /// Peforms the state action.
+        /// Set the actor's destination when this state is entered.
         /// </summary>
-        public override void Tick()
+        public override void OnEnter()
+        {
+            Building stashAt = Owner.BuildingManager.FindStorage();
+            if (stashAt != null)
+            {
+                MyActor.State.AddNewSubstate(new ActorStateMoveToICanAccess(MyActor, stashAt, Owner));
+                MyActor.State.AddNewSubstate(new ActorStatePlaceItem(MyActor, stashAt, Owner));
+            }
+            else
+            {
+                MyActor.State.AddNewSubstate(new ActorStateDropHeldItem(MyActor, Owner));
+            }
+        }
+
+        public override void OnFinish()
         {
             
         }
 
-        // Idle will create new states to replace itself, so it will never "finish".
-        protected override bool CheckFinishedState()
+        public override void Tick()
         {
-            return false;
+            Finished = true;
         }
     }
 }

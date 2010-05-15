@@ -7,6 +7,7 @@
     {
         Item = 0,
         Actor = 1,
-        Storage = 2
+        Storage = 2,
+        Harvest = 3
     }
 }

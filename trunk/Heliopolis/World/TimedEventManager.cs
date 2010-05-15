@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
 
 namespace Heliopolis.World
 {
@@ -29,21 +30,21 @@ namespace Heliopolis.World
         /// <summary>
         /// Main game tick processing.
         /// </summary>
-        /// <param name="timeSpan">The time since the last tick.</param>
-        public void Tick(TimeSpan timeSpan)
+        /// <param name="gameTime">The time since the last tick.</param>
+        public void Tick(GameTime gameTime)
         {
             if (Paused)
                 return;
 
             // Implement scaling here
-            _totalGameTime = TimeSpan.FromTicks(_totalGameTime.Add(timeSpan).Ticks * Scale);
+            _totalGameTime = TimeSpan.FromTicks(_totalGameTime.Add(gameTime.ElapsedGameTime).Ticks * Scale);
 
             if (_eventorsByTime.Count <= 0) return;
             /* We want to process all the actors whos next absolute action time
                    is less than the current game time tick */
 
             KeyValuePair<TimeSpan, TimedEventor> kvp = _eventorsByTime.First();
-            while (kvp.Key.CompareTo(_totalGameTime) > 0)
+            while (kvp.Key.CompareTo(_totalGameTime) <= 0)
             {
                 CurrentProcessingTimeSpan = kvp.Key;
                 kvp.Value.Tick(_totalGameTime);

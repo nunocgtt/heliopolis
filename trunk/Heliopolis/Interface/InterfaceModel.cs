@@ -1,9 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Heliopolis.World;
+using Heliopolis.World.InteractableObjects;
+using Heliopolis.World.JobSystem;
 
 namespace Heliopolis.Interface
 {
+    public enum InterfaceActionType
+    {
+        ApplyDesignation
+    }
+    public class InterfaceAction
+    {
+        public InterfaceActionType ActionType { get; set; }
+        public string TargetHarvestType { get; set; }
+    }
+
     public class InterfaceModel
     {
         public Point CameraPos;
@@ -16,16 +29,58 @@ namespace Heliopolis.Interface
         private Point _startMouseDownPoint;
         private Point _endMouseDownPoint;
         public bool MouseDown;
+        private readonly GameWorld _world;
         public float Fps { get; set; }
+        public InterfaceAction CurrentAction { get; set; }
+
+        public bool GameIsPaused
+        {
+            get
+            {
+                return _world.TimedEventManager.Paused;
+            } 
+        }
+
         public List<Point> SelectionTiles { get; private set; }
 
-        public InterfaceModel(Point screenSize)
+        private void ApplyAction()
         {
+            if (CurrentAction != null)
+            {
+                if (CurrentAction.ActionType == InterfaceActionType.ApplyDesignation)
+                {
+                    // Apply the designation
+                    for (int i = _startMouseDownPoint.X; i <= _endMouseDownPoint.X; i++)
+                    {
+                        for (int j = _startMouseDownPoint.Y; j <= _endMouseDownPoint.Y; j++)
+                        {
+                            if (_world.Environment[i, j].InteractableObject != null)
+                            {
+                                if (_world.Environment[i, j].InteractableObject is HarvestableInteractableObject)
+                                {
+                                    var harvestMe = (HarvestableInteractableObject)_world.Environment[i, j].InteractableObject;
+                                    if (harvestMe.ResourceType == CurrentAction.TargetHarvestType)
+                                    {
+                                        _world.DesignationManager.AddDesignation(new HarvestDesignation(_world, harvestMe));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                CurrentAction = null;
+            }
+        }
+
+        public InterfaceModel(Point screenSize, GameWorld world)
+        {
+            _world = world;
             ZoomedIn = false;
             ScreenSize = screenSize;
             CameraPos = new Point(0, 0);
             CurrentSelectionState = SelectionState.None;
             MouseDown = false;
+            CurrentAction = null;
         }
 
         public void StartSelection()
@@ -44,6 +99,7 @@ namespace Heliopolis.Interface
         {
             _endMouseDownPoint = MouseXyPoint;
             MouseDown = false;
+            ApplyAction();
         }
 
         public int ZoomLevel
@@ -104,6 +160,17 @@ namespace Heliopolis.Interface
                     break;
             }
             return returnMe;
+        }
+
+        internal void SelectTreesForHarvest()
+        {
+            CurrentAction = new InterfaceAction {ActionType = InterfaceActionType.ApplyDesignation, TargetHarvestType = "wood"};
+            CurrentSelectionState = SelectionState.Area;
+        }
+
+        internal void TogglePause()
+        {
+            _world.TimedEventManager.Paused = !_world.TimedEventManager.Paused;
         }
     }
 }

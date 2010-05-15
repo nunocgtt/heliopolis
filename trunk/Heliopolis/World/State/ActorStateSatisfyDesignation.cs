@@ -20,23 +20,28 @@ namespace Heliopolis.World.State
         /// <param name="myDesignation">The designation to satisfy.</param>
         /// <param name="owner">The owning game world.</param>
         public ActorStateSatisfyDesignation(Actor myActor, Designation myDesignation, GameWorld owner)
-            : base(myActor, owner)
+            : base(myActor, owner, false)
         {
             _myDesignation = myDesignation;
-            SubStates = new LinkedList<ActorState>();
-            List<ActorState> subStatesFromDesignation = _myDesignation.GetStateStepsToPerform();
-            foreach (ActorState substate in subStatesFromDesignation)
-                SubStates.AddFirst(substate);
+            
         }
 
-        protected override bool CheckFinishedState()
+        public override void OnEnter()
         {
-            // Designation is done when we have a.moved and b.performed the job
-            if (SubStates.Count == 0)
-            {
-                _myDesignation.CompleteDesignation();
-            }
-            return (SubStates.Count == 0);
+            List<ActorState> subStatesFromDesignation = _myDesignation.GetStateStepsToPerform();
+            foreach (ActorState substate in subStatesFromDesignation)
+                MyActor.State.AddNewSubstate(substate);
         }
+
+        public override void OnFinish()
+        {
+            _myDesignation.CompleteDesignation();
+        }
+
+        public override void Tick()
+        {
+            Finished = true;
+        }
+
     }
 }

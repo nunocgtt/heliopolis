@@ -44,6 +44,11 @@ namespace Heliopolis.World.BuildingManagement
             return spawnMe;
         }
 
+        public Building FindStorage()
+        {
+            return null;
+        }
+
         //public Building SpawnBuilding(string buildingType, Point position)
         //{
         //    Building spawnMe = BuildingFactory.GetNewBuilding(buildingType, position);

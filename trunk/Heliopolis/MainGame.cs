@@ -39,7 +39,7 @@ namespace Heliopolis
                                 PreferredBackBufferHeight = _screenSize.Y
                             };
             Content.RootDirectory = "Content";
-            _interfaceModel = new InterfaceModel(_screenSize);
+            _interfaceModel = new InterfaceModel(_screenSize, GameWorld.Instance);
             _interfaceController = new InterfaceController(_interfaceModel, this, _isometricEngine);
             _interfaceView = new InterfaceView(_interfaceModel, _isometricEngine);
         }
@@ -86,6 +86,7 @@ namespace Heliopolis
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            GameWorld.Instance.Tick(gameTime);
             _interfaceController.Update(gameTime);
             base.Update(gameTime);
         }
