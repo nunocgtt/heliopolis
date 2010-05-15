@@ -20,7 +20,7 @@ namespace Heliopolis.World.State
         /// <param name="movementDestination">A MovementDestination instance containing destination information.</param>
         /// <param name="owner">The owning game world.</param>
         public ActorStateMoveToICanAccess(Actor myActor, ICanAccess movementDestination, GameWorld owner)
-            : base(myActor, owner)
+            : base(myActor, owner, true)
         {
             _movementDestination = movementDestination;
             ActionType = "movement";
@@ -36,7 +36,11 @@ namespace Heliopolis.World.State
                     _movementDestination.GetAllAccessPoints()
                     .Where(p => Owner.Environment[p].CanAccess)
                     .ToList());
-            base.OnEnter();
+        }
+
+        public override void OnFinish()
+        {
+            
         }
 
         /// <summary>
@@ -45,12 +49,11 @@ namespace Heliopolis.World.State
         public override void Tick()
         {
             MyActor.MoveNextDirection();
-            base.Tick();
+            if (MyActor.Directions.Count == 0)
+            {
+                Finished = true;
+            }
         }
 
-        protected override bool CheckFinishedState()
-        {
-            return (MyActor.Directions.Count == 0);
-        }
     }
 }

@@ -27,7 +27,7 @@ namespace Heliopolis.World.JobSystem
                 new List<ActorState>
                     {
                         new ActorStateMove(TakenBy, ItemToStash.Position, Owner),
-                        new ActorStatePickupItem(TakenBy, ItemToStash, Owner),
+                        new ActorStateTakeItemFromOwner(TakenBy, ItemToStash, Owner),
                         new ActorStateStashCurrentItem(TakenBy, Owner)
                     };
             return subStates;

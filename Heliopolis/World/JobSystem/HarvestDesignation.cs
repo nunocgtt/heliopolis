@@ -14,13 +14,14 @@ namespace Heliopolis.World.JobSystem
     /// </summary>
     public class HarvestDesignation : Designation
     {
-        private readonly HarvestableInteractableObject _targetToHarvest;
+        public readonly HarvestableInteractableObject TargetToHarvest;
 
-        public HarvestDesignation(GameWorld owner, HarvestableInteractableObject targetToHarvest, string jobtype)
+        public HarvestDesignation(GameWorld owner, HarvestableInteractableObject targetToHarvest)
             : base(owner, targetToHarvest, true)
         {
-            _targetToHarvest = targetToHarvest;
-            JobType = jobtype;
+            TargetToHarvest = targetToHarvest;
+            JobType = targetToHarvest.Action;
+            IsReady = true;
         }
 
         public override List<ActorState> GetStateStepsToPerform()
@@ -28,15 +29,16 @@ namespace Heliopolis.World.JobSystem
             var subStates =
                 new List<ActorState>
                     {
-                        new ActorStateMoveToICanAccess(TakenBy, _targetToHarvest, Owner),
-                        new HarvestJob(Owner, TakenBy, JobType, this)
+                        new ActorStateMoveToICanAccess(TakenBy, TargetToHarvest, Owner),
+                        new HarvestJob(Owner, TakenBy, JobType, this),
+                        new ActorStateStashCurrentItem(TakenBy, Owner)
                     };
             return subStates;
         }
 
         public override bool Repeat()
         {
-            return (_targetToHarvest.ResourceCount > 0);
+            return (TargetToHarvest.ResourceCount > 0);
         }
     }
 }

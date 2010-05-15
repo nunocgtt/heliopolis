@@ -66,7 +66,7 @@ namespace Heliopolis.World
             returnMe.Id = new Guid();
             returnMe.Position = intialPosition;
             returnMe.ActionTimes.Add("movement", TimeSpan.FromMilliseconds(200));
-            returnMe.ActionTimes.Add("mining", TimeSpan.FromMilliseconds(300));
+            returnMe.ActionTimes.Add("harvest", TimeSpan.FromMilliseconds(300));
             returnMe.ActionTimes.Add("idle", TimeSpan.FromMilliseconds(100));
             returnMe.ActionTimes.Add("pickupitem", TimeSpan.FromMilliseconds(100));
             returnMe.ActionTimes.Add("placeitem", TimeSpan.FromMilliseconds(100));

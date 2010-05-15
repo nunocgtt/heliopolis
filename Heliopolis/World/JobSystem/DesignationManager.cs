@@ -52,8 +52,18 @@ namespace Heliopolis.World.JobSystem
 
         // These three methods are used by the designations to update their availability status
 
+        private void CheckJobTypeInDictionary(string jobType)
+        {
+            if (!_designationsPending.ContainsKey(jobType))
+            {
+                _designationsPending[jobType] = new List<Designation>();
+                _designations[jobType] = new List<Designation>();
+            }
+        }
+
         public void MakeDesignationAvailable(Designation availableDesignation)
         {
+            CheckJobTypeInDictionary(availableDesignation.JobType);
             if (_designationsPending[availableDesignation.JobType].Contains(availableDesignation))
                 _designationsPending[availableDesignation.JobType].Remove(availableDesignation);
             if (!_designations[availableDesignation.JobType].Contains(availableDesignation))
@@ -62,6 +72,7 @@ namespace Heliopolis.World.JobSystem
 
         public void MakeDesignationUnavailable(Designation unavailableDesignation)
         {
+            CheckJobTypeInDictionary(unavailableDesignation.JobType);
             if (!_designationsPending[unavailableDesignation.JobType].Contains(unavailableDesignation))
                 _designationsPending[unavailableDesignation.JobType].Add(unavailableDesignation);
             if (_designations[unavailableDesignation.JobType].Contains(unavailableDesignation))
@@ -139,11 +150,14 @@ namespace Heliopolis.World.JobSystem
         /// <returns>Returns null if one doesnt exist, otherwise returns a Designation to perform.</returns>
         public bool CheckAvailableDesignation(int searcherAreaId, string jobType, Point searcherPosition, out Designation designationToTake)
         {
-            foreach (Designation d in _designations[jobType].Where(d => d.CanBeTakenFromArea(searcherAreaId)))
+            if (_designations.ContainsKey(jobType))
             {
-                designationToTake = d;
-                return true;
-            }
+                foreach (Designation d in _designations[jobType].Where(d => d.CanBeTakenFromArea(searcherAreaId)))
+                {
+                    designationToTake = d;
+                    return true;
+                } 
+            } 
             designationToTake = null;
             return false;
         }

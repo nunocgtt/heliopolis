@@ -17,28 +17,53 @@ namespace Heliopolis.Interface
         private int _frameRate;
         private int _frameCounter;
         private TimeSpan _elapsedTime = TimeSpan.Zero;
+        private Keys[] oldPressedKeys;
 
         public InterfaceController(InterfaceModel model, Game gameOwner, IsometricEngine engine)
         {
             _interfaceModel = model;
             _game = gameOwner;
             _engine = engine;
+            oldPressedKeys = Keyboard.GetState().GetPressedKeys();
         }
 
         public void Update(GameTime gameTime)
         {
+            Keys[] pressedKeys = Keyboard.GetState().GetPressedKeys();
+            
+            foreach (var oldPressedKey in oldPressedKeys)
+            {
+                if (!pressedKeys.Contains(oldPressedKey))
+                {
+                    KeyUp(oldPressedKey);
+                }
+            }
+
+            foreach (var pressedKey in pressedKeys)
+            {
+                if (!oldPressedKeys.Contains(pressedKey))
+                {
+                    KeyDown(pressedKey);
+                }
+            }
+
+            oldPressedKeys = pressedKeys;
+
             _interfaceModel.MousePoint = new Point(Mouse.GetState().X, Mouse.GetState().Y);
             Point cameraOffset = new Point((int)(_interfaceModel.CameraPos.X * -1 * _interfaceModel.ZoomLevel), (int)((int)(_interfaceModel.CameraPos.Y * -1 * _interfaceModel.ZoomLevel)));
             _interfaceModel.MouseXyPoint = Iso2D.ConvertScreenToTile(_interfaceModel.MousePoint, (int)(_engine.TileSize.X * _interfaceModel.ZoomLevel), (int)(_engine.TileSize.Y * _interfaceModel.ZoomLevel), _engine.FirstTileXyPosition(_interfaceModel.ZoomLevel), cameraOffset);
-
+            
+            int moveSpeed = MoveSpeed;
+            if (Keyboard.GetState().IsKeyDown(Keys.LeftShift))
+                moveSpeed *= 2;
             if (Keyboard.GetState().IsKeyDown(Keys.Down))
-                _interfaceModel.CameraPos.Y += MoveSpeed;
+                _interfaceModel.CameraPos.Y += moveSpeed;
             if (Keyboard.GetState().IsKeyDown(Keys.Up))
-                _interfaceModel.CameraPos.Y -= MoveSpeed;
+                _interfaceModel.CameraPos.Y -= moveSpeed;
             if (Keyboard.GetState().IsKeyDown(Keys.Right))
-                _interfaceModel.CameraPos.X += MoveSpeed;
+                _interfaceModel.CameraPos.X += moveSpeed;
             if (Keyboard.GetState().IsKeyDown(Keys.Left))
-                _interfaceModel.CameraPos.X -= MoveSpeed;
+                _interfaceModel.CameraPos.X -= moveSpeed;
             if (Keyboard.GetState().IsKeyDown(Keys.Add))
                 _interfaceModel.ZoomedIn = true;
             if (Keyboard.GetState().IsKeyDown(Keys.Subtract))
@@ -53,6 +78,8 @@ namespace Heliopolis.Interface
                 _interfaceModel.CurrentSelectionState = SelectionState.None;
             if (Keyboard.GetState().IsKeyDown(Keys.B))
                 _interfaceModel.CurrentSelectionState = SelectionState.PlaceBuilding;
+            if (Keyboard.GetState().IsKeyDown(Keys.H))
+                _interfaceModel.SelectTreesForHarvest();
 
             if (_interfaceModel.CameraPos.Y < 0)
                 _interfaceModel.CameraPos.Y = 0;
@@ -74,6 +101,24 @@ namespace Heliopolis.Interface
                     _interfaceModel.EndSelection(); 
             }
 
+            UpdateFps(gameTime);
+        }
+
+        private void KeyDown(Keys key)
+        {
+
+        }
+
+        private void KeyUp(Keys key)
+        {
+            if (key == Keys.P)
+            {
+                _interfaceModel.TogglePause();
+            }
+        }
+
+        private void UpdateFps(GameTime gameTime)
+        {
             _elapsedTime += gameTime.ElapsedGameTime;
             _frameCounter++;
 
@@ -87,6 +132,5 @@ namespace Heliopolis.Interface
             _interfaceModel.Fps = _frameRate;
             _interfaceModel.UpdateSelectionInfo();
         }
-
     }
 }

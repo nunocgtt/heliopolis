@@ -48,35 +48,12 @@ namespace Heliopolis.World.State
         /// <param name="jobtype">The type of this job.</param>
         /// <param name="owningDesignation"></param>
         protected Job(GameWorld owner, Actor actor, string jobtype, Designation owningDesignation)
-            : base(actor,owner)
+            : base(actor,owner, true)
         {
             _jobType = jobtype;
             _isFinished = false;
             OwningDesignation = owningDesignation;
         }
-
-        //{
-        //    isFinished = true;
-        //    switch (jobType)
-        //    {
-        //        case "mining":
-        //            EnvironmentalJobParameters environmentalJobParameters = (EnvironmentalJobParameters)JobParameters;
-        //            environmentalJobParameters.TargetTile.ResourceLeft -= 1;
-        //            owner.ItemManager.SpawnItem(environmentalJobParameters.TargetTile.Resource, environmentalJobParameters.JobActor.Position);
-        //            // we need to create some resource where the actor is
-        //            isFinished = false;
-        //            if (environmentalJobParameters.TargetTile.ResourceLeft == 0)
-        //            {
-        //                EnvironmentTileFactory.SetToTemplate(environmentalJobParameters.TargetTile.ExhaustedTile, environmentalJobParameters.TargetTile);
-        //                isFinished = true;
-        //            }
-        //            break;
-        //        case "construction":
-        //            BuildingJobParameters buildingJobParameters = (BuildingJobParameters)jobParameters;
-        //            buildingJobParameters.TargetBuilding.CompleteBuilding();
-        //            break;
-        //    }
-        //}
 
         /// <summary>
         /// Creates a copy of this Job.
@@ -85,78 +62,6 @@ namespace Heliopolis.World.State
         public object Clone()
         {
             return MemberwiseClone();
-        }
-    }
-
-    public class HarvestJob : Job
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="HarvestJob"/> class.
-        /// </summary>
-        /// <param name="owner">The owner.</param>
-        /// <param name="actor">The actor.</param>
-        /// <param name="jobType">Type of the job.</param>
-        /// <param name="parentDesignation">The parent designation.</param>
-        public HarvestJob(GameWorld owner, Actor actor, string jobType, HarvestDesignation parentDesignation)
-            : base(owner, actor, jobType, parentDesignation)
-        {
-
-        }
-
-        public override void Tick()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override bool CheckFinishedState()
-        {
-            return this.IsFinished;
-        }
-    }
-
-    public class PickupItemJob : Job
-    {
-        public ICanHoldItem PickerUpper { get; set; }
-        public Item TargetItem { get; set; }
-
-        public PickupItemJob(GameWorld owner, Actor actor, string jobType, Designation parentDesignation, ICanHoldItem pickUpper, Item targetItem)
-            : base(owner, actor, jobType, parentDesignation)
-        {
-            PickerUpper = pickUpper;
-        }
-
-        public override void Tick()
-        {
-            PickerUpper.PickupItem(TargetItem);
-        }
-
-        protected override bool CheckFinishedState()
-        {
-            return IsFinished;
-        }
-    }
-
-    public class PlaceItem : Job
-    {
-        public ICanHoldItem ActorPlacingItem { get; set; }
-        public ICanHoldItem PutItemPlace { get; set; }
-        public Item TargetItem { get; set; }
-
-        public PlaceItem(GameWorld owner, Actor actor, string jobType, Designation parentDesignation, ICanHoldItem putItemPlace, Item targetItem)
-            : base(owner, actor, jobType, parentDesignation)
-        {
-            PutItemPlace = putItemPlace;
-            ActorPlacingItem = actor;
-        }
-
-        public override void Tick()
-        {
-            ActorPlacingItem.PutdownItem(TargetItem);
-        }
-
-        protected override bool CheckFinishedState()
-        {
-            return IsFinished;
         }
     }
 }

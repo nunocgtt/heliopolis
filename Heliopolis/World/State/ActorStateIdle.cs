@@ -18,7 +18,7 @@ namespace Heliopolis.World.State
         /// <param name="myActor">The actor who this state belongs to.</param>
         /// <param name="owner">The owning game world.</param>
         public ActorStateIdle(Actor myActor, GameWorld owner)
-            : base(myActor, owner)
+            : base(myActor, owner, true)
         {
             ActionType = "idle";
         }
@@ -35,17 +35,19 @@ namespace Heliopolis.World.State
                 if (Owner.DesignationManager.CheckAvailableDesignation(MyActor.AreaID, s, MyActor.Position, out someDesignation))
                 {
                     someDesignation.AssignDesignation(MyActor);
-                    MyActor.State = new ActorStateSatisfyDesignation(MyActor, someDesignation, Owner);
-                    break;
+                    MyActor.State.AddNewSubstate(new ActorStateSatisfyDesignation(MyActor, someDesignation, Owner));
                 }
             }
-            base.Tick();
         }
 
-        // Idle will create new states to replace itself, so it will never "finish".
-        protected override bool CheckFinishedState()
+        public override void OnEnter()
         {
-            return false;
+            
+        }
+
+        public override void OnFinish()
+        {
+
         }
     }
 }

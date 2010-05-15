@@ -168,7 +168,7 @@ namespace Heliopolis.World
         /// Main game tick processing.
         /// </summary>
         /// <param name="timeSpan">The time since the last tick.</param>
-        public void Tick(TimeSpan timeSpan)
+        public void Tick(GameTime timeSpan)
         {
             TimedEventManager.Tick(timeSpan);
         }

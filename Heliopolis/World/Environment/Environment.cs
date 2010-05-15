@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Heliopolis.GraphicsEngine;
+using Heliopolis.Utilities.EdgeTracking;
 using Heliopolis.Utilities.PathFinder;
 using Heliopolis.World.InteractableObjects;
 using Microsoft.Xna.Framework;
@@ -217,6 +218,7 @@ namespace Heliopolis.World.Environment
         public void LoadTestEnvironment()
         {
             Owner.SpatialTreeIndex.Initialise();
+            
             Random someNumber = new Random(0);
             for (int i = 0; i < _worldSize.X; i++)
             {
@@ -226,7 +228,7 @@ namespace Heliopolis.World.Environment
                     if (tileToUse >= 5)
                     {
                         EnvironmentTile tileAdded = SpawnTile("grass", new Point(i, j));
-                        tileAdded.InteractableObject = new HarvestableInteractableObject(Owner,tileAdded, "tree1", 30, "wood", "Woodchopping");
+                        tileAdded.InteractableObject = new HarvestableInteractableObject(Owner,tileAdded, "tree1", 30, "wood", "woodchopping");
                     }
                     else if (tileToUse >= 1)
                     {
@@ -239,12 +241,22 @@ namespace Heliopolis.World.Environment
                 }
             }
             InitialiseHelperClasses();
+            for (int i = 0; i < _worldSize.X; i++)
+            {
+                for (int j = 0; j < _worldSize.Y; j++)
+                {
+                    if (this[i, j].InteractableObject != null)
+                    {
+                        this[i, j].CanAccess = false;
+                    }
+                }
+            }
         }
 
         public void InitialiseHelperClasses()
         {
             SetTileLinks();
-            _edgeTraversal.buildEdgeData();
+            _edgeTraversal.BuildEdgeData();
             _areaDictionary.BuildInitialWallGroup();
             _areaDictionary.BuildInitialGroups();
         }
@@ -275,7 +287,7 @@ namespace Heliopolis.World.Environment
         /// <param name="theTile">The tile changing state.</param>
         public void ManageAccessStateChange(EnvironmentTile theTile)
         {
-            _edgeTraversal.CanAccessChanged(theTile);
+            //_edgeTraversal.CanAccessChanged(theTile);
             _areaDictionary.ManageAccessStateChange(theTile);
         }
 

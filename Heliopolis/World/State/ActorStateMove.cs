@@ -23,7 +23,7 @@ namespace Heliopolis.World.State
         /// <param name="pointToMoveTo">The final position to move to.</param>
         /// <param name="owner">The owning game world.</param>
         public ActorStateMove(Actor myActor, Point pointToMoveTo, GameWorld owner)
-            : base(myActor, owner)
+            : base(myActor, owner, true)
         {
             ActionType = "movement";
             _movementDestination = new MovementDestination<Point>(pointToMoveTo);
@@ -35,7 +35,11 @@ namespace Heliopolis.World.State
         public override void OnEnter()
         {
             MyActor.DestinationPosition = _movementDestination;
-            base.OnEnter();
+        }
+
+        public override void OnFinish()
+        {
+            
         }
 
         /// <summary>
@@ -44,12 +48,11 @@ namespace Heliopolis.World.State
         public override void Tick()
         {
             MyActor.MoveNextDirection();
-            base.Tick();
+            if (MyActor.Directions.Count == 0)
+            {
+                Finished = true;
+            }
         }
 
-        protected override bool CheckFinishedState()
-        {
-            return (MyActor.Directions.Count == 0);
-        }
     }
 }

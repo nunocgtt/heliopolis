@@ -33,7 +33,7 @@ namespace Heliopolis.World
         private Dictionary<string, int> _properties;
         private readonly List<string> _jobsAble;
         private string _texture;
-        private ActorState _state;
+        private StateStack _state;
         private Dictionary<string, TimeSpan> _actionTimes;
         private string _actorType;
 
@@ -77,11 +77,11 @@ namespace Heliopolis.World
                      Dictionary<string, int> properties,
                      List<string> jobsAble) : base(owner)
         {
-            this._texture = texture;
+            _texture = texture;
             _hitpoints = hitPoints;
-            this._properties = properties;
-            this._jobsAble = jobsAble;
-            this._actorType = actorType;
+            _properties = properties;
+            _jobsAble = jobsAble;
+            _actorType = actorType;
             _position = new Point(-1, -1);
             TimedEventDisabled = true;
         }
@@ -103,10 +103,10 @@ namespace Heliopolis.World
         /// <summary>
         ///   Contains the current Actor's state.
         /// </summary>
-        public ActorState State
+        public StateStack State
         {
             get { return _state; }
-            set { ChangeState(value); }
+            //set { ChangeState(value); }
         }
 
         /// <summary>
@@ -170,10 +170,9 @@ namespace Heliopolis.World
         ///   Moves this actor into a new state.
         /// </summary>
         /// <param name = "newState">The new state.</param>
-        private void ChangeState(ActorState newState)
+        public void ChangeState(ActorState newState)
         {
-            _state = newState;
-            _state.OnEnter();
+            _state = new StateStack(this, Owner, newState);
         }
 
         public void StoreItemInHand()
@@ -214,7 +213,15 @@ namespace Heliopolis.World
         private void MoveToPosition(MovementDestination<Point> newPosition)
         {
             PathFinder<Point> pathFinder = Global.PathFinder;
-            if (newPosition.PointToMoveTo != _position)
+            if (newPosition.PointToMoveTo == _position && newPosition.MovementDestinationType == MovementDestinationType.SinglePoint)
+            {
+                Directions.Clear();
+            }
+            else if (newPosition.MovementDestinationType == MovementDestinationType.MultiPoint && newPosition.PointsAcceptable.Contains(_position))
+            {
+                Directions.Clear();
+            }
+            else
             {
                 PathfindRequest<Point> newrequest = null;
                 switch (newPosition.MovementDestinationType)
@@ -236,10 +243,6 @@ namespace Heliopolis.World
                 }
                 else
                     throw new Exception("Unable to path to that position.");
-            }
-            else
-            {
-                Directions.Clear();
             }
         }
 
@@ -295,13 +298,8 @@ namespace Heliopolis.World
         /// <param name = "absoluteMilliseconds">The absolute game time.</param>
         public override void ExecuteTick(TimeSpan absoluteMilliseconds)
         {
-            _state.Tick();
-            if (_state.StateFinished)
-            {
-                _state = new ActorStateIdle(this, Owner);
-            }
             // Want to set up the next tick
-            SetUpNextTick(_actionTimes[_state.CurrentActionType]);
+            SetUpNextTick(_actionTimes[_state.Tick()]);
         }
 
         public void Start()
@@ -318,7 +316,7 @@ namespace Heliopolis.World
             Actor returnMe = (Actor) MemberwiseClone();
             returnMe.Inventory = new List<Item>();
             returnMe.ActionTimes = new Dictionary<string, TimeSpan>();
-            returnMe.State = new ActorStateIdle(returnMe, Owner);
+            returnMe.ChangeState(new ActorStateIdle(returnMe, Owner));
             returnMe.InHand = new List<Item>();
             return returnMe;
         }

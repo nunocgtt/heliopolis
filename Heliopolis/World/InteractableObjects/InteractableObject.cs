@@ -9,7 +9,7 @@ namespace Heliopolis.World.InteractableObjects
     {
         public EnvironmentTile OwningTile { get; set; }
         public string Texture { get; protected set; }
-        public List<string> Actions = new List<string>();
+        public string Action { get; set; }
 
         protected InteractableObject(GameWorld owner, EnvironmentTile owningTile, string texture,
             string action)
@@ -17,7 +17,7 @@ namespace Heliopolis.World.InteractableObjects
         {
             OwningTile = owningTile;
             Texture = texture;
-            Actions.Add(action);
+            Action = action;
         }
 
         public override void ExecuteTick(TimeSpan absoluteMilliseconds)

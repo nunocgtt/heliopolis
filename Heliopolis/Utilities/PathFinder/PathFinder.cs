@@ -269,11 +269,17 @@ namespace Heliopolis.Utilities.PathFinder
         private void ProcessNextSearchStep(Node<T> nextNode)
         {
             _traceManager.WriteLine("ProcessNextSearchStep", "path");
-            T parentPoint = nextNode.Parent.Position;
+            List<Node<T>> successors;
             T pos = nextNode.Position;
-            List<Node<T>> successors = nextNode.IsRootNode ? 
-                _searchGrid.GetSuccessorsWithDirection(pos) :
-                _searchGrid.GetSuccessorsWithDirectionMinusParent(pos, parentPoint);
+            if (!nextNode.IsRootNode)
+            {
+                T parentPoint = nextNode.Parent.Position;
+                successors = _searchGrid.GetSuccessorsWithDirectionMinusParent(pos, parentPoint);
+            }
+            else
+            {
+                successors = _searchGrid.GetSuccessorsWithDirection(pos);
+            }
             _traceManager.WriteLine("Successors of " + nextNode, "path");
             _traceManager.DisplayContentsOfNodeList(successors, "path");
             Node<T> openNode = null;
