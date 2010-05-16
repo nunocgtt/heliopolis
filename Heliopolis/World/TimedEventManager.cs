@@ -68,8 +68,9 @@ namespace Heliopolis.World
 
         private void StartTimedEventor(TimedEventor timedEventor, TimeSpan firstActionTime)
         {
-            while (_eventorsByTime.ContainsKey(timedEventor.NextAbsoluteActionTime))
+            while (_eventorsByTime.ContainsKey(firstActionTime))
             {
+                firstActionTime = firstActionTime.Add(new TimeSpan(1)); 
                 timedEventor.IncrementActionTime(new TimeSpan(1));
             }
             _listOfActiveEventors.Add(timedEventor, firstActionTime);

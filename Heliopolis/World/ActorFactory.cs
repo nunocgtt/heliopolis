@@ -30,8 +30,8 @@ namespace Heliopolis.World
                 XmlNode hitpoints = node.SelectSingleNode("Hitpoints");
                 XmlNodeList propertyNodes = node.SelectNodes("Property");
                 XmlNodeList jobNodes = node.SelectNodes("Job");
-                Dictionary<string, int> property = new Dictionary<string, int>();
-                List<string> jobs = new List<string>();
+                var property = new Dictionary<string, int>();
+                var jobs = new List<string>();
                 //List<int> magnitude = new List<int>();
                 if (propertyNodes != null)
                     foreach (XmlNode n in propertyNodes)
@@ -64,16 +64,15 @@ namespace Heliopolis.World
         {
             Actor returnMe = (Actor)_actorTemplates[templateName].Clone();
             returnMe.Id = new Guid();
-            returnMe.Position = intialPosition;
             returnMe.ActionTimes.Add("movement", TimeSpan.FromMilliseconds(200));
             returnMe.ActionTimes.Add("harvest", TimeSpan.FromMilliseconds(300));
-            returnMe.ActionTimes.Add("idle", TimeSpan.FromMilliseconds(100));
+            returnMe.ActionTimes.Add("idle", TimeSpan.FromMilliseconds(500));
             returnMe.ActionTimes.Add("pickupitem", TimeSpan.FromMilliseconds(100));
             returnMe.ActionTimes.Add("placeitem", TimeSpan.FromMilliseconds(100));
             returnMe.ActionTimes.Add("construction", TimeSpan.FromMilliseconds(100));
             returnMe.InHand = new List<Item>();
             returnMe.Inventory = new List<Item>();
-            returnMe.Start();
+            returnMe.Start(intialPosition);
             return returnMe;
         }
 

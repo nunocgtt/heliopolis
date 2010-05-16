@@ -37,26 +37,32 @@ namespace Heliopolis.Utilities.SpatialTreeIndexSystem
             return GridToLeafNodes[position.X, position.Y];
         }
 
-        public void CheckChangeSection(Point oldPosition, Point newPosition, ISpatialIndexMember objectToMove, SpatialObjectKey spatialObjectType)
+        public void CheckChangeSection(Point newPosition, ISpatialIndexMember objectToMove, SpatialObjectKey spatialObjectType)
         {
-            SpatialTreeNode leafNodeToRemoveFrom = PositionToLeafNode(oldPosition);
+            SpatialTreeNode leafNodeToRemoveFrom = PositionToLeafNode(objectToMove.SpatialIndexPosition);
             SpatialTreeNode leafNodeToAdd = PositionToLeafNode(newPosition);
             if (leafNodeToRemoveFrom != leafNodeToAdd)
             {
-                RemoveFromSection(oldPosition, objectToMove, spatialObjectType);               
-                AddToSection(newPosition, objectToMove, spatialObjectType);
+                RemoveFromSection(objectToMove, spatialObjectType);
+                leafNodeToAdd.AddSpatialMemeber(spatialObjectType, objectToMove);
             }
         }
 
-        public void AddToSection(Point position, ISpatialIndexMember objectToAdd, SpatialObjectKey spatialObjectType)
+        public void AddToSection(Point pointToAdd, ISpatialIndexMember objectToAdd, SpatialObjectKey spatialObjectType)
         {
-            SpatialTreeNode leafNodeToAdd = PositionToLeafNode(position);
+            SpatialTreeNode leafNodeToAdd = PositionToLeafNode(pointToAdd);
             leafNodeToAdd.AddSpatialMemeber(spatialObjectType, objectToAdd);
         }
 
-        public void RemoveFromSection(Point position, ISpatialIndexMember objectToRemove, SpatialObjectKey spatialObjectType)
+        public void AddToSection(ISpatialIndexMember objectToAdd, SpatialObjectKey spatialObjectType)
         {
-            SpatialTreeNode leafNodeToRemoveFrom = PositionToLeafNode(position);
+            SpatialTreeNode leafNodeToAdd = PositionToLeafNode(objectToAdd.SpatialIndexPosition);
+            leafNodeToAdd.AddSpatialMemeber(spatialObjectType, objectToAdd);
+        }
+
+        public void RemoveFromSection(ISpatialIndexMember objectToRemove, SpatialObjectKey spatialObjectType)
+        {
+            SpatialTreeNode leafNodeToRemoveFrom = PositionToLeafNode(objectToRemove.SpatialIndexPosition);
             leafNodeToRemoveFrom.RemoveSpatialMemeber(spatialObjectType, objectToRemove);
         }
 

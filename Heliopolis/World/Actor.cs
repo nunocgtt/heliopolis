@@ -24,7 +24,7 @@ namespace Heliopolis.World
     ///   Actors also retain an internal set of counters, for things like health, hunger, sleep and other needs.
     /// </remarks>
     [Serializable]
-    public class Actor : TimedEventor, ICloneable, ICanHoldItem, ISpatialIndexMember
+    public class Actor : TimedEventor, ICloneable, ICanHoldItem
     {
         private Point _position;
         private MovementDestination<Point> _destinationPosition;
@@ -84,6 +84,7 @@ namespace Heliopolis.World
             _actorType = actorType;
             _position = new Point(-1, -1);
             TimedEventDisabled = true;
+            AddedToWorld = false;
         }
 
         /// <summary>
@@ -165,6 +166,8 @@ namespace Heliopolis.World
             get { return _position; }
             set { ChangePosition(value); }
         }
+
+        public bool AddedToWorld { get; set; }
 
         /// <summary>
         ///   Moves this actor into a new state.
@@ -252,14 +255,15 @@ namespace Heliopolis.World
         /// <param name = "newPosition">The new position to move to.</param>
         private void ChangePosition(Point newPosition)
         {
-            if (Position != new Point(-1, -1))
+            if (AddedToWorld)
             {
                 Owner.Environment[Position].ActorsOnTile.Remove(this);
-                Owner.SpatialTreeIndex.CheckChangeSection(_position, newPosition, this, new SpatialObjectKey() { ObjectType = SpatialObjectType.Actor, ObjectSubtype = ActorType });
+                Owner.SpatialTreeIndex.CheckChangeSection(newPosition, this, new SpatialObjectKey() { ObjectType = SpatialObjectType.Actor, ObjectSubtype = ActorType });
             }
             else
             {
                 Owner.SpatialTreeIndex.AddToSection(newPosition, this, new SpatialObjectKey() { ObjectType = SpatialObjectType.Actor, ObjectSubtype = ActorType });
+                AddedToWorld = true;
             }
             _position = newPosition;
             Owner.Environment[Position].ActorsOnTile.Add(this);
@@ -302,9 +306,10 @@ namespace Heliopolis.World
             SetUpNextTick(_actionTimes[_state.Tick()]);
         }
 
-        public void Start()
+        public void Start(Point initialPosition)
         {
             TimedEventDisabled = false;
+            Position = initialPosition;
         }
 
         /// <summary>
@@ -319,6 +324,11 @@ namespace Heliopolis.World
             returnMe.ChangeState(new ActorStateIdle(returnMe, Owner));
             returnMe.InHand = new List<Item>();
             return returnMe;
+        }
+
+        public Point SpatialIndexPosition
+        {
+            get { return Position; }
         }
     }
 }

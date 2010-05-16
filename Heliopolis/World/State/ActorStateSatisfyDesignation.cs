@@ -28,9 +28,7 @@ namespace Heliopolis.World.State
 
         public override void OnEnter()
         {
-            List<ActorState> subStatesFromDesignation = _myDesignation.GetStateStepsToPerform();
-            foreach (ActorState substate in subStatesFromDesignation)
-                MyActor.State.AddNewSubstate(substate);
+            MyActor.State.AddListOfSubstates(_myDesignation.GetStateStepsToPerform());
         }
 
         public override void OnFinish()

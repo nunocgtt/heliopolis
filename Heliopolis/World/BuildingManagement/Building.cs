@@ -270,5 +270,10 @@ namespace Heliopolis.World.BuildingManagement
             }
             return returnMe;
         }
+
+        public Point SpatialIndexPosition
+        {
+            get { return Position; }
+        }
     }
 }

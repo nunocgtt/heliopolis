@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Heliopolis.World.ItemManagement;
 
 namespace Heliopolis.World.State
@@ -28,7 +29,7 @@ namespace Heliopolis.World.State
 
         public override void Tick()
         {
-            foreach (var item in MyActor.InHand)
+            foreach (var item in MyActor.InHand.ToList())
             {
                 ItemManager.PlaceItem(MyActor, Owner.Environment[MyActor.Position], item);   
             }

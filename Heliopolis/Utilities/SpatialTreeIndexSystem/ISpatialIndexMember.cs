@@ -10,6 +10,6 @@ namespace Heliopolis.Utilities.SpatialTreeIndexSystem
         /// <summary>
         /// The position to render this object at.
         /// </summary>
-        Point Position { get; set; }
+        Point SpatialIndexPosition { get; }
     }
 }
