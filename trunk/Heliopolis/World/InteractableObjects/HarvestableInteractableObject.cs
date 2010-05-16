@@ -33,7 +33,12 @@ namespace Heliopolis.World.InteractableObjects
         {
             itemHarvested = ItemFactory.GetNewItem(ResourceType);
             ResourceCount--;
+            if (ResourceCount == 0)
+            {
+                OwningTile.RemoveInteractableObject();
+            }
         }
+
 
         #region ICanAccess Members
 

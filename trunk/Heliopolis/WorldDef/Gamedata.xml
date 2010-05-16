@@ -4,7 +4,7 @@
   <!-- All the resources and other items that can exist in the world -->
   <Item name="wood">
     <Weight>1</Weight>
-    <Texture>wooditem</Texture>
+    <Texture>wood</Texture>
     <Class>rawMaterial</Class>
   </Item>
   <Item name="stone">

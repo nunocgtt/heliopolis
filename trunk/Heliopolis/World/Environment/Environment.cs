@@ -228,7 +228,7 @@ namespace Heliopolis.World.Environment
                     if (tileToUse >= 5)
                     {
                         EnvironmentTile tileAdded = SpawnTile("grass", new Point(i, j));
-                        tileAdded.InteractableObject = new HarvestableInteractableObject(Owner,tileAdded, "tree1", 30, "wood", "woodchopping");
+                        tileAdded.InteractableObject = new HarvestableInteractableObject(Owner,tileAdded, "tree1", 10, "wood", "woodchopping");
                     }
                     else if (tileToUse >= 1)
                     {

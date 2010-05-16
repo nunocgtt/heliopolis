@@ -162,6 +162,11 @@ namespace Heliopolis.World
         {
             _environment.LoadTestEnvironment();
             _actorManager.SpawnActor("dood", new Point(0, 0));
+            _actorManager.SpawnActor("dood", new Point(0, 0));
+            _actorManager.SpawnActor("dood", new Point(0, 0));
+            _actorManager.SpawnActor("dood", new Point(0, 0));
+            _actorManager.SpawnActor("dood", new Point(0, 0));
+
         }
 
         /// <summary>

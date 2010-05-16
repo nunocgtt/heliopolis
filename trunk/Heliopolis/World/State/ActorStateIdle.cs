@@ -21,6 +21,7 @@ namespace Heliopolis.World.State
             : base(myActor, owner, true)
         {
             ActionType = "idle";
+            RootState = true;
         }
 
         /// <summary>

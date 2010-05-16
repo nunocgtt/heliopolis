@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
+using Heliopolis.World.ItemManagement;
 using Microsoft.Xna.Framework;
 
 namespace Heliopolis.World.Environment
@@ -48,6 +49,7 @@ namespace Heliopolis.World.Environment
             returnMe.Id = new Guid();
             returnMe.Position = newPosition;
             returnMe.AdjacentTiles = new List<EnvironmentTile>(4);
+            returnMe.ItemsOnGround = new List<Item>();
             if (returnMe.CanAccess)
                 returnMe.AreaID = 0;
             else

@@ -18,19 +18,17 @@ namespace Heliopolis.World.State
 
         private readonly Stack<ActorState> _executingStateStack = new Stack<ActorState>();
 
+        public void AddListOfSubstates(IEnumerable<ActorState> statesToAdd)
+        {
+            foreach (var actorState in statesToAdd.Reverse())
+            {
+                _executingStateStack.Push(actorState);
+            }
+        }
+
         public void AddNewSubstate(ActorState newState)
         {
             _executingStateStack.Push(newState);
-        }
-
-        private void FinishLoop()
-        {
-            _executingStateStack.Peek().OnFinish();
-            _executingStateStack.Pop();
-            if (_executingStateStack.Peek().Finished)
-            {
-                FinishLoop(); //recursion arghgjhgjhghg
-            }
         }
 
         public string Tick()
@@ -40,18 +38,18 @@ namespace Heliopolis.World.State
             {
                 ActorState stateToProcess = _executingStateStack.Peek();
 
-                if (stateToProcess.Finished)
+                if (!stateToProcess.Entered)
                 {
-                    FinishLoop();
-                }
-                else if (!stateToProcess.Entered)
                     stateToProcess.OnEnter();
+                    stateToProcess.Entered = true;
+                }
                 else
                 {
                     stateToProcess.Tick();
                     if (stateToProcess.Finished)
                     {
-                        FinishLoop();
+                        ActorState finishMe = _executingStateStack.Pop();
+                        finishMe.OnFinish();
                     }
                 }
 

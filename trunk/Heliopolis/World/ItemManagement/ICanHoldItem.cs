@@ -1,9 +1,10 @@
-﻿namespace Heliopolis.World.ItemManagement
+﻿using Heliopolis.Utilities.SpatialTreeIndexSystem;
+namespace Heliopolis.World.ItemManagement
 {
     /// <summary>
     /// To be implemented by objects that need to pick up and place items.
     /// </summary>
-    public interface ICanHoldItem
+    public interface ICanHoldItem : ISpatialIndexMember
     {
         /// <summary>
         /// Pick up an item and place into inventory/storage.

@@ -14,7 +14,7 @@ namespace Heliopolis.World.Environment
     /// Represents a single tile in the game environment.
     /// </summary>
     [Serializable]
-    public class EnvironmentTile : GameWorldObject, ICloneable, ISpatialIndexMember, ICanHoldItem, ICanAccess
+    public class EnvironmentTile : GameWorldObject, ICloneable, ICanHoldItem, ICanAccess
     {
         private int _areaId;
         private string _texture;
@@ -156,6 +156,12 @@ namespace Heliopolis.World.Environment
 
         public InteractableObject InteractableObject { get; set; }
 
+        public void RemoveInteractableObject()
+        {
+            InteractableObject = null;
+            CanAccess = true;
+        }
+
         public List<Item> ItemsOnGround
         {
             get { return _itemsOnGround; }
@@ -201,6 +207,15 @@ namespace Heliopolis.World.Environment
         public IEnumerable<Point> GetAllAccessPoints()
         {
             return new List<Point> {Position};
+        }
+
+        #endregion
+
+        #region ISpatialIndexMember Members
+
+        public Point SpatialIndexPosition
+        {
+            get { return Position; }
         }
 
         #endregion

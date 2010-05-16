@@ -56,13 +56,25 @@ namespace Heliopolis.World.State
         public string ActionType;
 
         public bool Entered;
-        public bool Finished;
+        private bool _finished;
         public bool RequiresTime;
+        public bool RootState;
 
         protected ActorState(Actor myActor, GameWorld owner, bool requiresTime) : base(owner)
         {
             MyActor = myActor;
             RequiresTime = requiresTime;
+        }
+
+        public bool Finished
+        {
+            get
+            {
+                if (RootState)
+                    return false;
+                return _finished;
+            }
+            set { _finished = value; }
         }
 
         public abstract void OnEnter();
