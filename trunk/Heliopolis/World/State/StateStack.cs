@@ -36,12 +36,15 @@ namespace Heliopolis.World.State
             bool keepProcessing = true;
             while (keepProcessing)
             {
+                bool enterStateSoKeepProcessing = false;
                 ActorState stateToProcess = _executingStateStack.Peek();
 
                 if (!stateToProcess.Entered)
                 {
+                    // Note: OnEnter is able to insert new states to process.
                     stateToProcess.OnEnter();
                     stateToProcess.Entered = true;
+                    enterStateSoKeepProcessing = true;
                 }
                 else
                 {
@@ -49,11 +52,13 @@ namespace Heliopolis.World.State
                     if (stateToProcess.Finished)
                     {
                         ActorState finishMe = _executingStateStack.Pop();
+                        // Note: OnFinish is NOT allowed to insert new states
                         finishMe.OnFinish();
                     }
                 }
 
-                keepProcessing = !_executingStateStack.Peek().RequiresTime;
+                keepProcessing = (!_executingStateStack.Peek().RequiresTime) 
+                    || enterStateSoKeepProcessing;
             }
 
             return _executingStateStack.Peek().ActionType;
