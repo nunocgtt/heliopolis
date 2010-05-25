@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Interface inherits="MyGame.ExampleInterface" theme="UITheme\SimpleLight\SimpleLight.xml">
+<Interface inherits="Heliopolis.Interface.InterfacePanelsHandler" theme="UITheme\SimpleLight\SimpleLight.xml">
   <Variables>
     <Variable name="buttonwidth" value="72"/>
     <Variable name="buttonpadding" value="15"/>
@@ -7,21 +7,21 @@
     <!-- screenwitdh and screenhieght are implicitly set -->
   </Variables>
   <Panels>
-    <Panel id="TopMenuPanel" type="SimpleUI.UIPanel_Frame" position="top-left" x="0" y="0" width="screenwidth" height="24" layout="stack-horizontal">
+    <Panel id="TopMenuPanel" type="Heliopolis.UILibrary.UIPanel_Frame" position="top-left" x="0" y="0" width="screenwidth" height="24" layout="stack-horizontal">
       
     </Panel>
 
-    <Panel id="RightMenuPanel" type="SimpleUI.UIPanel_Frame" position="top-right" x="-15" y="15" width="180" height="700" layout="stack-vertical">
+    <Panel id="RightMenuPanel" type="Heliopolis.UILibrary.UIPanel_Frame" position="top-right" x="-15" y="15" width="180" height="700" layout="stack-vertical">
       <Panels>
-        <Panel id="JobButton" type="SimpleUI.UIPanel_Button" onClick="MyList_OnAdd" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+        <Panel id="JobButton" type="Heliopolis.UILibrary.UIPanel_Button" onClick="ClickMe" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
           <Text alignment="center">Jobs</Text>
         </Panel>
 
-        <Panel id="StorageButton" type="SimpleUI.UIPanel_Button" onClick="MyList_OnAdd" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+        <Panel id="StorageButton" type="Heliopolis.UILibrary.UIPanel_Button" onClick="ClickMe" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
           <Text alignment="center">Storage</Text>
         </Panel>
         
-        <Panel id="BuildingsButton" type="SimpleUI.UIPanel_Button" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+        <Panel id="BuildingsButton" type="Heliopolis.UILibrary.UIPanel_Button" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
           <Text alignment="center">Buildings</Text>
         </Panel>
       </Panels>

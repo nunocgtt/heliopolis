@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Theme name="SimpleLight">
   <BackdropTextures>
-    <BackdropTexture name="Frame-Backdrop" texture="UITheme\SimpleLight\frame-backdrop" tileWidth="12" tileHeight="12"/>
+    <BackdropTexture name="Frame-Backdrop" texture="UITheme/SimpleLight/frame-backdrop" tileWidth="12" tileHeight="12"/>
     <BackdropTexture name="InputBox-Backdrop" texture="UITheme\SimpleLight\inputbox-backdrop" tileWidth="6" tileHeight="6"/>
     <BackdropTexture name="InputBox-Disabled-Backdrop" texture="UITheme\SimpleLight\inputbox-disabled-backdrop" tileWidth="6" tileHeight="6"/>
     <BackdropTexture name="Button-Backdrop" texture="UITheme\SimpleLight\button-backdrop" tileWidth="6" tileHeight="6"/>

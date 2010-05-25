@@ -3,6 +3,7 @@ using Heliopolis.GraphicsEngine;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using Heliopolis.UILibrary;
 
 namespace Heliopolis.Interface
 {
@@ -12,11 +13,13 @@ namespace Heliopolis.Interface
 
         private readonly InterfaceModel _interfaceModel;
         private readonly IsometricEngine _engine;
+        
 
         public InterfaceView(InterfaceModel model, IsometricEngine gameEngine)
         {
             _interfaceModel = model;
             _engine = gameEngine;
+        
         }
 
         public void LoadContent(ContentManager contentManager)
@@ -27,6 +30,7 @@ namespace Heliopolis.Interface
         public void Draw(SpriteBatch spriteBatch)
         {
             _engine.DrawWorld(spriteBatch, _interfaceModel.CameraPos, _interfaceModel.ZoomLevel, _interfaceModel.ScreenSize);
+            _interfaceModel.UserInterface.Draw(spriteBatch);
             spriteBatch.DrawString(_hudFont, 
                 string.Format("X: {0} Y: {1} FPS:{2} {3}", 
                     _interfaceModel.MouseXyPoint.X, 

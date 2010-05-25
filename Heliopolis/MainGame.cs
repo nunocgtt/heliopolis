@@ -26,9 +26,9 @@ namespace Heliopolis
 
         private readonly IsometricEngine _isometricEngine = new IsometricEngine();
 
-        private readonly InterfaceModel _interfaceModel;
-        private readonly InterfaceController _interfaceController;
-        private readonly InterfaceView _interfaceView;
+        private InterfaceModel _interfaceModel;
+        private InterfaceController _interfaceController;
+        private InterfaceView _interfaceView;
 
         public MainGame()
         {
@@ -39,9 +39,7 @@ namespace Heliopolis
                                 PreferredBackBufferHeight = _screenSize.Y
                             };
             Content.RootDirectory = "Content";
-            _interfaceModel = new InterfaceModel(_screenSize, GameWorld.Instance);
-            _interfaceController = new InterfaceController(_interfaceModel, this, _isometricEngine);
-            _interfaceView = new InterfaceView(_interfaceModel, _isometricEngine);
+            
         }
 
         /// <summary>
@@ -66,6 +64,9 @@ namespace Heliopolis
         /// </summary>
         protected override void LoadContent()
         {
+            _interfaceModel = new InterfaceModel(_screenSize, GameWorld.Instance, this);
+            _interfaceController = new InterfaceController(_interfaceModel, this, _isometricEngine);
+            _interfaceView = new InterfaceView(_interfaceModel, _isometricEngine);
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _isometricEngine.LoadContent(Content);
             _interfaceView.LoadContent(Content);

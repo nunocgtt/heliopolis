@@ -123,11 +123,12 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="UITheme\SimpleDark\SimpleDark.xml">
+    <Content Include="UITheme\SimpleDark\SimpleDark.xml">
       <Name>SimpleDark</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
-    </Compile>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="UITheme\SimpleLight\button-backdrop.png">
@@ -185,18 +186,20 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="UITheme\SimpleLight\SimpleLight.xml">
+    <Content Include="UITheme\SimpleLight\SimpleLight.xml">
       <Name>SimpleLight</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
-    </Compile>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="UI\ExampleInterface.xml">
-      <Name>ExampleInterface</Name>
+    <Content Include="UI\Interface.xml">
+      <Name>Interface</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
-    </Compile>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Fonts\Kootenay.spritefont">
@@ -216,12 +219,12 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GameWorldDefintion\Gamedata.xml">
+    <Content Include="GameWorldDefintion\Gamedata.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Name>Gamedata</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
-    </Compile>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

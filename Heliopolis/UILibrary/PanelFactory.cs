@@ -28,14 +28,6 @@ namespace Heliopolis.UILibrary
             return _panelCreate;
         }
 
-        public UIPanel CreateNewPanelWithParent(XmlNode xmlDocument, UIPanel parent, UserInterface userInterface)
-        {
-            _panelCreate = new UIPanel();
-            _xmlDocument = xmlDocument;
-            Initialize(parent, userInterface);
-            return _panelCreate;
-        }
-
         protected void Initialize(UIPanel parent, UserInterface userInterface)
         {
             _panelCreate.Parent = parent;
