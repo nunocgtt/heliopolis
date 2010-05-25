@@ -202,7 +202,6 @@ namespace Heliopolis.World.BuildingManagement
                 case BuildingStates.UnderConstruction:
                     _constructionItems.Add(item);
                     return ItemStates.ConstructionMaterial;
-                    break;
                 case BuildingStates.Ready:
                     foreach (BuildingTileContains container in _itemsHeld.Values)
                     {
