@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Theme name="SimpleLight">
+  <BackdropTextures>
+    <BackdropTexture name="Frame-Backdrop" texture="UITheme\SimpleLight\frame-backdrop" tileWidth="12" tileHeight="12"/>
+    <BackdropTexture name="InputBox-Backdrop" texture="UITheme\SimpleLight\inputbox-backdrop" tileWidth="6" tileHeight="6"/>
+    <BackdropTexture name="InputBox-Disabled-Backdrop" texture="UITheme\SimpleLight\inputbox-disabled-backdrop" tileWidth="6" tileHeight="6"/>
+    <BackdropTexture name="Button-Backdrop" texture="UITheme\SimpleLight\button-backdrop" tileWidth="6" tileHeight="6"/>
+    <BackdropTexture name="Button-Pressed-Backdrop" texture="UITheme\SimpleLight\button-pressed-backdrop" tileWidth="6" tileHeight="6"/>
+    <BackdropTexture name="Button-Disabled-Backdrop" texture="UITheme\SimpleLight\button-disabled-backdrop" tileWidth="6" tileHeight="6"/>
+    <BackdropTexture name="List-Backdrop" texture="UITheme\SimpleLight\list-backdrop" tileWidth="20" tileHeight="20"/>
+  </BackdropTextures>
+  
+  <Textures>
+    <Texture name="List-UpButton" texture="UITheme\SimpleLight\list-upbutton"/>
+    <Texture name="List-UpButton-Pressed" texture="UITheme\SimpleLight\list-upbutton-pressed"/>
+    <Texture name="List-DownButton" texture="UITheme\SimpleLight\list-downbutton"/>
+    <Texture name="List-DownButton-Pressed" texture="UITheme\SimpleLight\list-downbutton-pressed"/>
+  </Textures>
+  
+  <Colors>
+    <Color name="TextPanel-TextColor">000000</Color>
+    <Color name="InputBox-TextColor">000000</Color>
+    <Color name="InputBox-Disabled-TextColor">B4B4B4</Color>
+    <Color name="Button-TextColor">000000</Color>
+    <Color name="Button-Pressed-TextColor">222222</Color>
+    <Color name="Button-Disabled-TextColor">B4B4B4</Color>
+
+    <Color name="List-RowBackgroundColor">FFFFFF</Color>
+    <Color name="List-RowAltBackgroundColor">EAEAEA</Color>
+    <Color name="List-RowSelectedBackgroundColor">D9EFA1</Color>
+
+    <Color name="List-RowTextColor">000000</Color>
+    <Color name="List-RowAltTextColor">000000</Color>
+    <Color name="List-RowSelectedTextColor">000000</Color>
+    
+  </Colors>
+  <Fonts>
+    <Font name="TextPanel-Font">Fonts\Kootenay</Font>
+    <Font name="InputBox-Font">Fonts\Kootenay</Font>
+    <Font name="Button-Font">Fonts\Kootenay</Font>
+    <Font name="List-Font">Fonts\Kootenay</Font>
+  </Fonts>
+</Theme>

@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Interface inherits="MyGame.ExampleInterface" theme="UITheme\SimpleLight\SimpleLight.xml">
+  <Variables>
+    <Variable name="buttonwidth" value="72"/>
+    <Variable name="buttonpadding" value="15"/>
+    <Variable name="buttonheight" value="30"/>
+    <!-- screenwitdh and screenhieght are implicitly set -->
+  </Variables>
+  <Panels>
+    <Panel id="TopMenuPanel" type="SimpleUI.UIPanel_Frame" position="top-left" x="0" y="0" width="screenwidth" height="24" layout="stack-horizontal">
+      
+    </Panel>
+
+    <Panel id="RightMenuPanel" type="SimpleUI.UIPanel_Frame" position="top-right" x="-15" y="15" width="180" height="700" layout="stack-vertical">
+      <Panels>
+        <Panel id="JobButton" type="SimpleUI.UIPanel_Button" onClick="MyList_OnAdd" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+          <Text alignment="center">Jobs</Text>
+        </Panel>
+
+        <Panel id="StorageButton" type="SimpleUI.UIPanel_Button" onClick="MyList_OnAdd" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+          <Text alignment="center">Storage</Text>
+        </Panel>
+        
+        <Panel id="BuildingsButton" type="SimpleUI.UIPanel_Button" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+          <Text alignment="center">Buildings</Text>
+        </Panel>
+      </Panels>
+
+    </Panel>
+
+  </Panels>
+</Interface>
+
+<!--<Panel id="MyOuterPanel" type="SimpleUI.UIPanel_Frame">
+      <DrawRectangle position="top-left" x="15" y="15" width="480" height="420"/>
+      <Panels>
+
+
+        <Panel id="MyListTitle" type="SimpleUI.UIPanel_Text">
+          <DrawRectangle position="center-left" x="15" y="0"/>
+          <Text>My List of Arbitrary Words</Text>
+          <Fonts>
+            <Font name="TextPanel-Font">Fonts\SimpleUI\Lindsey</Font>
+          </Fonts>
+        </Panel>
+        
+        <Panel id="MyInputPanel" type="SimpleUI.UIPanel_InputBox" onEnterKeyPressed="MyList_OnAdd">
+          <DrawRectangle position="center-right" x="-81" y="0" width="180" height="30"/>
+          <Value alignment="center-left"></Value>
+         </Panel>
+
+        <Panel id="MyButton" type="SimpleUI.UIPanel_Button" onClick="MyList_OnAdd">
+          <DrawRectangle position="center-right" x="-10" y="0" width="72" height="30"/>
+          <Text alignment="center">Add</Text>
+        </Panel>
+
+        <Panel id="MyList" type="SimpleUI.UIPanel_List">
+          <DrawRectangle position="bottom-left" x="10" y="-10" width="460" height="180"/>
+          <ListItems>
+            <ListItem>Test Item 1</ListItem>
+            <ListItem>Test Item 2</ListItem>
+            <ListItem selected="true">Test Item 3</ListItem>
+            <ListItem>Test Item 4</ListItem>
+          </ListItems>
+        </Panel>
+       
+      </Panels>
+    </Panel>
+    
+    <Panel id="SimpleDarkPreview" type="SimpleUI.UIPanel_Frame" onClick="ThemePreview_OnClick">
+      <DrawRectangle position="top-right" x="-15" y="15" width="120" height="120"/>
+      <BackdropTextures>
+        <BackdropTexture name="Frame-Backdrop" texture="Themes\SimpleUI\SimpleDark\frame-backdrop" tileWidth="12" tileHeight="12"/>
+      </BackdropTextures>
+      <Panels>
+        <Panel id="ThemeNameLabel" type="SimpleUI.UIPanel_Text">
+          <DrawRectangle position="center" x="0" y="0"/>
+          <Text>SimpleDark</Text>
+          <Colors>
+            <Color name="TextPanel-TextColor">#EEEEEE</Color>
+          </Colors>
+          <Fonts>
+            <Font name="TextPanel-Font">Fonts\SimpleUI\Kootenay</Font>
+          </Fonts>
+        </Panel>
+      </Panels>
+    </Panel>
+
+    <Panel id="SimpleLightPreview" type="SimpleUI.UIPanel_Frame" onClick="ThemePreview_OnClick">
+      <DrawRectangle position="top-right" x="-15" y="145" width="120" height="120"/>
+      <BackdropTextures>
+        <BackdropTexture name="Frame-Backdrop" texture="Themes\SimpleUI\SimpleLight\frame-backdrop" tileWidth="12" tileHeight="12"/>
+      </BackdropTextures>
+      <Panels>
+        <Panel id="ThemeNameLabel" type="SimpleUI.UIPanel_Text">
+          <DrawRectangle position="center" x="0" y="0"/>
+          <Text>SimpleLight</Text>
+          <Colors>
+            <Color name="TextPanel-TextColor">#000000</Color>
+          </Colors>
+          <Fonts>
+            <Font name="TextPanel-Font">Fonts\SimpleUI\Kootenay</Font>
+          </Fonts>
+        </Panel>
+      </Panels>
+    </Panel>-->
