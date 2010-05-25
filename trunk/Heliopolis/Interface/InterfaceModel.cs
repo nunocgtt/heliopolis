@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework;
 using Heliopolis.World;
 using Heliopolis.World.InteractableObjects;
 using Heliopolis.World.JobSystem;
+using Heliopolis.UILibrary;
+using Microsoft.Xna.Framework.Content;
 
 namespace Heliopolis.Interface
 {
@@ -19,6 +21,7 @@ namespace Heliopolis.Interface
 
     public class InterfaceModel
     {
+        public const string UIFileToLoad = @"Content\UI\Interface.xml";
         public Point CameraPos;
         public bool ZoomedIn;
         public Point ScreenSize;
@@ -32,6 +35,7 @@ namespace Heliopolis.Interface
         private readonly GameWorld _world;
         public float Fps { get; set; }
         public InterfaceAction CurrentAction { get; set; }
+        private UserInterface _userInterface;
 
         public bool GameIsPaused
         {
@@ -72,7 +76,7 @@ namespace Heliopolis.Interface
             }
         }
 
-        public InterfaceModel(Point screenSize, GameWorld world)
+        public InterfaceModel(Point screenSize, GameWorld world, Game xnaGame)
         {
             _world = world;
             ZoomedIn = false;
@@ -81,6 +85,8 @@ namespace Heliopolis.Interface
             CurrentSelectionState = SelectionState.None;
             MouseDown = false;
             CurrentAction = null;
+            UserInterface = new InterfaceFactory().CreateUserInterface(xnaGame, UIFileToLoad, screenSize.X, screenSize.Y);
+
         }
 
         public void StartSelection()
@@ -108,6 +114,12 @@ namespace Heliopolis.Interface
             {
                 return ZoomedIn ? 2 : 1;
             }
+        }
+
+        public UserInterface UserInterface
+        {
+            get { return _userInterface; }
+            set { _userInterface = value; }
         }
 
         public void UpdateSelectionInfo()

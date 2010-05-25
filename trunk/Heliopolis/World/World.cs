@@ -142,7 +142,7 @@ namespace Heliopolis.World
         {
             _environment.InitialiseEnvironment();
             XmlDocument doc = new XmlDocument();
-            string fileLoc = Path.GetDirectoryName(this.GetType().Assembly.Location) + "\\WorldDef\\Gamedata.xml";
+            string fileLoc = Path.GetDirectoryName(GetType().Assembly.Location) + "\\Content\\GameWorldDefintion\\Gamedata.xml";
             doc.Load(fileLoc);
             LoadFactoriesFromFile(doc);
         }
