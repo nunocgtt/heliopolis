@@ -8,7 +8,8 @@ namespace Heliopolis.UILibrary
     public class UIPanel_Text : UIPanel, IPanel
     {
         public string Text { get; set; }
-        
+        public string Binding { get; set; }
+
         protected SpriteFont font;
         public override SpriteFont Font { 
             get { return this.font; }
@@ -25,7 +26,8 @@ namespace Heliopolis.UILibrary
         {
             Text = "";
 
-            XmlNode textNode = xmlNode.SelectSingleNode(@"Text");
+            XmlNode textNode = xmlNode.SelectSingleNode("Text");
+            XmlNode binding = xmlNode.SelectSingleNode("@binding");
 
             if (textNode != null)
             {
@@ -34,9 +36,12 @@ namespace Heliopolis.UILibrary
                     Text = textNode.FirstChild.Value;
                 }
             }
-        }
 
-        
+            if (binding != null)
+            {
+                Binding = binding.Value;
+            }
+        }
 
         protected virtual void SetFont(SpriteFont font)
         {
@@ -83,6 +88,16 @@ namespace Heliopolis.UILibrary
 
                 spriteBatch.DrawString(Font, Text, new Vector2(DrawRectangle.X, DrawRectangle.Y), Color);
             }
+        }
+
+        public override bool Update()
+        {
+            bool keepGoing = base.Update();
+            if (UserInterface.GameValueProvider != null && !string.IsNullOrEmpty(Binding))
+            {
+                Text = UserInterface.GameValueProvider.GetGameValue(Binding);
+            }
+            return keepGoing;
         }
 
         #region IPanel Members

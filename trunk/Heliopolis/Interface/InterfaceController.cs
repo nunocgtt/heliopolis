@@ -14,9 +14,6 @@ namespace Heliopolis.Interface
         private readonly InterfaceModel _interfaceModel;
         private readonly Game _game;
         private readonly IsometricEngine _engine;
-        private int _frameRate;
-        private int _frameCounter;
-        private TimeSpan _elapsedTime = TimeSpan.Zero;
         private Keys[] oldPressedKeys;
 
         public InterfaceController(InterfaceModel model, Game gameOwner, IsometricEngine engine)
@@ -100,8 +97,7 @@ namespace Heliopolis.Interface
                 if (_interfaceModel.MouseDown)
                     _interfaceModel.EndSelection(); 
             }
-
-            UpdateFps(gameTime);
+            _interfaceModel.UpdateInternalMetrics(gameTime);
         }
 
         private void KeyDown(Keys key)
@@ -115,22 +111,6 @@ namespace Heliopolis.Interface
             {
                 _interfaceModel.TogglePause();
             }
-        }
-
-        private void UpdateFps(GameTime gameTime)
-        {
-            _elapsedTime += gameTime.ElapsedGameTime;
-            _frameCounter++;
-
-            if (_elapsedTime > TimeSpan.FromSeconds(1))
-            {
-                _elapsedTime -= TimeSpan.FromSeconds(1);
-                _frameRate = _frameCounter;
-                _frameCounter = 0;
-            }
-
-            _interfaceModel.Fps = _frameRate;
-            _interfaceModel.UpdateSelectionInfo();
         }
     }
 }

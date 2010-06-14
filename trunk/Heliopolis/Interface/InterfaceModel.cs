@@ -9,6 +9,11 @@ using Microsoft.Xna.Framework.Content;
 
 namespace Heliopolis.Interface
 {
+    public interface IGameValueProvider
+    {
+        string GetGameValue(string valueToGet);
+    }
+
     public enum InterfaceActionType
     {
         ApplyDesignation
@@ -19,7 +24,7 @@ namespace Heliopolis.Interface
         public string TargetHarvestType { get; set; }
     }
 
-    public class InterfaceModel
+    public class InterfaceModel : IGameValueProvider
     {
         public const string UIFileToLoad = @"Content\UI\Interface.xml";
         public Point CameraPos;
@@ -86,7 +91,7 @@ namespace Heliopolis.Interface
             MouseDown = false;
             CurrentAction = null;
             UserInterface = new InterfaceFactory().CreateUserInterface(xnaGame, UIFileToLoad, screenSize.X, screenSize.Y);
-
+            UserInterface.GameValueProvider = this;
         }
 
         public void StartSelection()
@@ -183,6 +188,48 @@ namespace Heliopolis.Interface
         internal void TogglePause()
         {
             _world.TimedEventManager.Paused = !_world.TimedEventManager.Paused;
+        }
+
+        // Initially designed to bind in-game values to controls.
+        public string GetGameValue(string valueToGet)
+        {
+            switch (valueToGet)
+            {
+                case "totalunits":
+                    return _world.ActorManager.LiveActors.Count.ToString();
+                case "debuginfo":
+                    return string.Format("X: {0} Y: {1} FPS:{2} {3}",
+                                         MouseXyPoint.X,
+                                         MouseXyPoint.Y,
+                                         Fps,
+                                         GameIsPaused ? "Paused" : "");
+            }
+            return valueToGet + " invalid";
+        }
+        private int _frameRate;
+        private int _frameCounter;
+        private TimeSpan _elapsedTime = TimeSpan.Zero;
+
+        public void UpdateFps(GameTime gameTime)
+        {
+            _elapsedTime += gameTime.ElapsedGameTime;
+            _frameCounter++;
+
+            if (_elapsedTime > TimeSpan.FromSeconds(1))
+            {
+                _elapsedTime -= TimeSpan.FromSeconds(1);
+                _frameRate = _frameCounter;
+                _frameCounter = 0;
+            }
+
+            Fps = _frameRate;
+            UpdateSelectionInfo();
+        }
+
+        public void UpdateInternalMetrics(GameTime gameTime)
+        {
+            UserInterface.Update();
+            UpdateFps(gameTime);
         }
     }
 }

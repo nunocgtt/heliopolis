@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Reflection;
+using Heliopolis.Interface;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -12,9 +13,11 @@ namespace Heliopolis.UILibrary
     public class UserInterface
     {
         public Game Game { get; set; }
-        public XmlDocument InterfaceXML { get; set; }
-
+        public XmlDocument InterfaceXML { get; set; }       
         public Dictionary<string, UIPanel> Panels { get; set; }
+        public Dictionary<string, List<UIPanel>> PanelGroups { get; set; }
+
+        public IGameValueProvider GameValueProvider { get; set; }
 
         public UITheme Theme { get; set; }
 
@@ -55,6 +58,26 @@ namespace Heliopolis.UILibrary
             Panels.Add(panel.ID, panel);
         }
 
+        public void AddPanelToGroup(UIPanel panel, string groupId)
+        {
+            if (!PanelGroups.ContainsKey(groupId))
+            {
+                PanelGroups.Add(groupId, new List<UIPanel>());
+            }
+            PanelGroups[groupId].Add(panel);
+        }
+
+        public void SetPanelGroupVisibilty(string groupId, string panelId)
+        {
+            if (PanelGroups.ContainsKey(groupId))
+            {
+                foreach (var uiPanel in PanelGroups[groupId])
+                {
+                    uiPanel.Visible = (uiPanel.ID == panelId);
+                }
+            }
+        }
+
         public UIPanel GetPanel(string panelID)
         {
             UIPanel panel = null;
@@ -72,13 +95,9 @@ namespace Heliopolis.UILibrary
             CurrentKeyboardState = Keyboard.GetState();
             CurrentMouseState = Mouse.GetState();
 
-            bool keepGoing = true;
-
             foreach (UIPanel panel in Panels.Values)
             {
-                keepGoing = panel.Update();
-
-                if (!keepGoing)
+                if (!panel.Update())
                 {
                     break;
                 }
