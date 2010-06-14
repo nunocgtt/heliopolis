@@ -30,6 +30,7 @@ namespace Heliopolis.UILibrary
         public LayoutType PanelLayoutType { get; set; }
         public Point LayoutCurrentPosition;
         public Rectangle PosRect;
+        public string GroupId { get; set; }
 
         public Dictionary<string, UIPanel> Panels { get; set; }
 
@@ -247,7 +248,6 @@ namespace Heliopolis.UILibrary
                             if (Click != null)
                             {
                                 Click(this, EventArgs.Empty);
-                                keepGoing = false;
                             }
 
                             if (UserInterface.Focus != this)

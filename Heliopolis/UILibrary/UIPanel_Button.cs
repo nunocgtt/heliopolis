@@ -9,6 +9,8 @@ namespace Heliopolis.UILibrary
     public class UIPanel_Button : UIPanel, IPanel
     {
         public string Text { get; set; }
+        public string ModifyGroupVisibility { get; set; }
+        public string PanelToShow { get; set; }
 
         protected string textAlignment;
 
@@ -17,9 +19,11 @@ namespace Heliopolis.UILibrary
         protected void LoadText(XmlNode xmlNode)
         {
             Text = "";
-            this.textAlignment = "center";
+            textAlignment = "center";
 
             XmlNode textNode = xmlNode.SelectSingleNode(@"Text");
+            XmlNode modGroupVisiblily = xmlNode.SelectSingleNode("@modifyGroupVisiblity");
+            XmlNode panelToShow = xmlNode.SelectSingleNode("@panelToShow");
 
             if (textNode != null)
             {
@@ -34,6 +38,12 @@ namespace Heliopolis.UILibrary
                 {
                     this.textAlignment = alignmentAttribute.Value;
                 }
+            }
+
+            if (modGroupVisiblily != null && panelToShow != null)
+            {
+                ModifyGroupVisibility = modGroupVisiblily.Value;
+                PanelToShow = panelToShow.Value;
             }
         }
 
@@ -89,10 +99,20 @@ namespace Heliopolis.UILibrary
                     Color = base.GetColor("Button-TextColor");
 
                     buttonDepressed = false;
+
+                    ProcessPanelVisibilty();
                 }
             }
 
             return base.Update();
+        }
+
+        private void ProcessPanelVisibilty()
+        {
+            if (!string.IsNullOrEmpty(ModifyGroupVisibility) && !string.IsNullOrEmpty(PanelToShow))
+            {
+                UserInterface.SetPanelGroupVisibilty(ModifyGroupVisibility, PanelToShow);
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch)

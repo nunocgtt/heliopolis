@@ -68,6 +68,7 @@ namespace Heliopolis.UILibrary
                 XmlNode enabledAttribute = _xmlDocument.SelectSingleNode(@"@enabled");
                 XmlNode visibleAttribute = _xmlDocument.SelectSingleNode(@"@visible");
                 XmlNode layoutType = _xmlDocument.SelectSingleNode(@"@layout");
+                XmlNode groupId = _xmlDocument.SelectSingleNode(@"@groupid");
 
                 if (enabledAttribute != null)
                 {
@@ -89,6 +90,11 @@ namespace Heliopolis.UILibrary
                     {
                         _panelCreate.PanelLayoutType = LayoutType.StackVertical;
                     }
+                }
+
+                if (groupId != null)
+                {
+                    _panelCreate.UserInterface.AddPanelToGroup(_panelCreate, groupId.Value);
                 }
             }
             else

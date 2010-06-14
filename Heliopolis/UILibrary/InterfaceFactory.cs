@@ -32,6 +32,7 @@ namespace Heliopolis.UILibrary
         protected void Initialize()
         {
             _userInterface.Panels = new Dictionary<string, UIPanel>();
+            _userInterface.PanelGroups = new Dictionary<string, List<UIPanel>>();
             XmlNode inheritsAttribute = _xmlDocument.SelectSingleNode(@"/Interface/@inherits");
             XmlNode themeAttribute = _xmlDocument.SelectSingleNode(@"/Interface/@theme");
 
