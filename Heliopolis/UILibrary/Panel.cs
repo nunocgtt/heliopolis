@@ -14,7 +14,7 @@ namespace Heliopolis.UILibrary
         StackVertical
     }
 
-    public class UIPanel
+    public class Panel
     {
         public event EventHandler Hover;
         public event EventHandler Click;
@@ -24,7 +24,7 @@ namespace Heliopolis.UILibrary
         protected string id;
         public string ID { get { return id; } set { id = value; } }
  
-        public UIPanel Parent { get; set; }
+        public Panel Parent { get; set; }
         public UserInterface UserInterface { get; set; }
 
         public LayoutType PanelLayoutType { get; set; }
@@ -32,7 +32,7 @@ namespace Heliopolis.UILibrary
         public Rectangle PosRect;
         public string GroupId { get; set; }
 
-        public Dictionary<string, UIPanel> Panels { get; set; }
+        public Dictionary<string, Panel> Panels { get; set; }
 
         public bool HasFocus { get; set; }
 
@@ -84,12 +84,12 @@ namespace Heliopolis.UILibrary
             }
         }
 
-        internal UIPanel()
+        internal Panel()
         {
             LayoutCurrentPosition = new Point(0, 0);
         }
 
-        public virtual void AddChildPanel(UIPanel panel)
+        public virtual void AddChildPanel(Panel panel)
         {
             if (Panels.Keys.Contains(panel.ID))
             {
@@ -109,9 +109,9 @@ namespace Heliopolis.UILibrary
             }
         }
 
-        public virtual UIPanel GetPanel(string panelID)
+        public virtual Panel GetPanel(string panelID)
         {
-            UIPanel panel = null;
+            Panel panel = null;
 
             if (Panels.Keys.Contains(panelID))
             {
@@ -215,7 +215,7 @@ namespace Heliopolis.UILibrary
 
             if (visible)
             {
-                foreach (UIPanel panel in Panels.Values)
+                foreach (Panel panel in Panels.Values)
                 {
                     keepGoing = panel.Update();
 
@@ -298,7 +298,7 @@ namespace Heliopolis.UILibrary
                     DrawBackdrop(spriteBatch);
                 }
 
-                foreach (UIPanel panel in Panels.Values)
+                foreach (Panel panel in Panels.Values)
                 {
                     panel.Draw(spriteBatch);
                 }

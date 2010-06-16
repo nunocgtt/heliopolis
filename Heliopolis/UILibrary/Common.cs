@@ -15,7 +15,7 @@ namespace Heliopolis.UILibrary
     }
     public struct UIEvent
     {
-        public UIPanel SourcePanel;
+        public Panel SourcePanel;
         public string EventMessage;
     }
 

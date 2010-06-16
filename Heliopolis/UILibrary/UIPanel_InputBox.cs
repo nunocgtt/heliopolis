@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Heliopolis.UILibrary
 {
-    public class UIPanel_InputBox : UIPanel, IPanel
+    public class UIPanel_InputBox : Panel, IPanel
     {
         public string Value { get; set; }
 

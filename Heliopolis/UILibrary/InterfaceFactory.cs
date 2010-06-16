@@ -31,8 +31,8 @@ namespace Heliopolis.UILibrary
 
         protected void Initialize()
         {
-            _userInterface.Panels = new Dictionary<string, UIPanel>();
-            _userInterface.PanelGroups = new Dictionary<string, List<UIPanel>>();
+            _userInterface.Panels = new Dictionary<string, Panel>();
+            _userInterface.PanelGroups = new Dictionary<string, List<Panel>>();
             XmlNode inheritsAttribute = _xmlDocument.SelectSingleNode(@"/Interface/@inherits");
             XmlNode themeAttribute = _xmlDocument.SelectSingleNode(@"/Interface/@theme");
 
@@ -44,7 +44,7 @@ namespace Heliopolis.UILibrary
                 {
                     var themeXML = new XmlDocument();
                     themeXML.Load(themeFile);
-                    _userInterface.Theme = new UITheme(themeXML, _userInterface);
+                    _userInterface.Theme = new Theme(themeXML, _userInterface);
                 }
                 catch (Exception ex)
                 {
@@ -57,7 +57,7 @@ namespace Heliopolis.UILibrary
                 {
                     var themeXML = new XmlDocument();
                     themeXML.Load(@"Content\Themes\SimpleUI\SimpleLight\SimpleLight.xml");
-                    _userInterface.Theme = new UITheme(themeXML, _userInterface);
+                    _userInterface.Theme = new Theme(themeXML, _userInterface);
                 }
                 catch (Exception ex)
                 {
@@ -125,7 +125,7 @@ namespace Heliopolis.UILibrary
                     }
                     else
                     {
-                        _userInterface.RegisterPanel(new PanelFactory().CreateNewPanelByType(panelNode, _userInterface, typeof(UIPanel)));
+                        _userInterface.RegisterPanel(new PanelFactory().CreateNewPanelByType(panelNode, _userInterface, typeof(Panel)));
                     }
                 }
         }

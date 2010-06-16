@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Heliopolis.UILibrary
 {
-    public class UITheme
+    public class Theme
     {
         public XmlDocument ThemeXML { get; set; }
         public UserInterface UserInterface { get; set; }
@@ -16,7 +16,7 @@ namespace Heliopolis.UILibrary
         public Dictionary<string, Color> Colors;
         public Dictionary<string, SpriteFont> Fonts;
 
-        public UITheme(XmlDocument themeXML, UserInterface userInterface)
+        public Theme(XmlDocument themeXML, UserInterface userInterface)
         {
             ThemeXML = themeXML;
             UserInterface = userInterface;

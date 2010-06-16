@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Heliopolis.UILibrary
 {
-    public class UIPanel_Text : UIPanel, IPanel
+    public class TextLiteral : Panel, IPanel
     {
         public string Text { get; set; }
         public string Binding { get; set; }

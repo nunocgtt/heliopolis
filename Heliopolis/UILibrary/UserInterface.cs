@@ -14,14 +14,14 @@ namespace Heliopolis.UILibrary
     {
         public Game Game { get; set; }
         public XmlDocument InterfaceXML { get; set; }       
-        public Dictionary<string, UIPanel> Panels { get; set; }
-        public Dictionary<string, List<UIPanel>> PanelGroups { get; set; }
+        public Dictionary<string, Panel> Panels { get; set; }
+        public Dictionary<string, List<Panel>> PanelGroups { get; set; }
 
         public IGameValueProvider GameValueProvider { get; set; }
 
-        public UITheme Theme { get; set; }
+        public Theme Theme { get; set; }
 
-        public UIPanel Focus { get; set; }
+        public Panel Focus { get; set; }
 
         public KeyboardState PreviousKeyboardState { get; set; }
         public KeyboardState CurrentKeyboardState { get; set; }
@@ -49,7 +49,7 @@ namespace Heliopolis.UILibrary
             return eventHandler;
         }
 
-        public void RegisterPanel(UIPanel panel)
+        public void RegisterPanel(Panel panel)
         {
             if (Panels.Keys.Contains(panel.ID))
             {
@@ -58,11 +58,11 @@ namespace Heliopolis.UILibrary
             Panels.Add(panel.ID, panel);
         }
 
-        public void AddPanelToGroup(UIPanel panel, string groupId)
+        public void AddPanelToGroup(Panel panel, string groupId)
         {
             if (!PanelGroups.ContainsKey(groupId))
             {
-                PanelGroups.Add(groupId, new List<UIPanel>());
+                PanelGroups.Add(groupId, new List<Panel>());
             }
             PanelGroups[groupId].Add(panel);
         }
@@ -78,9 +78,9 @@ namespace Heliopolis.UILibrary
             }
         }
 
-        public UIPanel GetPanel(string panelID)
+        public Panel GetPanel(string panelID)
         {
-            UIPanel panel = null;
+            Panel panel = null;
 
             if (Panels.Keys.Contains(panelID))
             {
@@ -95,7 +95,7 @@ namespace Heliopolis.UILibrary
             CurrentKeyboardState = Keyboard.GetState();
             CurrentMouseState = Mouse.GetState();
 
-            foreach (UIPanel panel in Panels.Values)
+            foreach (Panel panel in Panels.Values)
             {
                 if (!panel.Update())
                 {
@@ -113,7 +113,7 @@ namespace Heliopolis.UILibrary
 
             //Game.GraphicsDevice.RenderState.ScissorTestEnable = true;
 
-            foreach (UIPanel panel in Panels.Values)
+            foreach (Panel panel in Panels.Values)
             {
                 panel.Draw(spriteBatch);
             }
