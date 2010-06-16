@@ -9,30 +9,30 @@ namespace Heliopolis.UILibrary
 {
     public class PanelFactory
     {
-        private UIPanel _panelCreate;
+        private Panel _panelCreate;
         private XmlNode _xmlDocument;
 
-        public UIPanel CreateNewPanelByTypeWithParent(XmlNode xmlDocument, UserInterface userInterface, Type objectType, UIPanel parentPanel)
+        public Panel CreateNewPanelByTypeWithParent(XmlNode xmlDocument, UserInterface userInterface, Type objectType, Panel parentPanel)
         {
-            _panelCreate = (UIPanel)Activator.CreateInstance(objectType);
+            _panelCreate = (Panel)Activator.CreateInstance(objectType);
             _xmlDocument = xmlDocument;
             Initialize(parentPanel, userInterface);
             return _panelCreate;
         }
 
-        public UIPanel CreateNewPanelByType(XmlNode xmlDocument, UserInterface userInterface, Type objectType)
+        public Panel CreateNewPanelByType(XmlNode xmlDocument, UserInterface userInterface, Type objectType)
         {
-            _panelCreate = (UIPanel) Activator.CreateInstance(objectType);
+            _panelCreate = (Panel) Activator.CreateInstance(objectType);
             _xmlDocument = xmlDocument;
             Initialize(null, userInterface);
             return _panelCreate;
         }
 
-        protected void Initialize(UIPanel parent, UserInterface userInterface)
+        protected void Initialize(Panel parent, UserInterface userInterface)
         {
             _panelCreate.Parent = parent;
             _panelCreate.UserInterface = userInterface;
-            _panelCreate.Panels = new Dictionary<string, UIPanel>();
+            _panelCreate.Panels = new Dictionary<string, Panel>();
             _panelCreate.HasFocus = false;
 
             bool isIPanel = _panelCreate is IPanel;
@@ -423,7 +423,7 @@ namespace Heliopolis.UILibrary
         }
 
 
-        public static Rectangle CalculateDrawRectangle(string position, int px, int py, int pw, int ph, UIPanel parent, UserInterface ui)
+        public static Rectangle CalculateDrawRectangle(string position, int px, int py, int pw, int ph, Panel parent, UserInterface ui)
         {
             int dx = px;
             int dy = py;
@@ -529,15 +529,15 @@ namespace Heliopolis.UILibrary
                         }
                         else
                         {
-                            _panelCreate.AddChildPanel(new PanelFactory().CreateNewPanelByTypeWithParent(panelNode, _panelCreate.UserInterface, typeof(UIPanel) ,_panelCreate));
+                            _panelCreate.AddChildPanel(new PanelFactory().CreateNewPanelByTypeWithParent(panelNode, _panelCreate.UserInterface, typeof(Panel) ,_panelCreate));
                         }
                     }
                 }
         }
 
-        public UIPanel GetInheritedPanel(string inheritedClassName, XmlNode panelXML, UserInterface userInterface)
+        public Panel GetInheritedPanel(string inheritedClassName, XmlNode panelXML, UserInterface userInterface)
         {
-            UIPanel panel;
+            Panel panel;
 
             if (InterfaceFactory.ReferencedTypes.Keys.Contains(inheritedClassName))
             {

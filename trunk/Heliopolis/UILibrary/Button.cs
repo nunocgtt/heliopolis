@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Heliopolis.UILibrary
 {
-    public class UIPanel_Button : UIPanel, IPanel
+    public class Button : Panel, IPanel
     {
         public string Text { get; set; }
         public string ModifyGroupVisibility { get; set; }

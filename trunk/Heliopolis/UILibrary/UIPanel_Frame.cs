@@ -2,7 +2,7 @@
 
 namespace Heliopolis.UILibrary
 {
-    public class UIPanel_Frame :  UIPanel, IPanel
+    public class UIPanel_Frame :  Panel, IPanel
     {
         public void LoadEventHandlers(XmlNode xmlNode)
         {

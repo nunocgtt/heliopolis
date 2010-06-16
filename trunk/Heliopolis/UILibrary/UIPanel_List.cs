@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Heliopolis.UILibrary
 {
-    public class UIPanel_List : UIPanel, IPanel
+    public class UIPanel_List : Panel, IPanel
     {
         public List<string> ListItems;
 
