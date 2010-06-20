@@ -55,7 +55,6 @@ namespace Heliopolis.GraphicsEngine
             _isometricEngine.AddTileProvider(_interfaceView);
             _isometricEngine.AddTileProvider(GameWorld.Instance.Environment);
             IsMouseVisible = true;
-            GameWorld.Instance.LoadTestWorld();
         }
 
         /// <summary>
@@ -70,6 +69,8 @@ namespace Heliopolis.GraphicsEngine
             _spriteBatch = new SpriteBatch(GraphicsDevice);
             _isometricEngine.LoadContent(Content);
             _interfaceView.LoadContent(Content);
+            GameWorld.Instance.LoadGameDescription(Content);
+            GameWorld.Instance.LoadTestWorld();
         }
 
         /// <summary>

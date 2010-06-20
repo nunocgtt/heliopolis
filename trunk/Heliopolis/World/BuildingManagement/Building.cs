@@ -212,7 +212,6 @@ namespace Heliopolis.World.BuildingManagement
                         }
                     }
                     throw new NotSupportedException();
-                    break;
                 default:
                     throw new NotSupportedException();
             }

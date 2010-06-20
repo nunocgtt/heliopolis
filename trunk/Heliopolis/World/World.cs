@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using System.Xml;
 using System.IO;
 using Heliopolis.Utilities;
+using Microsoft.Xna.Framework.Content;
 
 namespace Heliopolis.World
 {
@@ -52,8 +53,9 @@ namespace Heliopolis.World
         /// <param name="worldToLoad">The new game world to load.</param>
         public static void LoadNewGameWorld(GameWorld worldToLoad)
         {
+            throw new NotSupportedException("Yet to be properly implemented.");
             _instance = worldToLoad;
-            worldToLoad.LoadGameDescription();
+            //worldToLoad.LoadGameDescription();
             worldToLoad.Environment.InitialiseHelperClasses();
         }
 
@@ -132,27 +134,19 @@ namespace Heliopolis.World
             _environment = new Environment.Environment(_worldSize, this);
             _spatialTreeIndex = new SpatialTreeIndex(WorldSize, new [] { 3, 3, 3, 3 }, new [] { 3, 3, 3, 3 });
             TimedEventManager = new TimedEventManager(this);
-            LoadGameDescription();
         }
 
         /// <summary>
         /// Load the world.xml file for all the descriptions of game objects.
         /// </summary>
-        public void LoadGameDescription()
+        public void LoadGameDescription(ContentManager contentManager)
         {
             _environment.InitialiseEnvironment();
-            XmlDocument doc = new XmlDocument();
-            string fileLoc = Path.GetDirectoryName(GetType().Assembly.Location) + "\\Content\\GameWorldDefintion\\Gamedata.xml";
-            doc.Load(fileLoc);
-            LoadFactoriesFromFile(doc);
-        }
-
-        private void LoadFactoriesFromFile(XmlDocument xmlDoc)
-        {
-            ItemFactory.LoadTemplatesFromXml(xmlDoc, this);
-            EnvironmentTileFactory.LoadTemplatesFromXml(xmlDoc, this);
-            ActorFactory.LoadTemplatesFromXml(xmlDoc, this);
-            BuildingFactory.LoadTemplatesFromXml(xmlDoc, this);
+            ItemFactory.LoadTemplatesFromXml(contentManager, this);
+            EnvironmentTileFactory.LoadTemplatesFromXml(contentManager, this);
+            ActorFactory.LoadTemplatesFromXml(contentManager, this);
+            ActionTimes.LoadTemplatesFromXml(contentManager, this);
+            BuildingFactory.LoadTemplatesFromXml(contentManager, this);
         }
 
         /// <summary>

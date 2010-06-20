@@ -16,7 +16,7 @@ namespace Heliopolis.World.State
         public HarvestJob(GameWorld owner, Actor actor, string jobType, HarvestDesignation parentDesignation)
             : base(owner, actor, jobType, parentDesignation)
         {
-            ActionType = "harvest";
+            ActionType = jobType;
         }
 
         public override void OnEnter()
