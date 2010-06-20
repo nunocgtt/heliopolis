@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<XnaContent>
+  <Asset Type="System.Collections.Generic.List[ContentClasses.BuildingTemplate]">
+    <Item>
+      <Name>Carpenters</Name>
+      <Size>2 2</Size>
+      <Tiles>
+        <Item>
+          <Position>0 0</Position>
+          <TileType>blah</TileType>
+        </Item>
+      </Tiles>
+    </Item>
+  </Asset>
+</XnaContent>

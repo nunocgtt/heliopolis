@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using Microsoft.Xna.Framework;
+using ContentClasses;
+using Microsoft.Xna.Framework.Content;
+using System.Linq;
 
 namespace Heliopolis.World.ItemManagement
 {
@@ -12,30 +15,13 @@ namespace Heliopolis.World.ItemManagement
     public static class ItemFactory
     {
         [NonSerialized]
-        private static Dictionary<string, Item> _itemTemplates = null;
+        private static Dictionary<string, ItemTemplate> _itemTemplates = null;
+        private static GameWorld _owner;
 
-        /// <summary>
-        /// Loads Item templates from an XML file.
-        /// </summary>
-        /// <param name="xmlDoc">The xml file.</param>
-        /// <param name="owner">The owning game world.</param>
-        public static void LoadTemplatesFromXml(XmlDocument xmlDoc, GameWorld owner)
+        public static void LoadTemplatesFromXml(ContentManager contentManager, GameWorld owner)
         {
-            _itemTemplates = new Dictionary<string, Item>();
-            XmlNodeList itemNodes = xmlDoc.GetElementsByTagName("Item");
-            foreach (XmlNode node in itemNodes)
-            {
-                XmlNode weightNode = node.SelectSingleNode("Weight");
-                XmlNode texture = node.SelectSingleNode("Texture");
-                XmlNode classification = node.SelectSingleNode("Class");
-                Item addItem = new Item(
-                    float.Parse(weightNode.InnerText),
-                    classification.InnerText,
-                    texture.InnerText,
-                    node.Attributes["name"].Value,
-                    owner);
-                AddTemplate(node.Attributes["name"].Value, addItem);
-            }
+            _itemTemplates = contentManager.Load<List<ItemTemplate>>(@"GameWorldDefintion/items").ToDictionary(p => p.Name);
+            _owner = owner;
         }
 
         /// <summary>
@@ -46,20 +32,17 @@ namespace Heliopolis.World.ItemManagement
         /// <returns>An Item.</returns>
         public static Item GetNewItem(string templateName, Point position)
         {
-            Item returnMe = (Item)_itemTemplates[templateName].Clone();
+            ItemTemplate itemTemplate = _itemTemplates[templateName];
+            Item returnMe = new Item(itemTemplate.Weight,itemTemplate.Texture, itemTemplate.Name, _owner);
             returnMe.Position = position;
             return returnMe;
         }
 
         public static Item GetNewItem(string templateName)
         {
-            Item returnMe = (Item)_itemTemplates[templateName].Clone();
+            ItemTemplate itemTemplate = _itemTemplates[templateName];
+            Item returnMe = new Item(itemTemplate.Weight, itemTemplate.Texture, itemTemplate.Name, _owner);
             return returnMe;
-        }
-
-        private static void AddTemplate(string name, Item addItem)
-        {
-            _itemTemplates.Add(name, addItem);
         }
     }
 }

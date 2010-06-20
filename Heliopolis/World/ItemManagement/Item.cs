@@ -118,14 +118,6 @@ namespace Heliopolis.World.ItemManagement
         }
 
         /// <summary>
-        /// The class of item.
-        /// </summary>
-        public string Classification
-        {
-            get { return _classification; }
-        }
-
-        /// <summary>
         /// The type of item.
         /// </summary>
         public string ItemType
@@ -137,14 +129,12 @@ namespace Heliopolis.World.ItemManagement
         /// Initialises a new instance of the Item class.
         /// </summary>
         /// <param name="weight">The weight.</param>
-        /// <param name="classification">The class.</param>
         /// <param name="texture">The texture.</param>
         /// <param name="itemType">The type.</param>
         /// <param name="owner">The owning game world.</param>
-        public Item(float weight, string classification, string texture, string itemType, GameWorld owner) : base(owner)
+        public Item(float weight, string texture, string itemType, GameWorld owner) : base(owner)
         {
             _itemType = itemType;
-            _classification = classification;
             _texture = texture;
             _isReserved = false;
             _isMemberOfSpatialIndex = false;

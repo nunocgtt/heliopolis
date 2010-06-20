@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<XnaContent>
+  <Asset Type="System.Collections.Generic.List[ContentClasses.TextureSheet]">
+    <Item>
+      <SheetName>floors</SheetName>
+      <ContentFileName>Sprites/floors</ContentFileName>
+    </Item>
+    <Item>
+      <SheetName>trees</SheetName>
+      <ContentFileName>Sprites/trees</ContentFileName>
+    </Item>
+    <Item>
+      <SheetName>dwarves</SheetName>
+      <ContentFileName>Sprites/dwarves</ContentFileName>
+    </Item>
+    <Item>
+      <SheetName>items</SheetName>
+      <ContentFileName>Sprites/items</ContentFileName>
+    </Item>
+  </Asset>
+</XnaContent>

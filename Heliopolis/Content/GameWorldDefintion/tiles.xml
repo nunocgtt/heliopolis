@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<XnaContent>
+  <Asset Type="System.Collections.Generic.List[ContentClasses.TileTemplate]">
+    <Item>
+      <Name>grass</Name>
+      <Texture>grass</Texture>
+      <CanAccess>true</CanAccess>
+    </Item>
+    <Item>
+      <Name>rock</Name>
+      <Texture>rock</Texture>
+      <CanAccess>true</CanAccess>
+    </Item>
+  </Asset>
+</XnaContent>

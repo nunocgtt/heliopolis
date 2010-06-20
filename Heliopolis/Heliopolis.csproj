@@ -123,9 +123,10 @@
     <Compile Include="Utilities\SpatialTreeIndexSystem\SpatialTreeNode.cs" />
     <Compile Include="Utilities\StateRecorder.cs" />
     <Compile Include="Utilities\TraceManager.cs" />
-    <Compile Include="World\Actor.cs" />
-    <Compile Include="World\ActorFactory.cs" />
-    <Compile Include="World\ActorManager.cs" />
+    <Compile Include="World\ActorManagement\ActionTimes.cs" />
+    <Compile Include="World\ActorManagement\Actor.cs" />
+    <Compile Include="World\ActorManagement\ActorFactory.cs" />
+    <Compile Include="World\ActorManagement\ActorManager.cs" />
     <Compile Include="World\BuildingManagement\BuildingStates.cs" />
     <Compile Include="World\BuildingManagement\BuildingTileContains.cs" />
     <Compile Include="World\Environment\AreaDictionary.cs" />

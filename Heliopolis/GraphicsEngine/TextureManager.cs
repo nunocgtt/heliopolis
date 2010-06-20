@@ -11,20 +11,13 @@ namespace Heliopolis.GraphicsEngine
     {
         public Dictionary<string, IsometricTexture> Textures = new Dictionary<string, IsometricTexture>();
         public Dictionary<string, Texture2D> TextureSheets = new Dictionary<string, Texture2D>();
-        public Dictionary<string, string> TextureSheetNames = new Dictionary<string, string>();
 
         public TextureManager(ContentManager contentManager)
         {
-            TextureSheetNames.Add("floors", "Sprites/floors");
-            TextureSheetNames.Add("trees", "Sprites/trees");
-            TextureSheetNames.Add("dwarves", "Sprites/dwarves");
-            TextureSheetNames.Add("items", "Sprites/items");
-
-            foreach (KeyValuePair<string, string> kvp in TextureSheetNames)
-                TextureSheets.Add(kvp.Key, contentManager.Load<Texture2D>(kvp.Value));
-
             List<IsometricTexture> importList = contentManager.Load<List<IsometricTexture>>(@"GameWorldDefintion/textures");
+            List<TextureSheet> textureSheet = contentManager.Load<List<TextureSheet>>(@"GameWorldDefintion/texturesheets");
 
+            TextureSheets = textureSheet.ToDictionary(p => p.SheetName, q => contentManager.Load<Texture2D>(q.ContentFileName));
             Textures = importList.ToDictionary(p => p.TextureName);
         }
     }

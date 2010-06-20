@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ContentClasses;
 using Heliopolis.World.Environment;
 using Heliopolis.World.BuildingManagement;
 using Microsoft.Xna.Framework;
@@ -95,7 +96,7 @@ namespace Heliopolis.World.JobSystem
         /// <returns>Returns true if the building can be constructed.</returns>
         public bool CheckConstructionAble(Point targetPos, string buildingToConstruct)
         {
-            Building toBeConstructed = BuildingFactory.BuildingTemplates[buildingToConstruct];
+            BuildingTemplate toBeConstructed = BuildingFactory.BuildingTemplates[buildingToConstruct];
             for (int i = 0; i < toBeConstructed.Size.X; i++)
             {
                 for (int j = 0; j < toBeConstructed.Size.Y; j++)

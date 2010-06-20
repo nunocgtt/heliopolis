@@ -1,6 +1,5 @@
-#region
-
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Heliopolis.Utilities;
 using Heliopolis.Utilities.PathFinder;
@@ -8,8 +7,6 @@ using Heliopolis.Utilities.SpatialTreeIndexSystem;
 using Heliopolis.World.ItemManagement;
 using Heliopolis.World.State;
 using Microsoft.Xna.Framework;
-
-#endregion
 
 namespace Heliopolis.World
 {
@@ -24,7 +21,7 @@ namespace Heliopolis.World
     ///   Actors also retain an internal set of counters, for things like health, hunger, sleep and other needs.
     /// </remarks>
     [Serializable]
-    public class Actor : TimedEventor, ICloneable, ICanHoldItem
+    public class Actor : TimedEventor, ICanHoldItem
     {
         private Point _position;
         private MovementDestination<Point> _destinationPosition;
@@ -34,7 +31,7 @@ namespace Heliopolis.World
         private readonly List<string> _jobsAble;
         private string _texture;
         private StateStack _state;
-        private Dictionary<string, TimeSpan> _actionTimes;
+        private Dictionary<string, float> _actionProficiency;
         private string _actorType;
 
         private List<Item> _inHand;
@@ -85,15 +82,20 @@ namespace Heliopolis.World
             _position = new Point(-1, -1);
             TimedEventDisabled = true;
             AddedToWorld = false;
+            _actionProficiency = jobsAble.ToDictionary(p => p, q => 1f);
+            Id = new Guid();
+            InHand = new List<Item>();
+            Inventory = new List<Item>();
+            ChangeState(new ActorStateIdle(this, Owner));
         }
 
         /// <summary>
         ///   Contains the various actions this actor can peform, and how long it takes to do each.
         /// </summary>
-        public Dictionary<string, TimeSpan> ActionTimes
+        public Dictionary<string, float> ActionProficiency
         {
-            get { return _actionTimes; }
-            set { _actionTimes = value; }
+            get { return _actionProficiency; }
+            set { _actionProficiency = value; }
         }
 
         /// <summary>
@@ -302,28 +304,17 @@ namespace Heliopolis.World
         /// <param name = "absoluteMilliseconds">The absolute game time.</param>
         public override void ExecuteTick(TimeSpan absoluteMilliseconds)
         {
-            // Want to set up the next tick
-            SetUpNextTick(_actionTimes[_state.Tick()]);
+            // Process the tick, returns the next action type being performed;
+            string actionType = _state.Tick();
+            double ticks = ActionTimes.GetActionTime(actionType).TotalMilliseconds;
+            ticks = ActionProficiency[actionType]*ticks;
+            SetUpNextTick(new TimeSpan(0,0,0,0,(int)ticks));
         }
 
         public void Start(Point initialPosition)
         {
             TimedEventDisabled = false;
             Position = initialPosition;
-        }
-
-        /// <summary>
-        ///   Creates a new copy of this class.
-        /// </summary>
-        /// <returns>An Actor copy.</returns>
-        public object Clone()
-        {
-            Actor returnMe = (Actor) MemberwiseClone();
-            returnMe.Inventory = new List<Item>();
-            returnMe.ActionTimes = new Dictionary<string, TimeSpan>();
-            returnMe.ChangeState(new ActorStateIdle(returnMe, Owner));
-            returnMe.InHand = new List<Item>();
-            return returnMe;
         }
 
         public Point SpatialIndexPosition
