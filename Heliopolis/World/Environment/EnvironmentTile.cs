@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using Heliopolis.Utilities.PathFinder;
 using Heliopolis.Utilities.SpatialTreeIndexSystem;
+using Heliopolis.Utilities.PathFinder;
 using Heliopolis.World.BuildingManagement;
 using Heliopolis.World.InteractableObjects;
 using Heliopolis.World.ItemManagement;

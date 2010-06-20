@@ -4,9 +4,9 @@ using System.Linq;
 using Heliopolis.Utilities.PathFinder;
 using Heliopolis.World.Environment;
 using Heliopolis.World.ItemManagement;
+using Heliopolis.World.State;
 using Microsoft.Xna.Framework;
 using Heliopolis.Utilities;
-using Heliopolis.World.State;
 
 namespace Heliopolis.World.JobSystem
 {

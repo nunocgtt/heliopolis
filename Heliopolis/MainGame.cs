@@ -1,10 +1,10 @@
 using Heliopolis.GraphicsEngine;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Heliopolis.Interface;
 using Heliopolis.World;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
-namespace Heliopolis
+namespace Heliopolis.GraphicsEngine
 {
     public enum SelectionState
     {

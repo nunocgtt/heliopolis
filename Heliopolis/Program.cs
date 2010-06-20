@@ -1,6 +1,6 @@
 using System;
 
-namespace Heliopolis
+namespace Heliopolis.GraphicsEngine
 {
     static class Program
     {

@@ -1,7 +1,7 @@
 using System;
 using Heliopolis.Utilities.PathFinder;
-using Microsoft.Xna.Framework;
 using Heliopolis.World.ItemManagement;
+using Microsoft.Xna.Framework;
 
 namespace Heliopolis.World.State
 {

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Heliopolis.World.BuildingManagement;
 using Heliopolis.World.Environment;
+using Heliopolis.World.BuildingManagement;
 using Microsoft.Xna.Framework;
 
 namespace Heliopolis.World.JobSystem

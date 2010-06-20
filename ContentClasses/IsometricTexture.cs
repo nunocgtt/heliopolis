@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 
-namespace Heliopolis.GraphicsEngine
+namespace ContentClasses
 {
+    [Serializable]
     public class IsometricTexture
     {
         public string TextureName { get; set; }

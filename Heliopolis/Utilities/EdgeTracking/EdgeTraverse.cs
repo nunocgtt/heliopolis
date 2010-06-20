@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Heliopolis.Utilities.PathFinder;
 using Heliopolis.World.Environment;
+using Heliopolis.Utilities.PathFinder;
 using Microsoft.Xna.Framework;
 
 namespace Heliopolis.Utilities.EdgeTracking
