@@ -1,6 +1,6 @@
-﻿using Heliopolis.Utilities.PathFinder;
+﻿using Heliopolis.Utilities;
+using Heliopolis.Utilities.PathFinder;
 using Microsoft.Xna.Framework;
-using Heliopolis.Utilities;
 
 namespace Heliopolis.World
 {

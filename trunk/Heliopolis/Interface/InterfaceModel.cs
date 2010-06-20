@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+using Heliopolis.GraphicsEngine;
+using Heliopolis.UILibrary;
 using Heliopolis.World;
 using Heliopolis.World.InteractableObjects;
 using Heliopolis.World.JobSystem;
-using Heliopolis.UILibrary;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 
 namespace Heliopolis.Interface

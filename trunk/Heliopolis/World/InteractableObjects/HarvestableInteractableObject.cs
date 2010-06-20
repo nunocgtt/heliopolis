@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Heliopolis.World.Environment;
-using Microsoft.Xna.Framework;
 using Heliopolis.World.ItemManagement;
+using Microsoft.Xna.Framework;
 
 namespace Heliopolis.World.InteractableObjects
 {

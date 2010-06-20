@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework;
 using Heliopolis.World.BuildingManagement;
+using Microsoft.Xna.Framework;
 
 namespace Heliopolis.World.State
 {

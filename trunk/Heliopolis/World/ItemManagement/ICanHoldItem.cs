@@ -1,4 +1,5 @@
 ﻿using Heliopolis.Utilities.SpatialTreeIndexSystem;
+
 namespace Heliopolis.World.ItemManagement
 {
     /// <summary>
