@@ -7,16 +7,27 @@ using Microsoft.Xna.Framework.Content;
 
 namespace Heliopolis.World
 {
-    public class ActionTimes
+    public class ActionTimes : IFactory
     {
         private static Dictionary<string, TimeSpan> _actionTiming;
 
-        public static void LoadTemplatesFromXml(ContentManager contentManager, GameWorld owner)
+        public void LoadTemplatesFromContent(ContentManager contentManager, GameWorld owner, string contentFile)
         {
-            _actionTiming = contentManager.Load<List<ActionTime>>(@"GameWorldDefintion/actiontimes").ToDictionary(p => p.Name, q => new TimeSpan(0,0,0,0,q.Milliseconds));
+            _actionTiming = contentManager.Load<List<ActionTime>>(contentFile).ToDictionary(p => p.Name, q => new TimeSpan(0,0,0,0,q.Milliseconds));
         }
 
-        public static TimeSpan GetActionTime(string action)
+        private ActionTimes()
+        {
+        }
+
+        public static ActionTimes Instance;
+
+        static ActionTimes()
+        {
+            Instance = new ActionTimes();
+        }
+
+        public TimeSpan GetActionTime(string action)
         {
             return _actionTiming[action];
         }

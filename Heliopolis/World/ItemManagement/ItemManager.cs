@@ -22,7 +22,7 @@ namespace Heliopolis.World.ItemManagement
 
         public void SpawnItem(string itemType, ICanHoldItem holder)
         {
-            Item toAdd = ItemFactory.GetNewItem(itemType);
+            Item toAdd = ItemFactory.Instance.GetNewItem(itemType);
             toAdd.Holder = holder;
             toAdd.ItemState = holder.PickupItem(toAdd);
         }

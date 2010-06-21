@@ -12,16 +12,27 @@ namespace Heliopolis.World
     /// <summary>
     /// Handles creation of the Actor class, from a set of templates defined in an XML file.
     /// </summary>
-    public class ActorFactory
+    public class ActorFactory : IFactory
     {
         [NonSerialized]
-        private static Dictionary<string, ActorTemplate> _actorTemplates;
-        private static GameWorld _owner;
+        private Dictionary<string, ActorTemplate> _actorTemplates;
+        private GameWorld _owner;
 
-        public static void LoadTemplatesFromXml(ContentManager contentManager, GameWorld owner)
+        public void LoadTemplatesFromContent(ContentManager contentManager, GameWorld owner, string contentFile)
         {
-            _actorTemplates = contentManager.Load<List<ActorTemplate>>(@"GameWorldDefintion/actors").ToDictionary(p => p.Name);
+            _actorTemplates = contentManager.Load<List<ActorTemplate>>(contentFile).ToDictionary(p => p.Name);
             _owner = owner;
+        }
+
+        private ActorFactory()
+        {
+        }
+
+        public static ActorFactory Instance;
+
+        static ActorFactory()
+        {
+            Instance = new ActorFactory();
         }
 
         /// <summary>
@@ -30,7 +41,7 @@ namespace Heliopolis.World
         /// <param name="templateName">The name of the template.</param>
         /// <param name="intialPosition">The initial starting position on the game world.</param>
         /// <returns>Returns an Actor.</returns>
-        public static Actor GetNewActor(string templateName, Point intialPosition)
+        public Actor GetNewActor(string templateName, Point intialPosition)
         {
             ActorTemplate template = _actorTemplates[templateName];
             Actor returnMe = new Actor(_owner, template.Name, template.Texture, template.Hitpoints, template.Properties.ToDictionary(p => p, q => 0), template.Jobs.ToList());

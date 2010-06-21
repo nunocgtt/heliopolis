@@ -31,7 +31,7 @@ namespace Heliopolis.World.InteractableObjects
 
         public void Harvest(out Item itemHarvested)
         {
-            itemHarvested = ItemFactory.GetNewItem(ResourceType);
+            itemHarvested = ItemFactory.Instance.GetNewItem(ResourceType);
             ResourceCount--;
             if (ResourceCount == 0)
             {

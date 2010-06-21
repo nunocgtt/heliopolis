@@ -13,15 +13,26 @@ namespace Heliopolis.World.Environment
     /// <summary>
     /// Handles creation of the EnvironmentTile class, from a set of templates defined in an XML file.
     /// </summary>
-    public class EnvironmentTileFactory
+    public class EnvironmentTileFactory : IFactory
     {
-        private static Dictionary<string, TileTemplate> _tileTemplates;
-        private static GameWorld _owner;
+        private Dictionary<string, TileTemplate> _tileTemplates;
+        private GameWorld _owner;
 
-        public static void LoadTemplatesFromXml(ContentManager contentManager, GameWorld owner)
+        public void LoadTemplatesFromContent(ContentManager contentManager, GameWorld owner, string contentFile)
         {
-            _tileTemplates = contentManager.Load<List<TileTemplate>>(@"GameWorldDefintion/tiles").ToDictionary(p => p.Name);
+            _tileTemplates = contentManager.Load<List<TileTemplate>>(contentFile).ToDictionary(p => p.Name);
             _owner = owner;
+        }
+
+        private EnvironmentTileFactory()
+        {
+        }
+
+        public static EnvironmentTileFactory Instance;
+
+        static EnvironmentTileFactory()
+        {
+            Instance = new EnvironmentTileFactory();
         }
 
         /// <summary>
@@ -30,7 +41,7 @@ namespace Heliopolis.World.Environment
         /// <param name="templateName">The name of the template.</param>
         /// <param name="newPosition">The position of the tile.</param>
         /// <returns>A new EnvironmentTile.</returns>
-        public static EnvironmentTile GetNewTile(string templateName,
+        public EnvironmentTile GetNewTile(string templateName,
             Point newPosition)
         {
             TileTemplate template = _tileTemplates[templateName];

@@ -131,8 +131,11 @@
     <Compile Include="World\BuildingManagement\BuildingTileContains.cs" />
     <Compile Include="World\Environment\AreaDictionary.cs" />
     <Compile Include="World\Environment\IRequiresAccessListener.cs" />
+    <Compile Include="World\FactoryManager.cs" />
     <Compile Include="World\ICanAccess.cs" />
+    <Compile Include="World\IFactory.cs" />
     <Compile Include="World\InteractableObjects\HarvestableInteractableObject.cs" />
+    <Compile Include="World\InteractableObjects\InteractableObjectFactory.cs" />
     <Compile Include="World\InteractableObjects\ManufactureInteractableObject.cs" />
     <Compile Include="World\ItemManagement\ICanHoldItem.cs" />
     <Compile Include="World\ItemManagement\ItemStates.cs" />

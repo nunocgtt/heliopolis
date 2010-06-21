@@ -38,7 +38,7 @@ namespace Heliopolis.World.BuildingManagement
         /// <returns>A Building in the BuildingStates.UnderConstruction state.</returns>
         public Building StartBuildingConstruction(string buildingType, Point position)
         {
-            Building spawnMe = BuildingFactory.GetNewBuilding(buildingType, position);
+            Building spawnMe = BuildingFactory.Instance.GetNewBuilding(buildingType, position);
             _buildings.Add(spawnMe);
             spawnMe.StartBuilding();
             return spawnMe;

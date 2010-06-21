@@ -32,6 +32,7 @@ namespace Heliopolis.World
         private readonly ItemManager _itemManager;
         private readonly BuildingManager _buildingManager;
         private readonly SpatialTreeIndex _spatialTreeIndex;
+        private readonly FactoryManager _factoryManager;
         public TimedEventManager TimedEventManager { get; set; }
 
         static GameWorld()
@@ -134,6 +135,7 @@ namespace Heliopolis.World
             _environment = new Environment.Environment(_worldSize, this);
             _spatialTreeIndex = new SpatialTreeIndex(WorldSize, new [] { 3, 3, 3, 3 }, new [] { 3, 3, 3, 3 });
             TimedEventManager = new TimedEventManager(this);
+            _factoryManager = new FactoryManager(this);
         }
 
         /// <summary>
@@ -142,11 +144,7 @@ namespace Heliopolis.World
         public void LoadGameDescription(ContentManager contentManager)
         {
             _environment.InitialiseEnvironment();
-            ItemFactory.LoadTemplatesFromXml(contentManager, this);
-            EnvironmentTileFactory.LoadTemplatesFromXml(contentManager, this);
-            ActorFactory.LoadTemplatesFromXml(contentManager, this);
-            ActionTimes.LoadTemplatesFromXml(contentManager, this);
-            BuildingFactory.LoadTemplatesFromXml(contentManager, this);
+            _factoryManager.InitializeFactories(contentManager);
         }
 
         /// <summary>
@@ -160,7 +158,6 @@ namespace Heliopolis.World
             _actorManager.SpawnActor("dood", new Point(0, 0));
             _actorManager.SpawnActor("dood", new Point(0, 0));
             _actorManager.SpawnActor("dood", new Point(0, 0));
-
         }
 
         /// <summary>
