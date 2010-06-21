@@ -12,16 +12,27 @@ namespace Heliopolis.World.ItemManagement
     /// <summary>
     /// Handles creation of the Item class, from a set of templates defined in an XML file.
     /// </summary>
-    public static class ItemFactory
+    public class ItemFactory : IFactory
     {
         [NonSerialized]
-        private static Dictionary<string, ItemTemplate> _itemTemplates = null;
-        private static GameWorld _owner;
+        private Dictionary<string, ItemTemplate> _itemTemplates = null;
+        private GameWorld _owner;
 
-        public static void LoadTemplatesFromXml(ContentManager contentManager, GameWorld owner)
+        public void LoadTemplatesFromContent(ContentManager contentManager, GameWorld owner, string contentFile)
         {
-            _itemTemplates = contentManager.Load<List<ItemTemplate>>(@"GameWorldDefintion/items").ToDictionary(p => p.Name);
+            _itemTemplates = contentManager.Load<List<ItemTemplate>>(contentFile).ToDictionary(p => p.Name);
             _owner = owner;
+        }
+
+        private ItemFactory()
+        {
+        }
+
+        public static ItemFactory Instance;
+
+        static ItemFactory()
+        {
+            Instance = new ItemFactory();
         }
 
         /// <summary>
@@ -30,7 +41,7 @@ namespace Heliopolis.World.ItemManagement
         /// <param name="templateName">The name of the template to copy.</param>
         /// <param name="position">The position to create the item at.</param>
         /// <returns>An Item.</returns>
-        public static Item GetNewItem(string templateName, Point position)
+        public Item GetNewItem(string templateName, Point position)
         {
             ItemTemplate itemTemplate = _itemTemplates[templateName];
             Item returnMe = new Item(itemTemplate.Weight,itemTemplate.Texture, itemTemplate.Name, _owner);
@@ -38,7 +49,7 @@ namespace Heliopolis.World.ItemManagement
             return returnMe;
         }
 
-        public static Item GetNewItem(string templateName)
+        public Item GetNewItem(string templateName)
         {
             ItemTemplate itemTemplate = _itemTemplates[templateName];
             Item returnMe = new Item(itemTemplate.Weight, itemTemplate.Texture, itemTemplate.Name, _owner);

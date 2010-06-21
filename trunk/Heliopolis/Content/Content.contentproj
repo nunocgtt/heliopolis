@@ -194,6 +194,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameWorldDefintion\interactableobjects.xml">
+      <Name>interactableobjects</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+    </Compile>
     <Content Include="UI\Interface.xml">
       <Name>Interface</Name>
       <Importer>XmlImporter</Importer>

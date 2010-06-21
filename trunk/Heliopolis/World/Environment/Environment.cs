@@ -208,7 +208,7 @@ namespace Heliopolis.World.Environment
         /// <param name="position">The position of the tile.</param>
         private EnvironmentTile SpawnTile(string type, Point position)
         {
-            _gameWorld[position.X, position.Y] = EnvironmentTileFactory.GetNewTile(type, position);
+            _gameWorld[position.X, position.Y] = EnvironmentTileFactory.Instance.GetNewTile(type, position);
             return _gameWorld[position.X, position.Y];
         }
 

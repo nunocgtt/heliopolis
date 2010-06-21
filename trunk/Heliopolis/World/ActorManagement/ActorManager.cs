@@ -31,7 +31,7 @@ namespace Heliopolis.World
         /// <param name="position">The starting position of the actor.</param>
         public void SpawnActor(string actorType, Point position)
         {
-            Actor toAdd = ActorFactory.GetNewActor(actorType, position);
+            Actor toAdd = ActorFactory.Instance.GetNewActor(actorType, position);
             LiveActors.Add(toAdd);
         }
     }

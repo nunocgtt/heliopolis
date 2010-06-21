@@ -11,13 +11,13 @@ namespace Heliopolis.World.BuildingManagement
     /// <summary>
     /// Handles creation of the Building class, from a set of templates defined in an XML file.
     /// </summary>
-    public static class BuildingFactory
+    public class BuildingFactory : IFactory
     {
         [NonSerialized]
-        private static Dictionary<string, BuildingTemplate> _buildingTemplates;
-        private static GameWorld _owner;
+        private Dictionary<string, BuildingTemplate> _buildingTemplates;
+        private GameWorld _owner;
 
-        public static Dictionary<string, BuildingTemplate> BuildingTemplates
+        public Dictionary<string, BuildingTemplate> BuildingTemplates
         {
             get
             {
@@ -25,10 +25,21 @@ namespace Heliopolis.World.BuildingManagement
             }
         }
 
-        public static void LoadTemplatesFromXml(ContentManager contentManager, GameWorld owner)
+        public void LoadTemplatesFromContent(ContentManager contentManager, GameWorld owner, string contentFile)
         {
-            _buildingTemplates = contentManager.Load<List<BuildingTemplate>>(@"GameWorldDefintion/buildings").ToDictionary(p => p.Name);
+            _buildingTemplates = contentManager.Load<List<BuildingTemplate>>(contentFile).ToDictionary(p => p.Name);
             _owner = owner;
+        }
+
+        private BuildingFactory()
+        {
+        }
+
+        public static BuildingFactory Instance;
+
+        static BuildingFactory()
+        {
+            Instance = new BuildingFactory();
         }
 
         /// <summary>
@@ -37,7 +48,7 @@ namespace Heliopolis.World.BuildingManagement
         /// <param name="templateName">The template to copy.</param>
         /// <param name="position">The top left building tile position in the game world.</param>
         /// <returns>A Building.</returns>
-        public static Building GetNewBuilding(string templateName, Point position)
+        public Building GetNewBuilding(string templateName, Point position)
         {
             BuildingTemplate template = _buildingTemplates[templateName];
             Building returnMe = new Building(template.Size, null, null, _owner);

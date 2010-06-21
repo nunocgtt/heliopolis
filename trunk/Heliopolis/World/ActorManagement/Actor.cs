@@ -306,7 +306,7 @@ namespace Heliopolis.World
         {
             // Process the tick, returns the next action type being performed;
             string actionType = _state.Tick();
-            double ticks = ActionTimes.GetActionTime(actionType).TotalMilliseconds;
+            double ticks = ActionTimes.Instance.GetActionTime(actionType).TotalMilliseconds;
             ticks = ActionProficiency[actionType]*ticks;
             SetUpNextTick(new TimeSpan(0,0,0,0,(int)ticks));
         }

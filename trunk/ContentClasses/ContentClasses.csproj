@@ -49,6 +49,7 @@
     <Compile Include="ActionTime.cs" />
     <Compile Include="ActorTemplate.cs" />
     <Compile Include="BuildingTemplate.cs" />
+    <Compile Include="InteractableObjectTemplate.cs" />
     <Compile Include="IsometricTexture.cs" />
     <Compile Include="ItemTemplate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
