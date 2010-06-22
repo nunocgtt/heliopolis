@@ -91,6 +91,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="MainGame.cs" />
+    <Compile Include="Interface\SelectionState.cs" />
     <Compile Include="UILibrary\Common.cs" />
     <Compile Include="UILibrary\InterfaceFactory.cs" />
     <Compile Include="UILibrary\IPanel.cs" />

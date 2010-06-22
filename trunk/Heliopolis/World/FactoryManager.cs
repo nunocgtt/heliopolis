@@ -18,11 +18,11 @@ namespace Heliopolis.World
         {
             _factories = new Dictionary<IFactory, string>();
             _factories.Add(InteractableObjectFactory.Instance, @"GameWorldDefinition/interactableobjects");
-            _factories.Add(ActorFactory.Instance, @"GameWorldDefintion/actors");
-            _factories.Add(ItemFactory.Instance, @"GameWorldDefintion/items");
-            _factories.Add(EnvironmentTileFactory.Instance, @"GameWorldDefintion/tiles");
-            _factories.Add(BuildingFactory.Instance, @"GameWorldDefintion/buildings");
-            _factories.Add(ActionTimes.Instance, @"GameWorldDefintion/actiontimes");
+            _factories.Add(ActorFactory.Instance, @"GameWorldDefinition/actors");
+            _factories.Add(ItemFactory.Instance, @"GameWorldDefinition/items");
+            _factories.Add(EnvironmentTileFactory.Instance, @"GameWorldDefinition/tiles");
+            _factories.Add(BuildingFactory.Instance, @"GameWorldDefinition/buildings");
+            _factories.Add(ActionTimes.Instance, @"GameWorldDefinition/actiontimes");
         }
 
         public void InitializeFactories(ContentManager contentManager)

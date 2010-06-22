@@ -6,14 +6,6 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Heliopolis.GraphicsEngine
 {
-    public enum SelectionState
-    {
-        Single,
-        PlaceBuilding,
-        Line,
-        Area,
-        None
-    }
     /// <summary>
     /// This is the main type for your game
     /// </summary>
@@ -38,8 +30,7 @@ namespace Heliopolis.GraphicsEngine
                                 PreferredBackBufferWidth = _screenSize.X,
                                 PreferredBackBufferHeight = _screenSize.Y
                             };
-            Content.RootDirectory = "Content";
-            
+            Content.RootDirectory = "Content";  
         }
 
         /// <summary>
@@ -54,7 +45,7 @@ namespace Heliopolis.GraphicsEngine
             _isometricEngine.Initialize(GameWorld.Instance.Environment);
             _isometricEngine.AddTileProvider(_interfaceView);
             _isometricEngine.AddTileProvider(GameWorld.Instance.Environment);
-            IsMouseVisible = true;
+            IsMouseVisible = false;
         }
 
         /// <summary>

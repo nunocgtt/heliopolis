@@ -14,8 +14,8 @@ namespace Heliopolis.GraphicsEngine
 
         public TextureManager(ContentManager contentManager)
         {
-            List<IsometricTexture> importList = contentManager.Load<List<IsometricTexture>>(@"GameWorldDefintion/textures");
-            List<TextureSheet> textureSheet = contentManager.Load<List<TextureSheet>>(@"GameWorldDefintion/texturesheets");
+            List<IsometricTexture> importList = contentManager.Load<List<IsometricTexture>>(@"GameWorldDefinition/textures");
+            List<TextureSheet> textureSheet = contentManager.Load<List<TextureSheet>>(@"GameWorldDefinition/texturesheets");
 
             TextureSheets = textureSheet.ToDictionary(p => p.SheetName, q => contentManager.Load<Texture2D>(q.ContentFileName));
             Textures = importList.ToDictionary(p => p.TextureName);
