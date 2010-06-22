@@ -1,41 +1,47 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 using Heliopolis.GraphicsEngine;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
-using Heliopolis.UILibrary;
+using ContentClasses;
 
 namespace Heliopolis.Interface
 {
     public class InterfaceView : IIsometricTileProvider
     {
-        private SpriteFont _hudFont;
-
         private readonly InterfaceModel _interfaceModel;
         private readonly IsometricEngine _engine;
-        
+
+        private Dictionary<string, MouseCursor> _mouseCursors;
+        private Dictionary<string, Texture2D> _mouseCursorTextures;
+
         public InterfaceView(InterfaceModel model, IsometricEngine gameEngine)
         {
             _interfaceModel = model;
             _engine = gameEngine;
+            
         }
 
         public void LoadContent(ContentManager contentManager)
         {
-            _hudFont = contentManager.Load<SpriteFont>("Fonts/Hud");
+            _mouseCursors =
+                contentManager.Load<List<MouseCursor>>("GameWorldDefinition/mousecursors").ToDictionary(p => p.Name);
+            _mouseCursorTextures = new Dictionary<string, Texture2D>();
+            foreach (var mouseCursor in _mouseCursors)
+            {
+                _mouseCursorTextures.Add(mouseCursor.Key, contentManager.Load<Texture2D>(mouseCursor.Value.MouseTexture));
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             _engine.DrawWorld(spriteBatch, _interfaceModel.CameraPos, _interfaceModel.ZoomLevel, _interfaceModel.ScreenSize);
             _interfaceModel.UserInterface.Draw(spriteBatch);
-/*            spriteBatch.DrawString(_hudFont, 
-                string.Format("X: {0} Y: {1} FPS:{2} {3}", 
-                    _interfaceModel.MouseXyPoint.X, 
-                    _interfaceModel.MouseXyPoint.Y,
-                    _interfaceModel.Fps,
-                    _interfaceModel.GameIsPaused ? "Paused" : "" ), 
-                new Vector2(0, 0), Color.White);*/
+            spriteBatch.Draw(_mouseCursorTextures[_interfaceModel.MouseCursor]
+                ,new Vector2(_interfaceModel.MousePoint.X - _mouseCursors[_interfaceModel.MouseCursor].CenterPoint.X,
+                    _interfaceModel.MousePoint.Y - _mouseCursors[_interfaceModel.MouseCursor].CenterPoint.Y)
+                    ,Color.White);
         }
 
         #region IIsometricTileProvider Members

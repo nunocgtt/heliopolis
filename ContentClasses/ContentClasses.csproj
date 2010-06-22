@@ -52,6 +52,7 @@
     <Compile Include="InteractableObjectTemplate.cs" />
     <Compile Include="IsometricTexture.cs" />
     <Compile Include="ItemTemplate.cs" />
+    <Compile Include="MouseCursor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TextureSheet.cs" />
     <Compile Include="TileTemplate.cs" />

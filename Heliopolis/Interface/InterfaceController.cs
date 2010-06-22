@@ -46,9 +46,7 @@ namespace Heliopolis.Interface
 
             oldPressedKeys = pressedKeys;
 
-            _interfaceModel.MousePoint = new Point(Mouse.GetState().X, Mouse.GetState().Y);
-            Point cameraOffset = new Point((int)(_interfaceModel.CameraPos.X * -1 * _interfaceModel.ZoomLevel), (int)((int)(_interfaceModel.CameraPos.Y * -1 * _interfaceModel.ZoomLevel)));
-            _interfaceModel.MouseXyPoint = Iso2D.ConvertScreenToTile(_interfaceModel.MousePoint, (int)(_engine.TileSize.X * _interfaceModel.ZoomLevel), (int)(_engine.TileSize.Y * _interfaceModel.ZoomLevel), _engine.FirstTileXyPosition(_interfaceModel.ZoomLevel), cameraOffset);
+            _interfaceModel.SetNewMousePosition(new Point(Mouse.GetState().X, Mouse.GetState().Y), _engine);
             
             int moveSpeed = MoveSpeed;
             if (Keyboard.GetState().IsKeyDown(Keys.LeftShift))
@@ -89,8 +87,6 @@ namespace Heliopolis.Interface
             {
                 if (!_interfaceModel.MouseDown)
                     _interfaceModel.StartSelection();
-                else
-                    _interfaceModel.UpdateSelection();
             }
             else if (Mouse.GetState().LeftButton == ButtonState.Released)
             {
@@ -102,7 +98,10 @@ namespace Heliopolis.Interface
 
         private void KeyDown(Keys key)
         {
-
+            if (key == Keys.Space)
+            {
+                _interfaceModel.StartMoveCamera();
+            }
         }
 
         private void KeyUp(Keys key)
@@ -111,6 +110,11 @@ namespace Heliopolis.Interface
             {
                 _interfaceModel.TogglePause();
             }
+            if (key == Keys.Space)
+            {
+                _interfaceModel.FinishMoveCamera();
+            }
+
         }
     }
 }

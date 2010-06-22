@@ -194,8 +194,23 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GameWorldDefintion\interactableobjects.xml">
+    <Compile Include="GameWorldDefinition\interactableobjects.xml">
       <Name>interactableobjects</Name>
+      <Importer>XmlImporter</Importer>
+      <Processor>PassThroughProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\cursor1.png">
+      <Name>cursor1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Sprites\cursor2.png">
+      <Name>cursor2</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="GameWorldDefinition\mousecursors.xml">
+      <Name>mousecursors</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </Compile>
@@ -224,37 +239,37 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GameWorldDefintion\actors.xml">
+    <Compile Include="GameWorldDefinition\actors.xml">
       <Name>actors</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </Compile>
-    <Compile Include="GameWorldDefintion\actiontimes.xml">
+    <Compile Include="GameWorldDefinition\actiontimes.xml">
       <Name>actiontimes</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </Compile>
-    <Compile Include="GameWorldDefintion\buildings.xml">
+    <Compile Include="GameWorldDefinition\buildings.xml">
       <Name>buildings</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </Compile>
-    <Compile Include="GameWorldDefintion\tiles.xml">
+    <Compile Include="GameWorldDefinition\tiles.xml">
       <Name>tiles</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </Compile>
-    <Compile Include="GameWorldDefintion\items.xml">
+    <Compile Include="GameWorldDefinition\items.xml">
       <Name>items</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </Compile>
-    <Compile Include="GameWorldDefintion\texturesheets.xml">
+    <Compile Include="GameWorldDefinition\texturesheets.xml">
       <Name>texturesheets</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
     </Compile>
-    <Compile Include="GameWorldDefintion\textures.xml">
+    <Compile Include="GameWorldDefinition\textures.xml">
       <Name>textures</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
