@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Interface inherits="Heliopolis.Interface.InterfacePanelsHandler" theme="UITheme\SimpleLight\SimpleLight.xml">
+<Interface inherits="Heliopolis.Interface.InterfaceModel" theme="UITheme\SimpleLight\SimpleLight.xml">
   <Variables>
     <Variable name="buttonwidth" value="150"/>
     <Variable name="buttonpadding" value="15"/>
@@ -37,7 +37,7 @@
           <Text alignment="center">Back</Text>
         </Panel>     
         
-        <Panel id="ChopWoodButton" type="Heliopolis.UILibrary.Button" onClick="ClickMe" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+        <Panel id="ChopWoodButton" type="Heliopolis.UILibrary.Button" onClick="ChopWood" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
           <Text alignment="center">Chop Wood</Text>
         </Panel>
 
@@ -78,7 +78,7 @@
           <Text alignment="center">Lumber Mill</Text>
         </Panel>
 
-        <Panel id="BuildCarpentersButton" type="Heliopolis.UILibrary.Button" onClick="ClickMe" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+        <Panel id="BuildCarpentersButton" type="Heliopolis.UILibrary.Button" onClick="PlaceBuilding" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
           <Text alignment="center">Carpenters Hut</Text>
         </Panel>
       </Panels>

@@ -90,8 +90,9 @@ namespace Heliopolis.UILibrary
             return panel;
         }
 
-        public void Update()
+        public bool Update()
         {
+            bool eventExecuted = false;
             CurrentKeyboardState = Keyboard.GetState();
             CurrentMouseState = Mouse.GetState();
 
@@ -99,12 +100,14 @@ namespace Heliopolis.UILibrary
             {
                 if (!panel.Update())
                 {
+                    eventExecuted = true;
                     break;
                 }
             }
 
             PreviousKeyboardState = CurrentKeyboardState;
             PreviousMouseState = CurrentMouseState;
+            return eventExecuted;
         }
 
         public void Draw(SpriteBatch spriteBatch)

@@ -49,9 +49,27 @@ namespace Heliopolis.Interface
         public List<string> GetTexturesToDraw(Point position)
         {
             var returnMe = new List<string>();
-            if (_interfaceModel.SelectionTiles.Contains(position))
+            if (_interfaceModel.CurrentInterfaceState == InterfaceState.MakeSelection ||
+                _interfaceModel.CurrentInterfaceState == InterfaceState.CurrentlyMakingSelection)
             {
-                returnMe.Add("selection1");
+                if (_interfaceModel.SelectionTiles != null)
+                {
+                    if (_interfaceModel.SelectionTiles.Contains(position))
+                    {
+                        returnMe.Add("selection1");
+                    }
+                }
+            }
+            if (_interfaceModel.CurrentInterfaceState == InterfaceState.PlacingBuilding)
+            {
+                if (position.X >= _interfaceModel.MousePointIsometricGrid.X
+                    && position.X < _interfaceModel.MousePointIsometricGrid.X + _interfaceModel.BuildingToPlace.Size.X
+                    && position.Y >= _interfaceModel.MousePointIsometricGrid.Y
+                    && position.Y < _interfaceModel.MousePointIsometricGrid.Y + _interfaceModel.BuildingToPlace.Size.Y)
+                {
+                    Point buildingTilePosition = new Point(position.X - _interfaceModel.MousePointIsometricGrid.X, position.Y - _interfaceModel.MousePointIsometricGrid.Y);
+                    returnMe.Add(_interfaceModel.BuildingToPlace.BuildingTiles[buildingTilePosition.X, buildingTilePosition.Y].Texture);
+                }
             }
             return returnMe;
         }

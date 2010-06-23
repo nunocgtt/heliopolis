@@ -7,6 +7,7 @@ using Heliopolis.World.InteractableObjects;
 using Heliopolis.World.JobSystem;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
+using Heliopolis.World.BuildingManagement;
 
 namespace Heliopolis.Interface
 {
@@ -29,7 +30,9 @@ namespace Heliopolis.Interface
     {
         None,
         MoveCamera,
-        MakeSelection
+        MakeSelection,
+        CurrentlyMakingSelection,
+        PlacingBuilding
     }
 
     public class InterfaceModel : IGameValueProvider
@@ -47,12 +50,29 @@ namespace Heliopolis.Interface
         private Stack<InterfaceState> _interfaceState;
         private Point _startMouseDownPoint;
         private Point _endMouseDownPoint;
-        public bool MouseDown;
         private readonly GameWorld _world;
         public float Fps { get; set; }
         public InterfaceAction CurrentAction { get; set; }
         private UserInterface _userInterface;
         public bool MovingCamera { get; set; }
+
+        private Building _buildingToPlace;
+
+        public Building BuildingToPlace
+        {
+            get
+            {
+                return _buildingToPlace;
+            }
+        }
+
+        public InterfaceState CurrentInterfaceState
+        {
+            get
+            {
+                return _interfaceState.Peek();
+            }
+        }
 
         public bool GameIsPaused
         {
@@ -66,7 +86,7 @@ namespace Heliopolis.Interface
         {
             get
             {
-                if (_interfaceState.Peek() == InterfaceState.MoveCamera)
+                if (CurrentInterfaceState == InterfaceState.MoveCamera)
                     return "Arrows";
                 return "Normal";
             }
@@ -110,9 +130,8 @@ namespace Heliopolis.Interface
             ScreenSize = screenSize;
             CameraPos = new Point(0, 0);
             CurrentSelectionState = SelectionState.None;
-            MouseDown = false;
             CurrentAction = null;
-            UserInterface = new InterfaceFactory().CreateUserInterface(xnaGame, UIFileToLoad, screenSize.X, screenSize.Y);
+            UserInterface = new InterfaceFactory().CreateUserInterface(xnaGame, UIFileToLoad, screenSize.X, screenSize.Y, this);
             UserInterface.GameValueProvider = this;
             _interfaceState = new Stack<InterfaceState>();
             _interfaceState.Push(InterfaceState.None);
@@ -132,12 +151,22 @@ namespace Heliopolis.Interface
 
         public void StartSelection()
         {
-            if (_interfaceState.Peek() != InterfaceState.MoveCamera)
+            if (CurrentInterfaceState == InterfaceState.MakeSelection)
             {
                 _startMouseDownPoint = MousePointIsometricGrid;
                 _endMouseDownPoint = MousePointIsometricGrid;
-                MouseDown = true;
-                _interfaceState.Push(InterfaceState.MakeSelection);
+                _interfaceState.Pop();
+                _interfaceState.Push(InterfaceState.CurrentlyMakingSelection);
+            }
+        }
+
+        public void EndSelection()
+        {
+            if (CurrentInterfaceState == InterfaceState.CurrentlyMakingSelection)
+            {
+                _endMouseDownPoint = MousePointIsometricGrid;
+                ApplyAction();
+                _interfaceState.Pop();
             }
         }
 
@@ -148,18 +177,7 @@ namespace Heliopolis.Interface
             MousePointDelta = new Point(MousePointOld.X - MousePoint.X, MousePointOld.Y - MousePoint.Y);
 
             Point cameraOffset = new Point((CameraPos.X * -1 * ZoomLevel), ((CameraPos.Y * -1 * ZoomLevel)));
-            MousePointIsometricGrid = Iso2D.ConvertScreenToTile(MousePoint, (int)(gameEngine.TileSize.X * ZoomLevel), (int)(gameEngine.TileSize.Y * ZoomLevel), gameEngine.FirstTileXyPosition(ZoomLevel), cameraOffset);
-        }
-
-        public void EndSelection()
-        {
-            if (_interfaceState.Peek() == InterfaceState.MakeSelection)
-            {
-                _endMouseDownPoint = MousePointIsometricGrid;
-                MouseDown = false;
-                ApplyAction();
-                _interfaceState.Pop();
-            }
+            MousePointIsometricGrid = Iso2D.ConvertScreenToTile(MousePoint, (gameEngine.TileSize.X * ZoomLevel), (gameEngine.TileSize.Y * ZoomLevel), gameEngine.FirstTileXyPosition(ZoomLevel), cameraOffset);
         }
 
         public int ZoomLevel
@@ -178,19 +196,27 @@ namespace Heliopolis.Interface
 
         public void UpdateSelectionInfo()
         {
-            SelectionTiles = CalculateSeletionTiles();
+            if (CurrentInterfaceState == InterfaceState.CurrentlyMakingSelection || CurrentInterfaceState == InterfaceState.MakeSelection)
+            {
+                _endMouseDownPoint = MousePointIsometricGrid;
+                SelectionTiles = CalculateSeletionTiles();
+            }
+            else
+            {
+                SelectionTiles = null;
+            }
         }
 
         private List<Point> CalculateSeletionTiles()
         {
-            List<Point> returnMe = new List<Point>();
+            var returnMe = new List<Point>();
             switch (CurrentSelectionState)
             {
                 case SelectionState.Single:
                     returnMe.Add(MousePointIsometricGrid);
                     break;
                 case SelectionState.Area:
-                    if (MouseDown)
+                    if (CurrentInterfaceState == InterfaceState.CurrentlyMakingSelection)
                     {
                         int startX = Math.Min(_startMouseDownPoint.X, _endMouseDownPoint.X);
                         int endX = Math.Max(_startMouseDownPoint.X, _endMouseDownPoint.X);
@@ -201,10 +227,10 @@ namespace Heliopolis.Interface
                                 returnMe.Add(new Point(i, j));
                     }
                     else
-                        returnMe.Add(this.MousePointIsometricGrid);
+                        returnMe.Add(MousePointIsometricGrid);
                     break;
                 case SelectionState.Line:
-                    if (MouseDown)
+                    if (CurrentInterfaceState == InterfaceState.CurrentlyMakingSelection)
                     {
                         int startX = Math.Min(_startMouseDownPoint.X, _endMouseDownPoint.X);
                         int endX = Math.Max(_startMouseDownPoint.X, _endMouseDownPoint.X);
@@ -226,12 +252,6 @@ namespace Heliopolis.Interface
                     break;
             }
             return returnMe;
-        }
-
-        internal void SelectTreesForHarvest()
-        {
-            CurrentAction = new InterfaceAction {ActionType = InterfaceActionType.ApplyDesignation, TargetHarvestType = "wood"};
-            CurrentSelectionState = SelectionState.Area;
         }
 
         internal void TogglePause()
@@ -270,14 +290,11 @@ namespace Heliopolis.Interface
                 _frameRate = _frameCounter;
                 _frameCounter = 0;
             }
-
             Fps = _frameRate;
-            UpdateSelectionInfo();
         }
 
         public void UpdateInternalMetrics(GameTime gameTime)
-        {
-            UserInterface.Update();
+        {   
             if (_interfaceState.Peek() == InterfaceState.MakeSelection)
             {
                 _endMouseDownPoint = MousePointIsometricGrid;
@@ -287,7 +304,35 @@ namespace Heliopolis.Interface
                 CameraPos.X += MousePointDelta.X;
                 CameraPos.Y += MousePointDelta.Y;
             }
+            if (CameraPos.Y < 0)
+                CameraPos.Y = 0;
+            if (CameraPos.X < 0)
+                CameraPos.X = 0;
             UpdateFps(gameTime);
+            UpdateSelectionInfo();
+        }
+
+        public bool CatchUIEvents()
+        {
+            return UserInterface.Update();
+        }
+
+        public void ChopWood(Object sender, EventArgs e)
+        {
+            CurrentAction = new InterfaceAction { ActionType = InterfaceActionType.ApplyDesignation, TargetHarvestType = "wood" };
+            CurrentSelectionState = SelectionState.Area;
+            _interfaceState.Push(InterfaceState.MakeSelection);
+        }
+
+        public void PlaceBuilding(Object sender, EventArgs e)
+        {
+            _interfaceState.Push(InterfaceState.PlacingBuilding);
+            _buildingToPlace = BuildingFactory.Instance.GetNewBuilding("Carpenters");
+        }
+
+        public void ClickMe(Object sender, EventArgs e)
+        {
+            //DO STUFFF
         }
     }
 }

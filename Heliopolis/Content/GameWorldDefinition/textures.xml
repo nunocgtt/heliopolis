@@ -10,6 +10,34 @@
       <TextureSheet>floors</TextureSheet>
     </Item>
     <Item>
+      <TextureName>woodwall</TextureName>
+      <Size>32 16</Size>
+      <!-- 2 * 32, 1 * 20 -->
+      <TexturePointOrigin>64 20</TexturePointOrigin>
+      <CenterPoint>16 8</CenterPoint>
+      <ZLevel>1</ZLevel>
+      <TextureSheet>floors</TextureSheet>
+    </Item>
+    <Item>
+      <TextureName>woodfloor</TextureName>
+      <Size>32 16</Size>
+      <!-- 10 * 32, 0 * 20 -->
+      <TexturePointOrigin>320 0</TexturePointOrigin>
+      <CenterPoint>16 8</CenterPoint>
+      <ZLevel>1</ZLevel>
+      <TextureSheet>floors</TextureSheet>
+    </Item>
+    <Item>
+      <!-- to change!! -->
+      <TextureName>wooddoor</TextureName>
+      <Size>32 16</Size>
+      <!-- 10 * 32, 0 * 20 -->
+      <TexturePointOrigin>320 0</TexturePointOrigin>
+      <CenterPoint>16 8</CenterPoint>
+      <ZLevel>1</ZLevel>
+      <TextureSheet>floors</TextureSheet>
+    </Item>
+    <Item>
       <TextureName>rock</TextureName>
       <Size>32 19</Size>
       <TexturePointOrigin>128 0</TexturePointOrigin>

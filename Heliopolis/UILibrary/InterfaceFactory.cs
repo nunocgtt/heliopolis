@@ -15,8 +15,11 @@ namespace Heliopolis.UILibrary
         //protected object InheritedClass;
         public static Dictionary<string, Type> ReferencedTypes;
 
-        public UserInterface CreateUserInterface(Game xnaGame, string filename, int width, int height)
+        private object _eventHandler;
+
+        public UserInterface CreateUserInterface(Game xnaGame, string filename, int width, int height, object eventHandler)
         {
+            _eventHandler = eventHandler;
             _xmlDocument = new XmlDocument();
             _xmlDocument.Load(filename);
             _userInterface = new UserInterface {Game = xnaGame};
@@ -77,7 +80,7 @@ namespace Heliopolis.UILibrary
                     try
                     {
                         _userInterface.InheritedClassType = ReferencedTypes[inheritedClassName];
-                        _userInterface.InheritedClass = Activator.CreateInstance(_userInterface.InheritedClassType);
+                        _userInterface.InheritedClass = _eventHandler;
                     }
                     catch (Exception ex)
                     {

@@ -10,11 +10,13 @@ namespace Heliopolis.Interface
 {
     public class InterfaceController
     {
-        private const int MoveSpeed = 5;
+        private const int MoveSpeed = 8;
         private readonly InterfaceModel _interfaceModel;
         private readonly Game _game;
         private readonly IsometricEngine _engine;
         private Keys[] oldPressedKeys;
+        private bool _leftMouseDown = false;
+        private bool _rightMouseDown = false;
 
         public InterfaceController(InterfaceModel model, Game gameOwner, IsometricEngine engine)
         {
@@ -26,8 +28,12 @@ namespace Heliopolis.Interface
 
         public void Update(GameTime gameTime)
         {
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+                _game.Exit();
+
+            bool uiCaughtEvent = _interfaceModel.CatchUIEvents();
+
             Keys[] pressedKeys = Keyboard.GetState().GetPressedKeys();
-            
             foreach (var oldPressedKey in oldPressedKeys)
             {
                 if (!pressedKeys.Contains(oldPressedKey))
@@ -35,7 +41,6 @@ namespace Heliopolis.Interface
                     KeyUp(oldPressedKey);
                 }
             }
-
             foreach (var pressedKey in pressedKeys)
             {
                 if (!oldPressedKeys.Contains(pressedKey))
@@ -43,77 +48,126 @@ namespace Heliopolis.Interface
                     KeyDown(pressedKey);
                 }
             }
-
+            KeyCurrentlyPressed(pressedKeys);
             oldPressedKeys = pressedKeys;
 
             _interfaceModel.SetNewMousePosition(new Point(Mouse.GetState().X, Mouse.GetState().Y), _engine);
-            
-            int moveSpeed = MoveSpeed;
-            if (Keyboard.GetState().IsKeyDown(Keys.LeftShift))
-                moveSpeed *= 2;
-            if (Keyboard.GetState().IsKeyDown(Keys.Down))
-                _interfaceModel.CameraPos.Y += moveSpeed;
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
-                _interfaceModel.CameraPos.Y -= moveSpeed;
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
-                _interfaceModel.CameraPos.X += moveSpeed;
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
-                _interfaceModel.CameraPos.X -= moveSpeed;
-            if (Keyboard.GetState().IsKeyDown(Keys.Add))
-                _interfaceModel.ZoomedIn = true;
-            if (Keyboard.GetState().IsKeyDown(Keys.Subtract))
-                _interfaceModel.ZoomedIn = false;
-            if (Keyboard.GetState().IsKeyDown(Keys.A))
-                _interfaceModel.CurrentSelectionState = SelectionState.Area;
-            if (Keyboard.GetState().IsKeyDown(Keys.L))
-                _interfaceModel.CurrentSelectionState = SelectionState.Line;
-            if (Keyboard.GetState().IsKeyDown(Keys.S))
-                _interfaceModel.CurrentSelectionState = SelectionState.Single;
-            if (Keyboard.GetState().IsKeyDown(Keys.N))
-                _interfaceModel.CurrentSelectionState = SelectionState.None;
-            if (Keyboard.GetState().IsKeyDown(Keys.B))
-                _interfaceModel.CurrentSelectionState = SelectionState.PlaceBuilding;
-            if (Keyboard.GetState().IsKeyDown(Keys.H))
-                _interfaceModel.SelectTreesForHarvest();
 
-            if (_interfaceModel.CameraPos.Y < 0)
-                _interfaceModel.CameraPos.Y = 0;
-            if (_interfaceModel.CameraPos.X < 0)
-                _interfaceModel.CameraPos.X = 0;
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
-                _game.Exit();
-
-            if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+            if (!uiCaughtEvent)
             {
-                if (!_interfaceModel.MouseDown)
-                    _interfaceModel.StartSelection();
-            }
-            else if (Mouse.GetState().LeftButton == ButtonState.Released)
-            {
-                if (_interfaceModel.MouseDown)
-                    _interfaceModel.EndSelection(); 
+                if (Mouse.GetState().LeftButton == ButtonState.Pressed)
+                {
+                    if (!_leftMouseDown)
+                        LeftMouseButtonDown();
+                    LeftMouseButtonPressed();
+                    _leftMouseDown = true;
+                }
+                else if (Mouse.GetState().LeftButton == ButtonState.Released)
+                {
+                    if (_leftMouseDown)
+                        LeftMouseButtonUp();
+                    _leftMouseDown = false;
+                }
+                if (Mouse.GetState().RightButton == ButtonState.Pressed)
+                {
+                    if (!_rightMouseDown)
+                        RightMouseButtonDown();
+                    RightMouseButtonPressed();
+                    _rightMouseDown = true;
+                }
+                else if (Mouse.GetState().RightButton == ButtonState.Released)
+                {
+                    if (_rightMouseDown)
+                        RightMouseButtonUp();
+                    _rightMouseDown = false;
+                }
             }
             _interfaceModel.UpdateInternalMetrics(gameTime);
         }
 
+        private void KeyCurrentlyPressed(IEnumerable<Keys> pressedKeys)
+        {
+            int cameraMoveSpeed = MoveSpeed;
+
+            foreach (var pressedKey in pressedKeys)
+            {
+                switch (pressedKey)
+                {
+                    case Keys.RightShift :
+                        cameraMoveSpeed *= 2;
+                        break;
+                    case Keys.Down:
+                        _interfaceModel.CameraPos.Y += cameraMoveSpeed;
+                        break;
+                    case Keys.Up:
+                        _interfaceModel.CameraPos.Y -= cameraMoveSpeed;
+                        break;
+                    case Keys.Right:
+                        _interfaceModel.CameraPos.X += cameraMoveSpeed;
+                        break;
+                    case Keys.Left:
+                        _interfaceModel.CameraPos.X -= cameraMoveSpeed;
+                        break;
+                }
+            }
+        }
+
         private void KeyDown(Keys key)
         {
-            if (key == Keys.Space)
+            switch (key)
             {
-                _interfaceModel.StartMoveCamera();
+                case Keys.Space:
+                    _interfaceModel.StartMoveCamera();
+                    break;
             }
         }
 
         private void KeyUp(Keys key)
         {
-            if (key == Keys.P)
+            switch (key)
             {
-                _interfaceModel.TogglePause();
+                case Keys.P:
+                    _interfaceModel.TogglePause();
+                    break;
+                case Keys.Space:
+                    _interfaceModel.FinishMoveCamera();
+                    break;
+                case Keys.Add:
+                    _interfaceModel.ZoomedIn = true;
+                    break;
+                case Keys.Subtract:
+                    _interfaceModel.ZoomedIn = false;
+                    break;
             }
-            if (key == Keys.Space)
-            {
-                _interfaceModel.FinishMoveCamera();
-            }
+        }
+
+        public void LeftMouseButtonDown()
+        {
+            _interfaceModel.StartSelection();
+        }
+
+        public void LeftMouseButtonUp()
+        {
+            _interfaceModel.EndSelection(); 
+        }
+
+        public void LeftMouseButtonPressed()
+        {
+            
+        }
+
+        public void RightMouseButtonDown()
+        {
+
+        }
+
+        public void RightMouseButtonUp()
+        {
+
+        }
+
+        public void RightMouseButtonPressed()
+        {
 
         }
     }

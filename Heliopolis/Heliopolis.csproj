@@ -86,7 +86,6 @@
     <Compile Include="GraphicsEngine\TextureManager.cs" />
     <Compile Include="Interface\InterfaceController.cs" />
     <Compile Include="Interface\InterfaceModel.cs" />
-    <Compile Include="Interface\InterfacePanelsHandler.cs" />
     <Compile Include="Interface\InterfaceView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
