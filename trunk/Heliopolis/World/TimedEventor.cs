@@ -100,7 +100,7 @@ namespace Heliopolis.World
         /// <param name="absoluteMilliseconds">The current absolute game time.</param>
         public void Tick(TimeSpan absoluteMilliseconds)
         {
-            if (absoluteMilliseconds > _nextAbsoluteActionTime)
+            if (absoluteMilliseconds >= _nextAbsoluteActionTime)
             {
                 ExecuteTick(absoluteMilliseconds);
             }

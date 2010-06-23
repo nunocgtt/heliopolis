@@ -42,18 +42,43 @@ namespace Heliopolis.World.BuildingManagement
             Instance = new BuildingFactory();
         }
 
-        /// <summary>
-        /// Returns a copy of a building template.
-        /// </summary>
-        /// <param name="templateName">The template to copy.</param>
-        /// <param name="position">The top left building tile position in the game world.</param>
-        /// <returns>A Building.</returns>
-        public Building GetNewBuilding(string templateName, Point position)
+        public Building GetNewBuilding(string templateName)
         {
             BuildingTemplate template = _buildingTemplates[templateName];
-            Building returnMe = new Building(template.Size, null, null, _owner);
-            returnMe.Position = position;
+            BuildingTile[,] tiles = new BuildingTile[template.Size.X, template.Size.Y];
+            for (int i = 0; i < template.Size.X; i++)
+            {
+                for (int j = 0; j < template.Size.Y; j++)
+                {
+                    BulidingTileTemplate tileTemplate = template.Tiles.First(p => p.Position == new Point(i, j));
+                    tiles[i, j] = new BuildingTile()
+                    {
+                        BuildingTileType = BuildingTileType.Construction,
+                        CanAccess = tileTemplate.CanAccess,
+                        ItemSpace = 0,
+                        Position = new Point(i, j),
+                        Texture = tileTemplate.Texture
+                    };
+                }
+            }
+            List<string> requiredMats = new List<string>();
+            foreach (var buildingMaterialTemplate in template.RequiredMaterials)
+            {
+                for (int i = 0; i < buildingMaterialTemplate.Count; i++)
+                {
+                    requiredMats.Add(buildingMaterialTemplate.ItemName);
+                }
+            }
+            Building returnMe = new Building(template.Size, tiles, requiredMats, _owner);
             returnMe.Id = new Guid();
+            return returnMe;
+        }
+
+
+        public Building GetNewBuilding(string templateName, Point position)
+        {
+            Building returnMe = GetNewBuilding(templateName);
+            returnMe.Position = position;
             return returnMe;
         }
     }

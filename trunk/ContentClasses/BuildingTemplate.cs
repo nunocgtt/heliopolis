@@ -8,12 +8,21 @@ namespace ContentClasses
     {
         public string Name { get; set; }
         public Point Size { get; set; }
-        public List<BulidingTile> Tiles { get; set; }
+        public List<BulidingTileTemplate> Tiles { get; set; }
+        public List<BuildingMaterialTemplate> RequiredMaterials { get; set; }
     }
 
-    public class BulidingTile
+    public class BulidingTileTemplate
     {
         public Point Position { get; set; }
-        public string TileType { get; set; }
+        public bool CanAccess { get; set; }
+        public string Texture { get; set; }
+        public string InteractableObjectName { get; set; }
+    }
+
+    public class BuildingMaterialTemplate
+    {
+        public string ItemName { get; set; }
+        public int Count { get; set; }
     }
 }
