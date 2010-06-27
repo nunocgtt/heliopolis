@@ -96,22 +96,25 @@ namespace Heliopolis.GraphicsEngine
             drawTilePos.X = drawTilePos.X - cameraPosition.X;
             drawTilePos.Y = drawTilePos.Y - cameraPosition.Y;
 
-            List<IsometricTexture> texturesToDraw =
+            var texturesToDraw =
                 (from provider in _tileProviders
                  from drawTextureName in provider.GetTexturesToDraw(tileToDraw)
-                 select _textureManager.Textures[drawTextureName]).ToList();
+                 select new { Texture = _textureManager.Textures[drawTextureName.TextureName], DrawColor = drawTextureName.DrawColor }).ToList();
 
-            foreach (IsometricTexture drawTexture in texturesToDraw.OrderBy(p => p.ZLevel))
+            foreach (var drawTexture in texturesToDraw.OrderBy(p => p.Texture.ZLevel))
             {
-                Point offset = new Point(TileCenter.X - drawTexture.CenterPoint.X, TileCenter.Y - drawTexture.CenterPoint.Y);
-                Rectangle floorScreenRectangle = new Rectangle(drawTilePos.X + offset.X, drawTilePos.Y + offset.Y, drawTexture.Size.X, drawTexture.Size.Y);
+                Point offset = new Point(TileCenter.X - drawTexture.Texture.CenterPoint.X, TileCenter.Y - drawTexture.Texture.CenterPoint.Y);
+                Rectangle floorScreenRectangle = new Rectangle(drawTilePos.X + offset.X, drawTilePos.Y + offset.Y, drawTexture.Texture.Size.X, drawTexture.Texture.Size.Y);
                 Rectangle finalDrawRect = Zoom(zoomLevel, floorScreenRectangle);
-                Rectangle textureRect = new Rectangle();
-                textureRect.X = drawTexture.TexturePointOrigin.X;
-                textureRect.Y = drawTexture.TexturePointOrigin.Y;
-                textureRect.Width = drawTexture.Size.X;
-                textureRect.Height = drawTexture.Size.Y;
-                spriteBatch.Draw(_textureManager.TextureSheets[drawTexture.TextureSheet], finalDrawRect, textureRect, Color.White);
+                Rectangle textureRect =
+                    new Rectangle
+                        {
+                            X = drawTexture.Texture.TexturePointOrigin.X,
+                            Y = drawTexture.Texture.TexturePointOrigin.Y,
+                            Width = drawTexture.Texture.Size.X,
+                            Height = drawTexture.Texture.Size.Y
+                        };
+                spriteBatch.Draw(_textureManager.TextureSheets[drawTexture.Texture.TextureSheet], finalDrawRect, textureRect, drawTexture.DrawColor);
             }
         }
 

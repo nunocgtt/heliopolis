@@ -84,6 +84,7 @@
     <Compile Include="GraphicsEngine\IsometricEngine.cs" />
     <Compile Include="GraphicsEngine\IWorld.cs" />
     <Compile Include="GraphicsEngine\TextureManager.cs" />
+    <Compile Include="GraphicsEngine\TextureToDraw.cs" />
     <Compile Include="Interface\InterfaceController.cs" />
     <Compile Include="Interface\InterfaceModel.cs" />
     <Compile Include="Interface\InterfaceView.cs" />
