@@ -5,6 +5,6 @@ namespace Heliopolis.GraphicsEngine
 {
     public interface IIsometricTileProvider
     {
-        List<string> GetTexturesToDraw(Point position);
+        List<TextureToDraw> GetTexturesToDraw(Point position);
     }
 }

@@ -46,9 +46,9 @@ namespace Heliopolis.Interface
 
         #region IIsometricTileProvider Members
 
-        public List<string> GetTexturesToDraw(Point position)
+        public List<TextureToDraw> GetTexturesToDraw(Point position)
         {
-            var returnMe = new List<string>();
+            var returnMe = new List<TextureToDraw>();
             if (_interfaceModel.CurrentInterfaceState == InterfaceState.MakeSelection ||
                 _interfaceModel.CurrentInterfaceState == InterfaceState.CurrentlyMakingSelection)
             {
@@ -56,7 +56,7 @@ namespace Heliopolis.Interface
                 {
                     if (_interfaceModel.SelectionTiles.Contains(position))
                     {
-                        returnMe.Add("selection1");
+                        returnMe.Add(new TextureToDraw("selection1"));
                     }
                 }
             }
@@ -68,7 +68,7 @@ namespace Heliopolis.Interface
                     && position.Y < _interfaceModel.MousePointIsometricGrid.Y + _interfaceModel.BuildingToPlace.Size.Y)
                 {
                     Point buildingTilePosition = new Point(position.X - _interfaceModel.MousePointIsometricGrid.X, position.Y - _interfaceModel.MousePointIsometricGrid.Y);
-                    returnMe.Add(_interfaceModel.BuildingToPlace.BuildingTiles[buildingTilePosition.X, buildingTilePosition.Y].Texture);
+                    returnMe.Add(new TextureToDraw(_interfaceModel.BuildingToPlace.BuildingTiles[buildingTilePosition.X, buildingTilePosition.Y].Texture, new Color(255,255,255,150)));
                 }
             }
             return returnMe;

@@ -293,19 +293,19 @@ namespace Heliopolis.World.Environment
 
         #region IIsometricTileProvider Members
 
-        public List<string> GetTexturesToDraw(Point position)
+        public List<TextureToDraw> GetTexturesToDraw(Point position)
         {
-            var textures = new List<string>();
+            var textures = new List<TextureToDraw>();
             if (this[position].BuildingTile == null)
-                textures.Add(this[position].Texture);
+                textures.Add(new TextureToDraw(this[position].Texture));
             else
-                textures.Add(this[position].BuildingTile.Texture);
+                textures.Add(new TextureToDraw(this[position].BuildingTile.Texture));
             if (this[position].InteractableObject != null)
             {
-                textures.Add(this[position].InteractableObject.Texture);
+                textures.Add(new TextureToDraw(this[position].InteractableObject.Texture));
             }
-            textures.AddRange(this[position].ActorsOnTile.Select(drawActor => drawActor.Texture));
-            textures.AddRange(this[position].ItemsOnGround.Select(drawItem => drawItem.Texture));
+            textures.AddRange(this[position].ActorsOnTile.Select(drawActor => new TextureToDraw(drawActor.Texture)));
+            textures.AddRange(this[position].ItemsOnGround.Select(drawItem => new TextureToDraw(drawItem.Texture)));
             return textures;
         }
 
