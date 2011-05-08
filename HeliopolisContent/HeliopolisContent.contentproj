@@ -194,6 +194,7 @@
       <Name>SimpleDark</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Compile Include="UITheme\SimpleLight\button-backdrop.png">
       <Name>button-backdrop</Name>
@@ -254,11 +255,13 @@
       <Name>SimpleLight</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UI\Interface.xml">
       <Name>Interface</Name>
       <Importer>XmlImporter</Importer>
       <Processor>PassThroughProcessor</Processor>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>

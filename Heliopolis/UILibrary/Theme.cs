@@ -98,19 +98,13 @@ namespace Heliopolis.UILibrary
 
                         if (name.Length > 0 && texture.Length > 0 && tileWidth > 0 && tileHeight > 0)
                         {
-                            try
-                            {
-                                Texture2D backgroundTexture = UserInterface.Game.Content.Load<Texture2D>(texture);
-                                UIBackdropTexture backdropTexture = new UIBackdropTexture(backgroundTexture, tileWidth, tileHeight);
+                            Texture2D backgroundTexture = UserInterface.Game.Content.Load<Texture2D>(texture);
+                            UIBackdropTexture backdropTexture = new UIBackdropTexture(backgroundTexture, tileWidth,
+                                                                                      tileHeight);
 
-                                if (!BackdropTextures.Keys.Contains(name))
-                                {
-                                    BackdropTextures.Add(name, backdropTexture);
-                                }
-                            }
-                            catch (Exception ex)
+                            if (!BackdropTextures.Keys.Contains(name))
                             {
-                                throw new Exception("Theme load failed during backdrop texture load for the following texture: " + texture, ex);
+                                BackdropTextures.Add(name, backdropTexture);
                             }
                         }
                     }

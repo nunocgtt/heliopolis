@@ -30,7 +30,7 @@ namespace Heliopolis.GraphicsEngine
                                 PreferredBackBufferWidth = _screenSize.X,
                                 PreferredBackBufferHeight = _screenSize.Y
                             };
-            Content.RootDirectory = "Content";  
+            Content.RootDirectory = "HeliopolisContent";  
         }
 
         /// <summary>
