@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heliopolis", "Heliopolis\Heliopolis.csproj", "{B8A63861-7451-4D3D-AAA0-383BA528BE32}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentClasses", "ContentClasses\ContentClasses.csproj", "{E09F1B1C-D8AF-43F8-BA26-BBC61A9590C2}"
@@ -35,12 +35,6 @@ Global
 		{E09F1B1C-D8AF-43F8-BA26-BBC61A9590C2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{E09F1B1C-D8AF-43F8-BA26-BBC61A9590C2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{E09F1B1C-D8AF-43F8-BA26-BBC61A9590C2}.Release|x86.ActiveCfg = Release|Any CPU
-		{FA929159-5099-4CDF-98FC-90DD6A009FA5}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{FA929159-5099-4CDF-98FC-90DD6A009FA5}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{FA929159-5099-4CDF-98FC-90DD6A009FA5}.Debug|x86.ActiveCfg = Debug|x86
-		{FA929159-5099-4CDF-98FC-90DD6A009FA5}.Release|Any CPU.ActiveCfg = Release|x86
-		{FA929159-5099-4CDF-98FC-90DD6A009FA5}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{FA929159-5099-4CDF-98FC-90DD6A009FA5}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

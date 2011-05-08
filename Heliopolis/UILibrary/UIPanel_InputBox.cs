@@ -235,7 +235,7 @@ namespace Heliopolis.UILibrary
 
                     if (base.HasFocus && this.cursorToggle)
                     {
-                        Texture2D cursorTexture = new Texture2D(spriteBatch.GraphicsDevice, 1, th + 4, 1, TextureUsage.None, SurfaceFormat.Color);
+                        Texture2D cursorTexture = new Texture2D(spriteBatch.GraphicsDevice, 1, th + 4, true, SurfaceFormat.Color);
 
                         Color[] textureData = new Color[th + 4];
 
