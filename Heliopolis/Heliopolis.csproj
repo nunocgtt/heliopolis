@@ -276,7 +276,13 @@
       <Project>{E09F1B1C-D8AF-43F8-BA26-BBC61A9590C2}</Project>
       <Name>ContentClasses</Name>
     </ProjectReference>
+    <ProjectReference Include="..\HeliopolisContent\HeliopolisContent.contentproj">
+      <Project>{738D68C7-A9AB-4990-9D9A-910A1D3305E1}</Project>
+      <Name>HeliopolisContent</Name>
+      <XnaReferenceType>Content</XnaReferenceType>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

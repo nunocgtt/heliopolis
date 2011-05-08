@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<XnaContent>
+  <Asset Type="System.Collections.Generic.List[ContentClasses.IsometricTexture]">
+    <Item>
+      <TextureName>grass</TextureName>
+      <Size>32 16</Size>
+      <TexturePointOrigin>64 0</TexturePointOrigin>
+      <CenterPoint>16 8</CenterPoint>
+      <ZLevel>0</ZLevel>
+      <TextureSheet>floors</TextureSheet>
+    </Item>
+    <Item>
+      <TextureName>woodwall</TextureName>
+      <Size>32 16</Size>
+      <!-- 2 * 32, 1 * 20 -->
+      <TexturePointOrigin>64 20</TexturePointOrigin>
+      <CenterPoint>16 8</CenterPoint>
+      <ZLevel>1</ZLevel>
+      <TextureSheet>floors</TextureSheet>
+    </Item>
+    <Item>
+      <TextureName>woodfloor</TextureName>
+      <Size>32 16</Size>
+      <!-- 10 * 32, 0 * 20 -->
+      <TexturePointOrigin>320 0</TexturePointOrigin>
+      <CenterPoint>16 8</CenterPoint>
+      <ZLevel>1</ZLevel>
+      <TextureSheet>floors</TextureSheet>
+    </Item>
+    <Item>
+      <!-- to change!! -->
+      <TextureName>wooddoor</TextureName>
+      <Size>32 16</Size>
+      <!-- 10 * 32, 0 * 20 -->
+      <TexturePointOrigin>320 0</TexturePointOrigin>
+      <CenterPoint>16 8</CenterPoint>
+      <ZLevel>1</ZLevel>
+      <TextureSheet>floors</TextureSheet>
+    </Item>
+    <Item>
+      <TextureName>rock</TextureName>
+      <Size>32 19</Size>
+      <TexturePointOrigin>128 0</TexturePointOrigin>
+      <CenterPoint>16 8</CenterPoint>
+      <ZLevel>0</ZLevel>
+      <TextureSheet>floors</TextureSheet>
+    </Item>
+    <Item>
+      <TextureName>tree1</TextureName>
+      <Size>32 32</Size>
+      <TexturePointOrigin>32 0</TexturePointOrigin>
+      <CenterPoint>16 24</CenterPoint>
+      <ZLevel>10</ZLevel>
+      <TextureSheet>trees</TextureSheet>
+    </Item>
+    <Item>
+      <TextureName>dwarf1</TextureName>
+      <Size>32 32</Size>
+      <TexturePointOrigin>32 0</TexturePointOrigin>
+      <CenterPoint>16 25</CenterPoint>
+      <ZLevel>10</ZLevel>
+      <TextureSheet>dwarves</TextureSheet>
+    </Item>
+    <Item>
+      <TextureName>selection1</TextureName>
+      <Size>32 19</Size>
+      <TexturePointOrigin>480 20</TexturePointOrigin>
+      <!-- 15 * 32, 1 * 20 -->
+      <CenterPoint>16 8</CenterPoint>
+      <ZLevel>5</ZLevel>
+      <TextureSheet>floors</TextureSheet>
+    </Item>
+    <Item>
+      <TextureName>wood</TextureName>
+      <Size>32 32</Size>
+      <TexturePointOrigin>0 0</TexturePointOrigin>
+      <!-- 0 * 32, 0 * 32 -->
+      <CenterPoint>16 24</CenterPoint>
+      <ZLevel>6</ZLevel>
+      <TextureSheet>items</TextureSheet>
+    </Item>
+  </Asset>
+</XnaContent>

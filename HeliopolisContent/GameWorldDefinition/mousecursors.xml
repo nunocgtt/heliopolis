@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<XnaContent>
+  <Asset Type="System.Collections.Generic.List[ContentClasses.MouseCursor]">
+    <Item>
+      <Name>Normal</Name>
+      <MouseTexture>Sprites/cursor1</MouseTexture>
+      <CenterPoint>6 0</CenterPoint>
+    </Item>
+    <Item>
+      <Name>Arrows</Name>
+      <MouseTexture>Sprites/cursor2</MouseTexture>
+      <CenterPoint>16 16</CenterPoint>
+    </Item>
+  </Asset>
+</XnaContent>
