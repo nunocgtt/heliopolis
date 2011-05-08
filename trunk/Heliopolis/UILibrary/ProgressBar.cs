@@ -82,8 +82,7 @@ namespace Heliopolis.UILibrary
                 {
                     m_borderColorOuter = value;
                     outerData[0] = m_borderColorOuter;
-                    outerTexture = new Texture2D(Game.GraphicsDevice, 1, 1, 1,
-                                TextureUsage.Linear, SurfaceFormat.Color);
+                    outerTexture = new Texture2D(Game.GraphicsDevice, 1, 1, true, SurfaceFormat.Color);
                     outerTexture.SetData(outerData);
                 }
             }
@@ -120,8 +119,7 @@ namespace Heliopolis.UILibrary
                 {
                     m_borderColorInner = value;
                     innerData[0] = m_borderColorInner;
-                    innerTexture = new Texture2D(Game.GraphicsDevice, 1, 1, 1,
-                                TextureUsage.Linear, SurfaceFormat.Color);
+                    innerTexture = new Texture2D(Game.GraphicsDevice, 1, 1, true, SurfaceFormat.Color);
                     innerTexture.SetData(innerData);
                 }
             }
@@ -158,8 +156,7 @@ namespace Heliopolis.UILibrary
                     m_fillColor = value;
                     fillData[0] = m_fillColor;
                     fillTexture.Dispose();
-                    fillTexture = new Texture2D(Game.GraphicsDevice, 1, 1, 1,
-                                TextureUsage.Linear, SurfaceFormat.Color);
+                    fillTexture = new Texture2D(Game.GraphicsDevice, 1, 1, true, SurfaceFormat.Color);
                     fillTexture.SetData(fillData);
                 }
             }
@@ -180,8 +177,7 @@ namespace Heliopolis.UILibrary
                 {
                     m_backgroundColor = value;
                     backgroundData[0] = m_backgroundColor;
-                    backgroundTexture = new Texture2D(Game.GraphicsDevice, 1, 1, 1,
-                            TextureUsage.Linear, SurfaceFormat.Color);
+                    backgroundTexture = new Texture2D(Game.GraphicsDevice, 1, 1, true, SurfaceFormat.Color);
                     backgroundTexture.SetData(backgroundData);
                 }
             }
@@ -309,14 +305,10 @@ namespace Heliopolis.UILibrary
         public override void Initialize()
         {
             // create some textures.  These will actually be overwritten when colors are set below.
-            outerTexture = new Texture2D(Game.GraphicsDevice, 1, 1, 1,
-                            TextureUsage.Linear, SurfaceFormat.Color);
-            innerTexture = new Texture2D(Game.GraphicsDevice, 1, 1, 1,
-                            TextureUsage.Linear, SurfaceFormat.Color);
-            backgroundTexture = new Texture2D(Game.GraphicsDevice, 1, 1, 1,
-                            TextureUsage.Linear, SurfaceFormat.Color);
-            fillTexture = new Texture2D(Game.GraphicsDevice, 1, 1, 1,
-                            TextureUsage.Linear, SurfaceFormat.Color);
+            outerTexture = new Texture2D(Game.GraphicsDevice, 1, 1, true, SurfaceFormat.Color);
+            innerTexture = new Texture2D(Game.GraphicsDevice, 1, 1, true, SurfaceFormat.Color);
+            backgroundTexture = new Texture2D(Game.GraphicsDevice, 1, 1, true, SurfaceFormat.Color);
+            fillTexture = new Texture2D(Game.GraphicsDevice, 1, 1, true, SurfaceFormat.Color);
 
             // initialize data arrays for building textures
             outerData = new Color[1];

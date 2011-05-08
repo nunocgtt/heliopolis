@@ -83,9 +83,9 @@ namespace Heliopolis.UILibrary
             Color[] rowAltBackgroundData = new Color[rw * rh];
             Color[] rowSelectedBackgroundData = new Color[rw * rh];
 
-            rowBackgroundTexture = new Texture2D(base.UserInterface.Game.GraphicsDevice, rw, rh, 1, TextureUsage.None, SurfaceFormat.Color);
-            rowAltBackgroundTexture = new Texture2D(base.UserInterface.Game.GraphicsDevice, rw, rh, 1, TextureUsage.None, SurfaceFormat.Color);
-            rowSelectedBackgroundTexture = new Texture2D(base.UserInterface.Game.GraphicsDevice, rw, rh, 1, TextureUsage.None, SurfaceFormat.Color);
+            rowBackgroundTexture = new Texture2D(base.UserInterface.Game.GraphicsDevice, rw, rh, true, SurfaceFormat.Color);
+            rowAltBackgroundTexture = new Texture2D(base.UserInterface.Game.GraphicsDevice, rw, rh, true, SurfaceFormat.Color);
+            rowSelectedBackgroundTexture = new Texture2D(base.UserInterface.Game.GraphicsDevice, rw, rh, true, SurfaceFormat.Color);
 
             for (int i = 0; i < rowBackgroundData.Length; i++)
             {
