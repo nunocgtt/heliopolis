@@ -37,7 +37,7 @@ namespace Heliopolis.Interface
 
     public class InterfaceModel : IGameValueProvider
     {
-        public const string UIFileToLoad = @"Content\UI\Interface.xml";
+        public const string UIFileToLoad = @"HeliopolisContent\UI\Interface.xml";
         public Point CameraPos;
         public bool ZoomedIn;
         public Point ScreenSize;

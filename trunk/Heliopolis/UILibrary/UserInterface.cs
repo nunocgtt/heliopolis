@@ -112,16 +112,10 @@ namespace Heliopolis.UILibrary
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            bool oldScissorTestEnable = Game.GraphicsDevice.RasterizerState.ScissorTestEnable;
-
-            //Game.GraphicsDevice.RenderState.ScissorTestEnable = true;
-
             foreach (Panel panel in Panels.Values)
             {
                 panel.Draw(spriteBatch);
             }
-
-            Game.GraphicsDevice.RasterizerState.ScissorTestEnable = oldScissorTestEnable;
         }
     }
 }

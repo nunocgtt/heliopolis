@@ -41,7 +41,7 @@ namespace Heliopolis.UILibrary
 
             if (themeAttribute != null)
             {
-                string themeFile = @"Content\" + themeAttribute.Value;
+                string themeFile = @"HeliopolisContent\" + themeAttribute.Value;
 
                 try
                 {
@@ -59,7 +59,7 @@ namespace Heliopolis.UILibrary
                 try
                 {
                     var themeXML = new XmlDocument();
-                    themeXML.Load(@"Content\Themes\SimpleUI\SimpleLight\SimpleLight.xml");
+                    themeXML.Load(@"HeliopolisContent\Themes\SimpleUI\SimpleLight\SimpleLight.xml");
                     _userInterface.Theme = new Theme(themeXML, _userInterface);
                 }
                 catch (Exception ex)
