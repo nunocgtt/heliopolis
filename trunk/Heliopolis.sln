@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Heliopolis", "Heliopolis\He
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentClasses", "ContentClasses\ContentClasses.csproj", "{E09F1B1C-D8AF-43F8-BA26-BBC61A9590C2}"
 EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "HeliopolisContent", "HeliopolisContent\HeliopolisContent.contentproj", "{738D68C7-A9AB-4990-9D9A-910A1D3305E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,12 @@ Global
 		{E09F1B1C-D8AF-43F8-BA26-BBC61A9590C2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{E09F1B1C-D8AF-43F8-BA26-BBC61A9590C2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{E09F1B1C-D8AF-43F8-BA26-BBC61A9590C2}.Release|x86.ActiveCfg = Release|Any CPU
+		{738D68C7-A9AB-4990-9D9A-910A1D3305E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{738D68C7-A9AB-4990-9D9A-910A1D3305E1}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{738D68C7-A9AB-4990-9D9A-910A1D3305E1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{738D68C7-A9AB-4990-9D9A-910A1D3305E1}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{738D68C7-A9AB-4990-9D9A-910A1D3305E1}.Release|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{738D68C7-A9AB-4990-9D9A-910A1D3305E1}.Release|x86.ActiveCfg = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

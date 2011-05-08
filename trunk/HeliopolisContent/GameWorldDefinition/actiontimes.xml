@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<XnaContent>
+  <Asset Type="System.Collections.Generic.List[ContentClasses.ActionTime]">
+    <Item>
+      <Name>movement</Name>
+      <Milliseconds>200</Milliseconds>
+    </Item>
+    <Item>
+      <Name>woodchopping</Name>
+      <Milliseconds>300</Milliseconds>
+    </Item>
+    <Item>
+      <Name>idle</Name>
+      <Milliseconds>1000</Milliseconds>
+    </Item>
+    <Item>
+      <Name>pickupitem</Name>
+      <Milliseconds>200</Milliseconds>
+    </Item>
+    <Item>
+      <Name>placeitem</Name>
+      <Milliseconds>200</Milliseconds>
+    </Item>
+    <Item>
+      <Name>construction</Name>
+      <Milliseconds>200</Milliseconds>
+    </Item>
+  </Asset>
+</XnaContent>

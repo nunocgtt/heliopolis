@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<XnaContent>
+  <Asset Type="System.Collections.Generic.List[ContentClasses.ItemTemplate]">
+    <Item>
+      <Name>wood</Name>
+      <Weight>1</Weight>
+      <Texture>wood</Texture>
+    </Item>
+    <Item>
+      <Name>stone</Name>
+      <Weight>1</Weight>
+      <Texture>stoneitem</Texture>
+    </Item>
+  </Asset>
+</XnaContent>

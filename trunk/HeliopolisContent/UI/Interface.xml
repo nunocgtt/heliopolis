@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Interface inherits="Heliopolis.Interface.InterfaceModel" theme="UITheme\SimpleLight\SimpleLight.xml">
+  <Variables>
+    <Variable name="buttonwidth" value="150"/>
+    <Variable name="buttonpadding" value="15"/>
+    <Variable name="buttonheight" value="30"/>
+    <Variable name="rightpaneltop" value="35"/>
+    <Variable name="rightpanelheight" value="670"/>
+    <!-- screenwitdh and screenhieght are implicitly set -->
+  </Variables>
+  <Panels>
+    <Panel id="TopMenuPanel" type="Heliopolis.UILibrary.UIPanel_Frame" position="top-left" x="0" y="0" width="screenwidth" height="24" layout="stack-horizontal">
+      <Panels>
+        <Panel id="DebugInfoz" type="Heliopolis.UILibrary.TextLiteral" binding="debuginfo" position="top-left" x="0" y="0" width="300" height="50">
+        </Panel>
+      </Panels>
+    </Panel>
+    <Panel id="RightMainMenuPanel" groupid="RightMenu" type="Heliopolis.UILibrary.UIPanel_Frame" position="top-right" x="-15" y="rightpaneltop" width="180" height="rightpanelheight" layout="stack-vertical">
+      <Panels>
+        <Panel id="JobButton" type="Heliopolis.UILibrary.Button" modifyGroupVisiblity="RightMenu" panelToShow="JobPanel" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+          <Text alignment="center">Jobs</Text>
+        </Panel>
+
+        <Panel id="StorageButton" type="Heliopolis.UILibrary.Button"  modifyGroupVisiblity="RightMenu" panelToShow="StoragePanel" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+          <Text alignment="center">Storage</Text>
+        </Panel>
+        
+        <Panel id="BuildingsButton" type="Heliopolis.UILibrary.Button" modifyGroupVisiblity="RightMenu" panelToShow="BuildingPanel" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+          <Text alignment="center">Buildings</Text>
+        </Panel>
+      </Panels>
+    </Panel>
+    
+    <Panel id="JobPanel" groupid="RightMenu" visible="false" type="Heliopolis.UILibrary.UIPanel_Frame" position="top-right" x="-15" y="rightpaneltop" width="180" height="rightpanelheight" layout="stack-vertical">
+      <Panels>
+        <Panel id="JobPanelBackButton" type="Heliopolis.UILibrary.Button"  modifyGroupVisiblity="RightMenu" panelToShow="RightMainMenuPanel" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+          <Text alignment="center">Back</Text>
+        </Panel>     
+        
+        <Panel id="ChopWoodButton" type="Heliopolis.UILibrary.Button" onClick="ChopWood" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+          <Text alignment="center">Chop Wood</Text>
+        </Panel>
+
+        <Panel id="MineRockButton" type="Heliopolis.UILibrary.Button" onClick="ClickMe" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+          <Text alignment="center">Mine Rock</Text>
+        </Panel>
+
+        <Panel id="GatherHerbButton" type="Heliopolis.UILibrary.Button" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+          <Text alignment="center">Gather Herb</Text>
+        </Panel>
+
+      </Panels>
+    </Panel>
+
+    <Panel id="StoragePanel" groupid="RightMenu" visible="false" type="Heliopolis.UILibrary.UIPanel_Frame" position="top-right" x="-15" y="rightpaneltop" width="180" height="rightpanelheight" layout="stack-vertical">
+      <Panels>
+         <Panel id="StoragePanelBackButton" type="Heliopolis.UILibrary.Button"  modifyGroupVisiblity="RightMenu" panelToShow="RightMainMenuPanel" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+          <Text alignment="center">Back</Text>
+        </Panel>
+        
+        <Panel id="GeneralStorageButton" type="Heliopolis.UILibrary.Button" onClick="ClickMe" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+          <Text alignment="center">General</Text>
+        </Panel>
+
+        <Panel id="WoodStorageButton" type="Heliopolis.UILibrary.Button" onClick="ClickMe" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+          <Text alignment="center">Wood</Text>
+        </Panel>
+      </Panels>
+    </Panel>
+
+    <Panel id="BuildingPanel" groupid="RightMenu" visible="false" type="Heliopolis.UILibrary.UIPanel_Frame" position="top-right" x="-15" y="rightpaneltop" width="180" height="rightpanelheight" layout="stack-vertical">
+      <Panels>
+         <Panel id="BuildingPanelBackButton" type="Heliopolis.UILibrary.Button"  modifyGroupVisiblity="RightMenu" panelToShow="RightMainMenuPanel" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+          <Text alignment="center">Back</Text>
+        </Panel>     
+        
+        <Panel id="BuildLumberMillButton" type="Heliopolis.UILibrary.Button" onClick="ClickMe" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+          <Text alignment="center">Lumber Mill</Text>
+        </Panel>
+
+        <Panel id="BuildCarpentersButton" type="Heliopolis.UILibrary.Button" onClick="PlaceBuilding" position="top-left" x="buttonpadding" y="buttonpadding" width="buttonwidth" height="buttonheight">
+          <Text alignment="center">Carpenters Hut</Text>
+        </Panel>
+      </Panels>
+    </Panel>
+  </Panels>
+</Interface>

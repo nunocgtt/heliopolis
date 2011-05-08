@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<XnaContent>
+	<Asset Type="System.Collections.Generic.List[ContentClasses.InteractableObjectTemplate]">
+		<Item>
+			<Name>tree</Name>
+			<IsHarvestable>true</IsHarvestable>
+			<IsManufacturable>false</IsManufacturable>
+			<HarvestCount>10</HarvestCount>
+			<HarvestJobType>woodchopping</HarvestJobType>
+			<Texture>tree1</Texture>
+		</Item>
+	</Asset>
+</XnaContent>
+
+

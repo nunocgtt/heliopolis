@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<XnaContent>
+  <Asset Type="System.Collections.Generic.List[ContentClasses.ActorTemplate]">
+    <Item>
+      <Name>dood</Name>
+      <Texture>dwarf1</Texture>
+      <Hitpoints>100</Hitpoints>
+      <Properties>
+        <Item>Sleep</Item>
+        <Item>Food</Item>
+      </Properties>
+      <Jobs>
+        <Item>movement</Item>
+        <Item>woodchopping</Item>
+        <Item>idle</Item>
+        <Item>pickupitem</Item>
+        <Item>placeitem</Item>
+        <Item>construction</Item>
+      </Jobs>
+    </Item>
+  </Asset>
+</XnaContent>
